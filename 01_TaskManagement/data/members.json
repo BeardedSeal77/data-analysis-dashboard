@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "name": "Erin Cullen",
+    "studentNumber": "600531",
+    "githubUsername": "BeardedSeal77",
+    "displayName": "Erin Cullen",
+    "email": null,
+    "role": "Project Lead",
+    "skills": ["R", "Data Analysis", "Project Management", "CRISP-DM"],
+    "avatar": null,
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "lastLogin": null,
+    "memberColor": "blue",
+    "preferences": {
+      "notifications": true,
+      "emailUpdates": false
+    }
+  },
+  {
+    "id": 2,
+    "name": "Karl Christiaan Schmutz",
+    "studentNumber": "577511",
+    "githubUsername": "KCSchmutz",
+    "displayName": "Karl Christiaan Schmutz",
+    "email": null,
+    "role": "Data Scientist",
+    "skills": ["Python", "Machine Learning", "Statistics", "Data Modeling"],
+    "avatar": null,
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "lastLogin": null,
+    "memberColor": "purple",
+    "preferences": {
+      "notifications": true,
+      "emailUpdates": false
+    }
+  },
+  {
+    "id": 3,
+    "name": "Juan Oosthuizen",
+    "studentNumber": "600161",
+    "githubUsername": "Juan-Oosthuizen-Projects",
+    "displayName": "Juan Oosthuizen",
+    "email": null,
+    "role": "Data Analyst",
+    "skills": ["R", "Power BI", "Data Visualization", "Statistical Analysis"],
+    "avatar": null,
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "lastLogin": null,
+    "memberColor": "green",
+    "preferences": {
+      "notifications": true,
+      "emailUpdates": false
+    }
+  },
+  {
+    "id": 4,
+    "name": "Llewellyn Jakobus Fourie",
+    "studentNumber": "601314",
+    "githubUsername": "llewellyn04",
+    "displayName": "Llewellyn Jakobus Fourie",
+    "email": null,
+    "role": "Data Engineer",
+    "skills": ["Python", "R", "Database Design", "Data Pipeline Development"],
+    "avatar": null,
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "lastLogin": null,
+    "memberColor": "orange",
+    "preferences": {
+      "notifications": true,
+      "emailUpdates": false
+    }
+  },
+  {
+    "id": 5,
+    "name": "Qhamaninande Ndlume",
+    "studentNumber": "601436",
+    "githubUsername": "Qama-Athe",
+    "displayName": "Qhamaninande Ndlume",
+    "email": null,
+    "role": "Research Analyst",
+    "skills": ["R", "CRISP-DM", "Research Methods", "Data Analysis"],
+    "avatar": null,
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "lastLogin": null,
+    "memberColor": "cyan",
+    "preferences": {
+      "notifications": true,
+      "emailUpdates": false
+    }
+  }
+]

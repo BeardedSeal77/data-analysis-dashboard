@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 6: Final Report</title>
+    <link rel="stylesheet" href="../static/css/output.css">
+    <link rel="stylesheet" href="../static/css/colours.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav id="navbar"></nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="milestoneContent"></div>
+    </main>
+
+    <script src="../static/js/config.js"></script>
+    <script src="../static/js/data-loader.js"></script>
+    <script src="../static/js/auth.js"></script>
+    <script src="../static/js/api.js"></script>
+    <script src="../static/js/components/task-component.js"></script>
+    <script src="../static/js/components/navbar.js"></script>
+    <script src="../static/js/components/taskboard.js"></script>
+    <script src="../static/js/components/milestone-component.js"></script>
+    <script>
+        // Initialize milestone 6 using the milestone component
+        document.addEventListener('DOMContentLoaded', async function() {
+            await MilestoneComponent.create(6, 'milestoneContent');
+        });
+    </script>
+</body>
+</html>
