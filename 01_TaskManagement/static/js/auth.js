@@ -144,9 +144,9 @@ class GitHubAuth {
         const patInput = document.getElementById('patInput');
         const pat = patInput.value.trim();
         
-        // More lenient validation - just check it's not empty and looks like a token
-        if (!pat || pat.length < 10) {
-            alert('Please enter a valid GitHub Personal Access Token');
+        // Accept any non-empty input
+        if (!pat) {
+            alert('Please enter a token');
             return;
         }
         
