@@ -2,7 +2,7 @@
 const CONFIG = {
     // GitHub OAuth Configuration
     GITHUB_CLIENT_ID: 'Ov23liVYz4U4Ik2BhZvQ', // GitHub App Client ID
-    REDIRECT_URI: window.location.origin + '/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
+    REDIRECT_URI: 'https://beardedseal77.github.io/data-analysis-dashboard/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
     
     // Repository Configuration
     GITHUB_OWNER: 'BeardedSeal77', // GitHub username
