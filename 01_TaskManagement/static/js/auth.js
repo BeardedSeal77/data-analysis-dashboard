@@ -95,19 +95,63 @@ class GitHubAuth {
     }
 
     login() {
-        const scope = 'repo user:email';
-        const state = this.generateState();
+        // For local development, show member selection directly
+        this.showMemberSelection();
+    }
+
+    showMemberSelection() {
+        // Create modal for member selection
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Select Your Profile</h3>
+                <p class="text-sm text-gray-600 mb-4">Choose your profile to start working on tasks:</p>
+                <div class="space-y-2">
+                    ${this.members.map(member => `
+                        <button onclick="githubAuth.selectMember('${member.githubUsername}')" 
+                                class="w-full text-left p-3 rounded border hover:bg-gray-50 flex items-center transition">
+                            <div class="w-8 h-8 rounded-full mr-3" style="background-color: var(--color-${member.memberColor})"></div>
+                            <div>
+                                <div class="font-medium">${member.displayName}</div>
+                                <div class="text-sm text-gray-500">${member.role}</div>
+                            </div>
+                        </button>
+                    `).join('')}
+                </div>
+                <button onclick="githubAuth.closeModal()" 
+                        class="mt-4 w-full py-2 px-4 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    closeModal() {
+        const modal = document.querySelector('.fixed.inset-0');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    selectMember(githubUsername) {
+        this.closeModal();
         
-        // Store state for verification
-        sessionStorage.setItem('github_oauth_state', state);
-        
-        const authUrl = `https://github.com/login/oauth/authorize?` +
-            `client_id=${this.clientId}&` +
-            `redirect_uri=${encodeURIComponent(this.redirectUri)}&` +
-            `scope=${encodeURIComponent(scope)}&` +
-            `state=${state}`;
-        
-        window.location.href = authUrl;
+        const member = this.members.find(m => m.githubUsername === githubUsername);
+        if (member) {
+            this.currentUser = {
+                ...member,
+                githubId: member.id,
+                avatar: `https://github.com/identicons/${githubUsername}.png`,
+                githubProfile: { login: githubUsername }
+            };
+            
+            // Store in localStorage for persistence across browser sessions
+            localStorage.setItem('selected_user', JSON.stringify(this.currentUser));
+            
+            this.updateUserInterface();
+            this.notifyAuthChange();
+            this.showNotification(`Logged in as ${this.currentUser.displayName}!`, 'success');
+        }
     }
 
     async handleOAuthCallback(code) {
@@ -218,21 +262,12 @@ class GitHubAuth {
     }
 
     checkExistingSession() {
-        const token = sessionStorage.getItem('github_access_token');
-        const userInfo = sessionStorage.getItem('github_user');
+        const userInfo = localStorage.getItem('selected_user');
         
-        if (token && userInfo) {
+        if (userInfo) {
             try {
                 this.currentUser = JSON.parse(userInfo);
-                this.accessToken = token;
                 this.updateUserInterface();
-                
-                // Verify token is still valid (skip for mock tokens)
-                if (!token.startsWith('mock_')) {
-                    this.verifyToken(token);
-                }
-                
-                // Notify other components
                 this.notifyAuthChange();
                 
             } catch (error) {
@@ -296,9 +331,7 @@ class GitHubAuth {
 
     logout() {
         // Clear stored data
-        sessionStorage.removeItem('github_access_token');
-        sessionStorage.removeItem('github_user');
-        sessionStorage.removeItem('github_oauth_state');
+        localStorage.removeItem('selected_user');
         
         // Reset current user
         this.currentUser = null;
@@ -311,11 +344,6 @@ class GitHubAuth {
         this.notifyAuthChange();
         
         this.showNotification('Logged out successfully', 'success');
-        
-        // Refresh page after short delay
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
     }
 
     generateState() {
