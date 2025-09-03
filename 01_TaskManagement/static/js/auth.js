@@ -113,18 +113,18 @@ class GitHubAuth {
 
         // Create modal for PAT input
         const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50';
         modal.innerHTML = `
-            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                <h3 class="text-lg font-semibold mb-4">GitHub Access Required</h3>
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">GitHub Access Required</h3>
                 <p class="text-sm text-gray-600 mb-4">Enter the shared GitHub Personal Access Token:</p>
                 <input type="password" id="patInput" placeholder="ghp_..." 
-                       class="w-full p-3 border rounded mb-4 font-mono text-sm">
+                       class="w-full p-3 border rounded mb-4 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="flex space-x-2">
                     <button onclick="githubAuth.submitPAT()" 
-                            class="flex-1 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700">Continue</button>
-                    <button onclick="this.parentElement.parentElement.remove()" 
-                            class="flex-1 py-2 px-4 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                            class="flex-1 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Continue</button>
+                    <button onclick="githubAuth.closePATModal()" 
+                            class="flex-1 py-2 px-4 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">Cancel</button>
                 </div>
                 <p class="text-xs text-gray-500 mt-2">Token stored in browser session only.</p>
             </div>
@@ -133,12 +133,20 @@ class GitHubAuth {
         document.getElementById('patInput').focus();
     }
 
+    closePATModal() {
+        const modal = document.querySelector('.fixed.inset-0');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
     submitPAT() {
         const patInput = document.getElementById('patInput');
         const pat = patInput.value.trim();
         
-        if (!pat || !pat.startsWith('ghp_')) {
-            alert('Please enter a valid GitHub Personal Access Token (starts with ghp_)');
+        // More lenient validation - just check it's not empty and looks like a token
+        if (!pat || pat.length < 10) {
+            alert('Please enter a valid GitHub Personal Access Token');
             return;
         }
         
@@ -153,14 +161,14 @@ class GitHubAuth {
 
     showMemberSelectionModal() {
         const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50';
         modal.innerHTML = `
-            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                <h3 class="text-lg font-semibold mb-4">Select Your Profile</h3>
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Select Your Profile</h3>
                 <div class="space-y-2">
                     ${this.members.map(member => `
                         <button onclick="githubAuth.selectMember('${member.githubUsername}')" 
-                                class="w-full text-left p-3 rounded border hover:bg-gray-50 flex items-center">
+                                class="w-full text-left p-3 rounded border hover:bg-gray-50 flex items-center transition">
                             <div class="w-8 h-8 rounded-full mr-3" style="background-color: var(--color-${member.memberColor})"></div>
                             <div>
                                 <div class="font-medium">${member.displayName}</div>
@@ -169,8 +177,8 @@ class GitHubAuth {
                         </button>
                     `).join('')}
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" 
-                        class="mt-4 w-full py-2 px-4 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                <button onclick="githubAuth.closePATModal()" 
+                        class="mt-4 w-full py-2 px-4 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">Cancel</button>
             </div>
         `;
         document.body.appendChild(modal);
