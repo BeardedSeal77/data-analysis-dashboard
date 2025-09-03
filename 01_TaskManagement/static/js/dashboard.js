@@ -165,7 +165,7 @@ class Dashboard {
 
         const activityHTML = recentActivity.map(assignment => {
             const task = this.tasks.find(t => t.id === assignment.taskId);
-            const member = this.members.find(m => m.githubUsername === assignment.assigneeUsername);
+            const member = this.members.find(m => m.id === assignment.memberId);
             
             let actionText = 'assigned';
             let actionColor = 'text-blue-600';
@@ -188,13 +188,13 @@ class Dashboard {
                     <div class="flex-shrink-0">
                         <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                             <span class="text-xs font-medium text-gray-600">
-                                ${(member?.name || assignment.assigneeDisplayName || 'Unknown').split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                ${(member?.name || assignment.memberDisplayName || 'Unknown').split(' ').map(n => n[0]).join('').substring(0, 2)}
                             </span>
                         </div>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm text-gray-900">
-                            <span class="font-medium">${member?.name || assignment.assigneeDisplayName}</span>
+                            <span class="font-medium">${member?.name || assignment.memberDisplayName}</span>
                             <span class="${actionColor}"> ${actionText}</span>
                             <span class="font-medium"> ${task?.title || 'Unknown Task'}</span>
                         </p>
@@ -233,7 +233,7 @@ class Dashboard {
                         <p class="text-xs text-gray-500 mt-1">
                             <span class="complexity-badge complexity-${task.complexity}">${task.complexity}</span>
                             <span class="ml-2">${task.estimatedHours}h</span>
-                            ${assignment ? `<span class="ml-2">• ${assignment.assigneeDisplayName}</span>` : ''}
+                            ${assignment ? `<span class="ml-2">• ${assignment.memberDisplayName}</span>` : ''}
                         </p>
                     </div>
                     <div class="flex-shrink-0 ml-4">

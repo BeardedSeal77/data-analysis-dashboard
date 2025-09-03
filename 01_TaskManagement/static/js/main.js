@@ -155,7 +155,7 @@ class TaskManager {
                 <div class="task-assignment">
                     <div class="assignee">
                         <i class="fas fa-user"></i>
-                        ${assignment.assigneeDisplayName}
+                        ${assignment.memberDisplayName}
                     </div>
                     ${assignment.progress > 0 ? `
                         <div class="progress-bar">
@@ -186,7 +186,7 @@ class TaskManager {
             return '<button class="btn btn-sm btn-primary assign-btn">Assign to Me</button>';
         }
 
-        if (assignment && assignment.assigneeUsername === this.currentUser.login) {
+        if (assignment && assignment.memberId === this.currentUser.id) {
             if (assignment.status === 'assigned') {
                 return '<button class="btn btn-sm btn-success start-btn">Start Task</button>';
             } else if (assignment.status === 'in-progress') {
@@ -283,7 +283,7 @@ class TaskManager {
                 ${assignment ? `
                     <hr>
                     <h4>Assignment Details</h4>
-                    <p><strong>Assignee:</strong> ${assignment.assigneeDisplayName}</p>
+                    <p><strong>Assignee:</strong> ${assignment.memberDisplayName}</p>
                     <p><strong>Status:</strong> ${assignment.status}</p>
                     <p><strong>Progress:</strong> ${assignment.progress}%</p>
                     <p><strong>Time Spent:</strong> ${assignment.timeSpent} hours</p>

@@ -1,13 +1,21 @@
 // Configuration for HDPSA Task Management System
 const CONFIG = {
-    // GitHub OAuth Configuration
-    GITHUB_CLIENT_ID: 'YOUR_GITHUB_CLIENT_ID', // Replace with your GitHub App Client ID
-    REDIRECT_URI: window.location.origin + '/01_TaskManagement/public/', // GitHub Pages URL
+    // MongoDB Atlas Configuration
+    MONGODB_CONNECTION_STRING: 'mongodb+srv://hdpsa-admin:IPlaySmashWithABlanketOnMyLap@hdpsa-task-management.pazpdmo.mongodb.net/hdpsa_tasks',
+    MONGODB_DATABASE: 'hdpsa_tasks',
+    MONGODB_API_KEY: 'YOUR_DATA_API_KEY', // We'll set this up if needed
     
-    // Repository Configuration
-    GITHUB_OWNER: 'YOUR_USERNAME', // Replace with your GitHub username
-    GITHUB_REPO: 'data-analysis-dashboard', // Repository name
-    TASK_BRANCH: 'taskAssignment', // Branch for live task data
+    // Legacy GitHub OAuth Configuration (for compatibility)
+    GITHUB_CLIENT_ID: 'not-needed-for-local',
+    REDIRECT_URI: window.location.origin + '/01_TaskManagement/dashboard.html',
+    
+    // Collections
+    COLLECTIONS: {
+        TASKS: 'tasks',
+        ASSIGNMENTS: 'assignments', 
+        MEMBERS: 'members',
+        MILESTONES: 'milestones'
+    },
     
     // API Configuration
     API_BASE_URL: 'https://api.github.com',

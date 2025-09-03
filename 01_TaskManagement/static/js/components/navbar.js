@@ -14,14 +14,115 @@ class NavBar {
         this.init();
     }
 
-    init() {
+    async init() {
         this.render();
         this.setupEventListeners();
         this.setupAuthListeners();
+        await this.setupProfileDropdown();
     }
     
+    async setupProfileDropdown() {
+        try {
+            // Load members data
+            const members = await window.dataLoader.loadMembers();
+            const profileSelect = document.getElementById('profileSelect');
+            
+            // Populate dropdown
+            members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = `${member.displayName} (${member.role})`;
+                profileSelect.appendChild(option);
+            });
+            
+            // Check for saved profile
+            const savedProfile = localStorage.getItem('selected_user');
+            if (savedProfile) {
+                const user = JSON.parse(savedProfile);
+                profileSelect.value = user.id;
+                this.showSelectedUser(user);
+            }
+            
+            // Handle profile selection
+            profileSelect.addEventListener('change', (e) => {
+                const selectedId = parseInt(e.target.value);
+                if (selectedId) {
+                    const selectedMember = members.find(m => m.id === selectedId);
+                    if (selectedMember) {
+                        const user = {
+                            ...selectedMember,
+                            avatar: `https://github.com/identicons/${selectedMember.githubUsername}.png`
+                        };
+                        localStorage.setItem('selected_user', JSON.stringify(user));
+                        this.showSelectedUser(user);
+                        
+                        // Notify other components
+                        window.dispatchEvent(new CustomEvent('profileSelected', {
+                            detail: { user }
+                        }));
+                    }
+                } else {
+                    localStorage.removeItem('selected_user');
+                    this.hideSelectedUser();
+                }
+            });
+            
+            // Handle logout button (use event delegation since button is created dynamically)
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'logoutBtn' || e.target.closest('#logoutBtn')) {
+                    this.logout();
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error setting up profile dropdown:', error);
+        }
+    }
+
+    showSelectedUser(user) {
+        const dropdown = document.getElementById('profileSelect');
+        const userInfo = document.getElementById('selectedUserInfo');
+        const avatar = document.getElementById('selectedUserAvatar');
+        const name = document.getElementById('selectedUserName');
+        const role = document.getElementById('selectedUserRole');
+        
+        dropdown.style.display = 'none';
+        userInfo.style.display = 'flex';
+        
+        avatar.style.backgroundColor = `var(--color-${user.memberColor})`;
+        name.textContent = user.displayName;
+        role.textContent = user.role;
+    }
+
+    hideSelectedUser() {
+        const dropdown = document.getElementById('profileSelect');
+        const userInfo = document.getElementById('selectedUserInfo');
+        
+        dropdown.style.display = 'block';
+        userInfo.style.display = 'none';
+        dropdown.value = '';
+    }
+    
+    logout() {
+        // Clear stored user data
+        localStorage.removeItem('selected_user');
+        
+        // Reset UI
+        this.hideSelectedUser();
+        
+        // Notify other components that user logged out
+        window.dispatchEvent(new CustomEvent('profileSelected', {
+            detail: { user: null }
+        }));
+        
+        // Optional: show notification
+        if (window.githubAuth && window.githubAuth.showNotification) {
+            window.githubAuth.showNotification('Logged out successfully', 'success');
+        }
+    }
+
     setupAuthListeners() {
-        // Listen for auth state changes
+        // Listen for auth state changes (kept for compatibility)
         window.addEventListener('authStateChanged', (event) => {
             this.updateAuthUI(event.detail.user, event.detail.isAuthenticated);
         });
@@ -84,33 +185,25 @@ class NavBar {
 
                         <!-- Right side - User Authentication -->
                         <div id="navUser" class="flex items-center space-x-4">
-                            <!-- Development Mode Member Selector -->
-                            <div id="devMemberSelector" class="hidden flex items-center space-x-3">
-                                <select id="memberSelect" class="px-3 py-2 rounded-md text-sm" 
+                            <div class="flex items-center space-x-3">
+                                <select id="profileSelect" class="px-3 py-2 rounded-md text-sm font-medium" 
                                         style="background-color: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-highlight-med);">
-                                    <option value="">Select Member</option>
+                                    <option value="">Select Your Profile</option>
                                 </select>
-                                <span class="text-xs px-2 py-1 rounded" style="background-color: var(--color-warning); color: var(--color-base);">DEV</span>
+                                
+                                <div id="selectedUserInfo" class="hidden flex items-center space-x-2">
+                                    <div class="w-8 h-8 rounded-full" id="selectedUserAvatar"></div>
+                                    <div>
+                                        <div class="text-sm font-medium" id="selectedUserName" style="color: var(--color-text);"></div>
+                                        <div class="text-xs" id="selectedUserRole" style="color: var(--color-muted);"></div>
+                                    </div>
+                                    <button id="logoutBtn" class="ml-3 px-2 py-1 text-xs rounded" 
+                                            style="background-color: var(--color-overlay); color: var(--color-text);" 
+                                            title="Logout">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </button>
+                                </div>
                             </div>
-                            
-                            <!-- Production Mode GitHub Auth -->
-                            <button id="loginBtn" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                                    style="background-color: var(--color-primary); color: var(--color-base);"
-                                    onmouseover="this.style.backgroundColor='var(--color-secondary)'" 
-                                    onmouseout="this.style.backgroundColor='var(--color-primary)'">
-                                <i class="fab fa-github mr-2"></i> Login with GitHub
-                            </button>
-                            
-                            <div id="userInfo" class="hidden flex items-center space-x-3">
-                                <!-- User info will be populated by auth system -->
-                            </div>
-                            
-                            <button id="logoutBtn" class="hidden px-3 py-1 text-sm rounded transition-colors"
-                                    style="background-color: var(--color-overlay); color: var(--color-text);"
-                                    onmouseover="this.style.backgroundColor='var(--color-highlight-med)'" 
-                                    onmouseout="this.style.backgroundColor='var(--color-overlay)'">
-                                <i class="fas fa-sign-out-alt mr-1"></i> Logout
-                            </button>
                         </div>
                     </div>
                 </div>

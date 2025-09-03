@@ -1,8 +1,8 @@
 // GitHub OAuth Authentication with Member Management
 class GitHubAuth {
     constructor() {
-        this.clientId = CONFIG.GITHUB_CLIENT_ID;
-        this.redirectUri = CONFIG.REDIRECT_URI;
+        this.clientId = CONFIG.GITHUB_CLIENT_ID || 'not-needed';
+        this.redirectUri = CONFIG.REDIRECT_URI || window.location.origin;
         this.currentUser = null;
         this.accessToken = null;
         this.members = [];
@@ -14,58 +14,10 @@ class GitHubAuth {
         // Load members data first
         await this.loadMembers();
         
-        // Check if we're in development mode (local file system)
-        if (this.isDevMode()) {
-            console.log('🔧 Development mode detected - enabling dev auth');
-            this.enableDevMode();
-            return;
-        }
-        
-        // Check if we're returning from OAuth
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            this.handleOAuthCallback(code);
-        } else {
-            // Check for existing session
-            this.checkExistingSession();
-        }
+        // Check for existing session
+        this.checkExistingSession();
         
         this.setupEventListeners();
-    }
-    
-    isDevMode() {
-        // Check if we're running locally (file:// protocol or localhost)
-        return window.location.protocol === 'file:' || 
-               window.location.hostname === 'localhost' || 
-               window.location.hostname === '127.0.0.1' ||
-               window.location.hostname === '';
-    }
-    
-    enableDevMode() {
-        // In dev mode, show a simple member selector instead of OAuth
-        this.setupDevModeUI();
-        this.setupEventListeners();
-    }
-    
-    setupDevModeUI() {
-        // Create dev mode controls that will be inserted into navbar
-        this.devModeActive = true;
-        
-        // Notify navbar to enable dev mode UI
-        setTimeout(() => {
-            if (window.navbar && window.navbar.enableDevModeUI) {
-                window.navbar.enableDevModeUI();
-            }
-        }, 100);
-        
-        // Auto-select first member for convenience in dev mode
-        if (this.members && this.members.length > 0 && this.members[0].githubUsername) {
-            setTimeout(() => {
-                this.simulateLogin(this.members[0].githubUsername);
-            }, 200);
-        }
     }
 
     async loadMembers() {
@@ -133,6 +85,7 @@ class GitHubAuth {
         }
     }
 
+
     selectMember(githubUsername) {
         this.closeModal();
         
@@ -154,80 +107,6 @@ class GitHubAuth {
         }
     }
 
-    async handleOAuthCallback(code) {
-        const state = new URLSearchParams(window.location.search).get('state');
-        const storedState = sessionStorage.getItem('github_oauth_state');
-        
-        // Verify state parameter
-        if (state !== storedState) {
-            console.error('OAuth state mismatch');
-            this.showError('Authentication failed: Invalid state parameter');
-            return;
-        }
-        
-        try {
-            // For development/demo - simulate GitHub OAuth
-            // In production, this would exchange code for real access token
-            this.showNotification('Authenticating with GitHub...', 'info');
-            
-            // Simulate delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // For demo purposes, use the first member with a GitHub username
-            const memberWithGithub = this.members.find(m => m.githubUsername);
-            
-            if (memberWithGithub) {
-                // Create mock GitHub user data
-                const mockGithubUser = {
-                    id: Math.floor(Math.random() * 1000000),
-                    login: memberWithGithub.githubUsername,
-                    name: memberWithGithub.name,
-                    email: memberWithGithub.email || `${memberWithGithub.githubUsername}@example.com`,
-                    avatar_url: `https://github.com/identicons/${memberWithGithub.githubUsername}.png`
-                };
-                
-                // Create mock token
-                const mockToken = 'mock_github_token_' + Date.now();
-                
-                // Store token and authenticate
-                this.accessToken = mockToken;
-                sessionStorage.setItem('github_access_token', mockToken);
-                
-                // Create combined user object
-                this.currentUser = {
-                    ...memberWithGithub,
-                    githubId: mockGithubUser.id,
-                    email: mockGithubUser.email,
-                    avatar: mockGithubUser.avatar_url,
-                    githubProfile: mockGithubUser
-                };
-                
-                // Store user info
-                sessionStorage.setItem('github_user', JSON.stringify(this.currentUser));
-                
-                // Update last login
-                await this.updateMemberLastLogin();
-                
-                // Update UI
-                this.updateUserInterface();
-                
-                // Notify other components
-                this.notifyAuthChange();
-                
-                this.showNotification(`Welcome, ${this.currentUser.displayName}!`, 'success');
-                
-            } else {
-                throw new Error('No GitHub users configured in members.json');
-            }
-            
-            // Clean up URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-        } catch (error) {
-            console.error('OAuth callback error:', error);
-            this.showError('Authentication failed: ' + error.message);
-        }
-    }
 
     async fetchUserInfo(token) {
         try {
@@ -400,44 +279,6 @@ class GitHubAuth {
         if (window.taskManager) {
             window.taskManager.setCurrentUser(this.currentUser);
         }
-    }
-    
-    // Development helper - simulate login for testing
-    simulateLogin(githubUsername) {
-        const member = this.members.find(m => 
-            m.githubUsername && 
-            m.githubUsername.toLowerCase() === githubUsername.toLowerCase()
-        );
-        
-        if (member) {
-            const mockUser = {
-                ...member,
-                githubId: Math.floor(Math.random() * 1000000),
-                email: member.email || `${githubUsername}@example.com`,
-                avatar: `https://github.com/identicons/${githubUsername}.png`,
-                githubProfile: {
-                    login: githubUsername,
-                    id: Math.floor(Math.random() * 1000000),
-                    name: member.name
-                }
-            };
-            
-            const mockToken = 'mock_github_token_' + Date.now();
-            this.accessToken = mockToken;
-            this.currentUser = mockUser;
-            
-            // Store session data
-            sessionStorage.setItem('github_access_token', mockToken);
-            sessionStorage.setItem('github_user', JSON.stringify(mockUser));
-            
-            this.updateUserInterface();
-            this.notifyAuthChange();
-            this.showNotification(`Welcome, ${mockUser.displayName}!`, 'success');
-            
-            return true;
-        }
-        
-        return false;
     }
     
     // Public methods

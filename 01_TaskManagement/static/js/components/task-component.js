@@ -68,7 +68,7 @@ class TaskComponent {
             <div class="task-assignment">
                 <div class="assignee">
                     <i class="fas fa-user" style="color: var(--color-muted);"></i>
-                    <span>${this.escapeHtml(this.assignment.assigneeDisplayName)}</span>
+                    <span>${this.escapeHtml(this.assignment.memberDisplayName)}</span>
                 </div>
             </div>
         `;
@@ -112,10 +112,22 @@ class TaskComponent {
 
     // Render action buttons based on user permissions and task state
     renderActionButtons() {
+        // Get current user from localStorage if not passed in
+        if (!this.currentUser) {
+            const storedUser = localStorage.getItem('selected_user');
+            if (storedUser) {
+                try {
+                    this.currentUser = JSON.parse(storedUser);
+                } catch (error) {
+                    console.error('Error parsing stored user:', error);
+                }
+            }
+        }
+        
         if (!this.currentUser) {
             return `
-                <button class="btn btn-sm btn-secondary" disabled title="Login required">
-                    <i class="fas fa-lock mr-1"></i>Login Required
+                <button class="btn btn-sm btn-secondary" disabled title="Please select your profile">
+                    <i class="fas fa-user mr-1"></i>Select Profile
                 </button>
             `;
         }
@@ -129,8 +141,8 @@ class TaskComponent {
             `;
         }
 
-        // Task assigned to current user
-        if (this.assignment && this.assignment.assigneeUsername === this.currentUser.githubUsername) {
+        // Task assigned to current user  
+        if (this.assignment && this.assignment.memberId === this.currentUser.id) {
             switch (this.assignment.status) {
                 case 'assigned':
                     return `
@@ -158,7 +170,7 @@ class TaskComponent {
         // Task assigned to someone else
         if (this.assignment) {
             return `
-                <span class="assigned-badge" title="Assigned to ${this.assignment.assigneeDisplayName}" style="background-color: var(--color-overlay); color: var(--color-text);">
+                <span class="assigned-badge" title="Assigned to ${this.assignment.memberDisplayName}" style="background-color: var(--color-overlay); color: var(--color-text);">
                     <i class="fas fa-user mr-1"></i>Assigned
                 </span>
             `;
@@ -282,7 +294,7 @@ class TaskComponent {
             if (!this.assignment) {
                 return filters.assignee === 'unassigned';
             }
-            return this.assignment.assigneeUsername === filters.assignee;
+            return this.assignment.memberId === filters.assignee;
         }
 
         return true;
@@ -414,7 +426,7 @@ class TaskModal {
                 <h3 class="font-medium mb-4" style="color: var(--color-text);">Assignment Details</h3>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                        <p class="text-sm"><strong>Assignee:</strong> ${this.escapeHtml(this.currentAssignment.assigneeDisplayName)}</p>
+                        <p class="text-sm"><strong>Assignee:</strong> ${this.escapeHtml(this.currentAssignment.memberDisplayName)}</p>
                         <p class="text-sm"><strong>Status:</strong> ${this.escapeHtml(this.currentAssignment.status)}</p>
                         <p class="text-sm"><strong>Progress:</strong> ${this.currentAssignment.progress}%</p>
                     </div>

@@ -27,12 +27,28 @@ class TaskBoard {
     }
     
     setupAuthListeners() {
-        // Listen for auth state changes
+        // Listen for auth state changes (legacy)
         window.addEventListener('authStateChanged', (event) => {
             this.setCurrentUser(event.detail.user);
         });
         
-        // Set initial user if auth is already loaded
+        // Listen for profile selection (new dropdown system)
+        window.addEventListener('profileSelected', (event) => {
+            this.setCurrentUser(event.detail.user);
+        });
+        
+        // Set initial user from localStorage if available
+        const storedUser = localStorage.getItem('selected_user');
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                this.setCurrentUser(user);
+            } catch (error) {
+                console.error('Error parsing stored user:', error);
+            }
+        }
+        
+        // Fallback to old auth system
         if (window.githubAuth && window.githubAuth.isAuthenticated()) {
             this.setCurrentUser(window.githubAuth.getCurrentUser());
         }
@@ -273,7 +289,7 @@ class TaskBoard {
             } else {
                 // Find member by GitHub username
                 const member = this.members.find(m => 
-                    m.githubUsername === assignment.assigneeUsername
+                    m.id === assignment.memberId
                 );
                 
                 if (member) {
@@ -424,8 +440,8 @@ class TaskBoard {
             const newAssignment = {
                 assignmentId: assignmentId,
                 taskId: taskId,
-                assigneeUsername: this.currentUser.githubUsername,
-                assigneeDisplayName: this.currentUser.displayName,
+                memberId: this.currentUser.id,
+                memberDisplayName: this.currentUser.displayName,
                 assigneeId: this.currentUser.id,
                 status: 'assigned',
                 assignedDate: new Date().toISOString(),
@@ -444,9 +460,9 @@ class TaskBoard {
             // Update assignments file if GitHub API is available
             if (window.GitHubAPI) {
                 try {
-                    await window.GitHubAPI.updateFile('task_assignments.json', JSON.stringify(this.assignments, null, 2));
+                    await window.GitHubAPI.updateAssignments(this.assignments);
                 } catch (apiError) {
-                    console.warn('Could not save to GitHub:', apiError);
+                    console.warn('Could not save assignments:', apiError);
                 }
             }
             
@@ -477,8 +493,8 @@ class TaskBoard {
                 const newAssignment = {
                     assignmentId: newAssignmentId,
                     taskId: taskId,
-                    assigneeUsername: this.currentUser.githubUsername,
-                    assigneeDisplayName: this.currentUser.displayName,
+                    memberId: this.currentUser.id,
+                    memberDisplayName: this.currentUser.displayName,
                     assigneeId: this.currentUser.id,
                     status: 'in-progress',
                     assignedDate: new Date().toISOString(),
@@ -497,9 +513,9 @@ class TaskBoard {
             
             if (window.GitHubAPI) {
                 try {
-                    await window.GitHubAPI.updateFile('task_assignments.json', JSON.stringify(this.assignments, null, 2));
+                    await window.GitHubAPI.updateAssignments(this.assignments);
                 } catch (apiError) {
-                    console.warn('Could not save to GitHub:', apiError);
+                    console.warn('Could not save assignments:', apiError);
                 }
             }
             
@@ -521,9 +537,9 @@ class TaskBoard {
                 
                 if (window.GitHubAPI) {
                     try {
-                        await window.GitHubAPI.updateFile('task_assignments.json', JSON.stringify(this.assignments, null, 2));
+                        await window.GitHubAPI.updateAssignments(this.assignments);
                     } catch (apiError) {
-                        console.warn('Could not save to GitHub:', apiError);
+                        console.warn('Could not save assignments:', apiError);
                     }
                 }
             }
@@ -552,9 +568,9 @@ class TaskBoard {
                 
                 if (window.GitHubAPI) {
                     try {
-                        await window.GitHubAPI.updateFile('task_assignments.json', JSON.stringify(this.assignments, null, 2));
+                        await window.GitHubAPI.updateAssignments(this.assignments);
                     } catch (apiError) {
-                        console.warn('Could not save to GitHub:', apiError);
+                        console.warn('Could not save assignments:', apiError);
                     }
                 }
             }
