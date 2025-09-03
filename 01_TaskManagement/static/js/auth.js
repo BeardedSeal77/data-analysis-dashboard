@@ -100,19 +100,102 @@ class GitHubAuth {
     }
 
     login() {
-        const scope = 'repo user:email';
-        const state = this.generateState();
+        // Show PAT input and member selection
+        this.showPATInputModal();
+    }
+
+    showPATInputModal() {
+        // Check if PAT is already stored
+        if (sessionStorage.getItem('github_pat')) {
+            this.showMemberSelectionModal();
+            return;
+        }
+
+        // Create modal for PAT input
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 class="text-lg font-semibold mb-4">GitHub Access Required</h3>
+                <p class="text-sm text-gray-600 mb-4">Enter the shared GitHub Personal Access Token:</p>
+                <input type="password" id="patInput" placeholder="ghp_..." 
+                       class="w-full p-3 border rounded mb-4 font-mono text-sm">
+                <div class="flex space-x-2">
+                    <button onclick="githubAuth.submitPAT()" 
+                            class="flex-1 py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700">Continue</button>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            class="flex-1 py-2 px-4 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Token stored in browser session only.</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById('patInput').focus();
+    }
+
+    submitPAT() {
+        const patInput = document.getElementById('patInput');
+        const pat = patInput.value.trim();
         
-        // Store state for verification
-        sessionStorage.setItem('github_oauth_state', state);
+        if (!pat || !pat.startsWith('ghp_')) {
+            alert('Please enter a valid GitHub Personal Access Token (starts with ghp_)');
+            return;
+        }
         
-        const authUrl = `https://github.com/login/oauth/authorize?` +
-            `client_id=${this.clientId}&` +
-            `redirect_uri=${encodeURIComponent(this.redirectUri)}&` +
-            `scope=${encodeURIComponent(scope)}&` +
-            `state=${state}`;
+        // Store PAT
+        sessionStorage.setItem('github_pat', pat);
+        CONFIG.GITHUB_PAT = pat;
         
-        window.location.href = authUrl;
+        // Close modal and show member selection
+        document.querySelector('.fixed.inset-0').remove();
+        this.showMemberSelectionModal();
+    }
+
+    showMemberSelectionModal() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <h3 class="text-lg font-semibold mb-4">Select Your Profile</h3>
+                <div class="space-y-2">
+                    ${this.members.map(member => `
+                        <button onclick="githubAuth.selectMember('${member.githubUsername}')" 
+                                class="w-full text-left p-3 rounded border hover:bg-gray-50 flex items-center">
+                            <div class="w-8 h-8 rounded-full mr-3" style="background-color: var(--color-${member.memberColor})"></div>
+                            <div>
+                                <div class="font-medium">${member.displayName}</div>
+                                <div class="text-sm text-gray-500">${member.role}</div>
+                            </div>
+                        </button>
+                    `).join('')}
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        class="mt-4 w-full py-2 px-4 bg-gray-200 rounded hover:bg-gray-300">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    selectMember(githubUsername) {
+        document.querySelector('.fixed.inset-0').remove();
+        
+        this.accessToken = sessionStorage.getItem('github_pat');
+        sessionStorage.setItem('github_access_token', this.accessToken);
+        
+        const member = this.members.find(m => m.githubUsername === githubUsername);
+        if (member) {
+            this.currentUser = {
+                ...member,
+                githubId: member.id,
+                avatar: `https://github.com/identicons/${githubUsername}.png`,
+                githubProfile: { login: githubUsername }
+            };
+            
+            sessionStorage.setItem('github_user', JSON.stringify(this.currentUser));
+            this.updateUserInterface();
+            this.notifyAuthChange();
+            this.showNotification(`Welcome, ${this.currentUser.displayName}!`, 'success');
+        }
     }
 
     async handleOAuthCallback(code) {
