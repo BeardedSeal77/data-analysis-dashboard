@@ -1,7 +1,6 @@
-<div align="center">
-  <h1>Data Analysis Dashboard</h1>
-  <img src="public/images/dashboard-hero.png" alt="Data Analysis Dashboard" width="200" style="border-radius: 50%; border: 3px solid #0066cc;" />
-</div>
+# BIN381 Data Analysis Dashboard
+
+A comprehensive data analysis and project management platform built with Next.js and Flask.
 
 ## Team Members
 
@@ -11,6 +10,95 @@
 | [Add Name] | [Add Role] |
 | [Add Name] | [Add Role] |
 | [Add Name] | [Add Role] |
+
+## Project Structure
+
+```
+├── app/                          # Next.js frontend (App Router)
+│   ├── layout.tsx               # Root layout with navigation
+│   ├── page.tsx                 # Homepage with project navigation
+│   ├── task-management/         # Task management pages
+│   └── project/                 # Data analysis pages
+├── packages/                    # Package management
+│   ├── package.json            # Next.js dependencies & scripts
+│   ├── requirements-task.txt   # Task management API deps
+│   └── requirements-project.txt # Project API deps
+├── 01_TaskManagement/
+│   └── api/
+│       └── app.py              # Flask server (port 5000, MongoDB)
+├── 02_Project/
+│   └── api/
+│       └── app.py              # Flask server (port 5001, PostgreSQL)
+└── docker-compose.yml          # PostgreSQL database
+```
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+# Install Node.js dependencies
+cd packages
+npm install
+
+# Install Python dependencies for task management
+pip install -r requirements-task.txt
+
+# Install Python dependencies for project analysis
+pip install -r requirements-project.txt
+```
+
+### 2. Start Database Services
+
+```bash
+# Start PostgreSQL (for data analysis)
+docker-compose up -d
+```
+
+### 3. Start All Services
+
+```bash
+# From packages/ directory - starts all 3 servers concurrently
+cd packages
+npm run dev
+```
+
+This single command starts:
+- **Next.js frontend** (http://localhost:3000)
+- **Task Management API** (http://localhost:5000) - MongoDB Atlas
+- **Data Analysis API** (http://localhost:5001) - PostgreSQL
+
+## API Endpoints
+
+### Task Management API (Port 5000)
+- `GET /api/health` - Health check
+- `GET /api/tasks` - Get all tasks
+- `GET /api/members` - Get all team members
+- `GET /api/assignments` - Get task assignments
+- `GET /api/analytics/task-distribution` - Task distribution analytics
+
+### Data Analysis API (Port 5001)
+- `GET /api/health` - Health check
+- `GET /api/datasets` - List all datasets
+- `GET /api/datasets/{name}/data` - Get dataset data
+- `GET /api/datasets/{name}/stats` - Get dataset statistics
+- `POST /api/datasets/upload` - Upload CSV dataset
+- `POST /api/query` - Execute SQL query
+
+## Features
+
+### Task Management System
+- Real-time task tracking with MongoDB Atlas
+- Team member management
+- Progress analytics and reporting
+- Milestone tracking
+
+### Data Analysis Project
+- CSV dataset upload and management
+- Statistical analysis and data exploration
+- SQL query execution
+- PostgreSQL integration
+- Data visualization tools
 
 ## What This Project Does
 
@@ -26,46 +114,61 @@ This data analysis dashboard explores health and demographic patterns across Sou
 
 📈 **Predicting** health outcomes based on socioeconomic factors like literacy, water access, and living conditions
 
-## Key Features
-
-- **Interactive Dashboards**: Power BI visualizations with filters for province, demographics, and health indicators
-- **Predictive Models**: Machine learning models to forecast child mortality and health risks
-- **Pattern Discovery**: Association rule mining to find relationships like "low literacy + poor sanitation → high disease risk"
-- **Regional Analysis**: Compare health outcomes across different South African regions
-- **Data-Driven Insights**: Evidence-based recommendations for healthcare interventions
-
 ## Technology Stack
 
+- **Next.js 15** - Modern React framework with App Router
+- **Flask 3.0** - Python web framework for APIs
+- **MongoDB Atlas** - Cloud database for task management
+- **PostgreSQL** - Relational database for data analysis
 - **R** - Statistical analysis and machine learning
 - **Power BI** - Interactive dashboards and visualizations  
 - **CRISP-DM** - Industry-standard data mining methodology
-- **Shiny** - Web-based interactive applications
 
-## Repository Structure
+## Development
 
+### Individual Services
+
+```bash
+# Run Next.js only
+cd packages && npm run next-dev
+
+# Run Task Management API only
+cd packages && npm run flask-task
+
+# Run Data Analysis API only
+cd packages && npm run flask-project
 ```
-├── data/                 # Health datasets (water, mortality, immunization, etc.)
-├── scripts/              # R analysis and modeling scripts
-├── dashboards/           # Power BI dashboard files
-├── reports/              # Analysis reports and findings
-└── presentations/        # Project presentations
+
+### Build for Production
+
+```bash
+cd packages
+npm run build
 ```
 
-## Getting Started
+## Database Setup
 
-1. Clone this repository
-2. Install R packages: `install.packages(c("tidyverse", "cluster", "randomForest", "arules"))`
-3. Load datasets from `data/` directory
-4. Run analysis scripts in order: EDA → Cleaning → Modeling → Visualization
-5. Open Power BI dashboards for interactive exploration
+### MongoDB Atlas (Task Management)
+Already configured in `01_TaskManagement/api/app.py`. No additional setup required.
 
-## Research Questions We Answer
+### PostgreSQL (Data Analysis)
+Started via Docker Compose:
+```bash
+docker-compose up -d
+```
 
-- Which regions have the highest health risks?
-- How do water access and sanitation affect child mortality?
-- What factors predict successful immunization campaigns?
-- Are literacy levels correlated with health behaviors?
+Database details:
+- Host: localhost:5432
+- Database: bin_project
+- User: postgres
+- Password: postgres
 
-## Project Methodology
+## Next Steps
 
-Following **CRISP-DM** framework: Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation → Deployment
+1. ✅ Basic architecture setup complete
+2. 🚧 Task management UI conversion in progress
+3. 📋 Data analysis frontend components
+4. 🎨 Enhanced styling and user experience
+5. 📊 Advanced analytics and visualization features
+
+Built with Next.js 15, Flask 3.0, MongoDB Atlas, and PostgreSQL.

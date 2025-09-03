@@ -1,0 +1,342 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import TaskCard from './TaskCard'
+import { Task, Assignment, Member } from '../types'
+
+interface TaskBoardProps {
+  milestoneId?: number
+}
+
+export default function TaskBoard({ milestoneId }: TaskBoardProps) {
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [members, setMembers] = useState<Member[]>([])
+  const [currentUser, setCurrentUser] = useState<Member | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadData()
+    loadCurrentUser()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      
+      const [tasksRes, assignmentsRes, membersRes] = await Promise.all([
+        fetch('/api/task/tasks'),
+        fetch('/api/task/assignments'),
+        fetch('/api/task/members')
+      ])
+
+      const [tasksData, assignmentsData, membersData] = await Promise.all([
+        tasksRes.json(),
+        assignmentsRes.json(),
+        membersRes.json()
+      ])
+
+      setTasks(tasksData)
+      setAssignments(assignmentsData)
+      setMembers(membersData)
+    } catch (error) {
+      console.error('Error loading task board data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadCurrentUser = () => {
+    const saved = localStorage.getItem('selected_user')
+    if (saved) {
+      try {
+        setCurrentUser(JSON.parse(saved))
+      } catch (error) {
+        console.error('Error parsing stored user:', error)
+      }
+    }
+  }
+
+  const handleRefresh = () => {
+    loadData()
+  }
+
+  const handleAssignTask = async (taskId: string) => {
+    if (!currentUser) {
+      showNotification('Please select your profile first', 'error')
+      return
+    }
+
+    try {
+      const newAssignment: Assignment = {
+        assignmentId: 'a' + Date.now(),
+        taskId,
+        memberId: currentUser.id,
+        status: 'assigned',
+        progress: 0,
+        assignedDate: new Date().toISOString()
+      }
+
+      const response = await fetch('/api/task/assignments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newAssignment)
+      })
+
+      if (response.ok) {
+        setAssignments([...assignments, newAssignment])
+        showNotification('Task assigned successfully!', 'success')
+      }
+    } catch (error) {
+      console.error('Error assigning task:', error)
+      showNotification('Error assigning task', 'error')
+    }
+  }
+
+  const handleStartTask = async (assignmentId: string) => {
+    try {
+      const updatedAssignments = assignments.map(a =>
+        a.assignmentId === assignmentId
+          ? { ...a, status: 'in-progress' as const, startedDate: new Date().toISOString(), progress: 10 }
+          : a
+      )
+
+      // Update local state
+      setAssignments(updatedAssignments)
+      
+      // Send to API
+      await updateAssignment(assignmentId, { 
+        status: 'in-progress', 
+        startedDate: new Date().toISOString(),
+        progress: 10
+      })
+      
+      showNotification('Task started!', 'success')
+    } catch (error) {
+      console.error('Error starting task:', error)
+      showNotification('Error starting task', 'error')
+    }
+  }
+
+  const handleCompleteTask = async (assignmentId: string) => {
+    try {
+      const updatedAssignments = assignments.map(a =>
+        a.assignmentId === assignmentId
+          ? { ...a, status: 'completed' as const, completedDate: new Date().toISOString(), progress: 100 }
+          : a
+      )
+
+      setAssignments(updatedAssignments)
+      
+      await updateAssignment(assignmentId, {
+        status: 'completed',
+        completedDate: new Date().toISOString(),
+        progress: 100
+      })
+      
+      showNotification('Task completed!', 'success')
+    } catch (error) {
+      console.error('Error completing task:', error)
+      showNotification('Error completing task', 'error')
+    }
+  }
+
+  const updateAssignment = async (assignmentId: string, updates: Partial<Assignment>) => {
+    try {
+      await fetch(`/api/task/assignments/${assignmentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      })
+    } catch (error) {
+      console.error('Error updating assignment:', error)
+    }
+  }
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    // Create toast notification
+    const toast = document.createElement('div')
+    toast.className = `toast toast-${type}`
+    toast.textContent = message
+    document.body.appendChild(toast)
+    
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.parentNode.removeChild(toast)
+      }
+    }, 3000)
+  }
+
+  const getTasksByAssignment = () => {
+    const filteredTasks = milestoneId 
+      ? tasks.filter(task => task.milestoneId === milestoneId)
+      : tasks
+
+    const result = {
+      backlog: [] as Task[],
+      members: {} as Record<number, Array<{task: Task, assignment: Assignment}>>
+    }
+
+    // Initialize member arrays
+    members.forEach(member => {
+      result.members[member.id] = []
+    })
+
+    filteredTasks.forEach(task => {
+      const assignment = assignments.find(a => 
+        a.taskId === task.id && a.status !== 'reassigned'
+      )
+
+      if (!assignment) {
+        result.backlog.push(task)
+      } else {
+        const member = members.find(m => m.id === assignment.memberId)
+        if (member) {
+          result.members[member.id].push({ task, assignment })
+        } else {
+          result.backlog.push(task)
+        }
+      }
+    })
+
+    return result
+  }
+
+  const getMemberColorStyles = (color: string) => {
+    const colorMap: Record<string, any> = {
+      blue: { headerBg: 'member-color-blue', badgeBg: 'bg-blue-500/20' },
+      purple: { headerBg: 'member-color-purple', badgeBg: 'bg-purple-500/20' },
+      green: { headerBg: 'member-color-green', badgeBg: 'bg-green-500/20' },
+      orange: { headerBg: 'member-color-orange', badgeBg: 'bg-orange-500/20' },
+      cyan: { headerBg: 'member-color-cyan', badgeBg: 'bg-cyan-500/20' }
+    }
+    return colorMap[color] || colorMap.blue
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <i className="fas fa-spinner fa-spin text-2xl text-primary-500 mb-2"></i>
+          <p className="text-muted">Loading task board...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const tasksByAssignment = getTasksByAssignment()
+
+  return (
+    <div className="taskboard-container">
+      {/* Toolbar */}
+      <div className="mb-6 flex justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <button 
+            onClick={handleRefresh}
+            className="inline-flex items-center px-4 py-2 rounded-md bg-overlay text-text hover:bg-highlight-med transition-colors"
+          >
+            <i className="fas fa-sync mr-2"></i> Refresh
+          </button>
+          {milestoneId && (
+            <span className="text-sm text-muted">
+              Showing tasks for Milestone {milestoneId}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Task Board */}
+      <div className="space-y-8">
+        {/* Backlog */}
+        <div className="member-block bg-surface rounded-lg shadow-sm border border-highlight-med">
+          <div className="member-header px-4 py-3 rounded-t-lg bg-overlay border-b border-highlight-med">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-medium flex items-center text-text">
+                <i className="fas fa-inbox mr-2 text-muted"></i>
+                <span>Backlog</span>
+              </h3>
+              <span className="inline-flex items-center justify-center w-6 h-6 text-xs rounded-full bg-highlight-med text-text">
+                {tasksByAssignment.backlog.length}
+              </span>
+            </div>
+            <p className="text-xs mt-1 text-subtle">Available tasks waiting to be assigned</p>
+          </div>
+          <div className="member-tasks p-4 space-y-3 min-h-32">
+            {tasksByAssignment.backlog.map(task => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                assignment={null}
+                currentUser={currentUser}
+                onAssign={() => handleAssignTask(task.id)}
+                onStart={() => {}}
+                onComplete={() => {}}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Member Blocks */}
+        {members.map(member => {
+          const colorStyles = getMemberColorStyles(member.memberColor)
+          const memberTasks = tasksByAssignment.members[member.id] || []
+
+          return (
+            <div key={member.id} className="member-block bg-surface rounded-lg shadow-sm border border-highlight-med">
+              <div className={`member-header px-4 py-3 rounded-t-lg ${colorStyles.headerBg} border-b border-highlight-med`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <img 
+                      src={member.avatar || `https://github.com/identicons/${member.githubUsername || 'default'}.png`}
+                      alt={member.displayName}
+                      className="w-8 h-8 rounded-full mr-3"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://github.com/identicons/default.png'
+                      }}
+                    />
+                    <div>
+                      <h3 className="text-sm font-medium text-text">{member.displayName}</h3>
+                      <p className="text-xs text-muted">
+                        {member.role} {member.githubUsername && `• @${member.githubUsername}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className={`inline-flex items-center justify-center w-6 h-6 text-xs rounded-full ${colorStyles.badgeBg} text-text`}>
+                      {memberTasks.length}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="member-tasks p-4 space-y-3 min-h-32">
+                {memberTasks.map(({ task, assignment }) => (
+                  <TaskCard
+                    key={`${task.id}-${assignment.assignmentId}`}
+                    task={task}
+                    assignment={assignment}
+                    currentUser={currentUser}
+                    onAssign={() => {}}
+                    onStart={() => handleStartTask(assignment.assignmentId)}
+                    onComplete={() => handleCompleteTask(assignment.assignmentId)}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {members.length === 0 && (
+        <div className="member-block bg-surface rounded-lg shadow-sm border border-danger mt-6">
+          <div className="member-header px-4 py-3 rounded-t-lg bg-danger/10 border-b border-danger">
+            <h3 className="text-sm font-medium text-danger">
+              <i className="fas fa-exclamation-triangle mr-2"></i>
+              No Members Loaded
+            </h3>
+            <p className="text-xs mt-1 text-danger/80">Check MongoDB Atlas connection</p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

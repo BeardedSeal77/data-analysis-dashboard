@@ -297,7 +297,7 @@ class NavBar {
         if (window.githubAuth) {
             const success = window.githubAuth.simulateLogin('BeardedSeal77');
             if (!success) {
-                alert('Simulation failed - check members.json for GitHub usernames');
+                alert('Simulation failed - check MongoDB Atlas members collection');
             }
         }
     }

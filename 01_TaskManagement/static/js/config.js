@@ -88,51 +88,8 @@ if (CONFIG.DEV_MODE) {
     CONFIG.REFRESH_INTERVAL = 10000; // 10 seconds for development
 }
 
-// Validate required configuration
-const requiredConfig = ['GITHUB_CLIENT_ID', 'GITHUB_OWNER', 'GITHUB_REPO'];
-const missingConfig = requiredConfig.filter(key => 
-    !CONFIG[key] || CONFIG[key].startsWith('YOUR_')
-);
-
-if (missingConfig.length > 0) {
-    console.warn('⚠️ Missing required configuration:', missingConfig);
-    console.warn('Please update config.js with your GitHub App details');
-    
-    // Show configuration warning in UI
-    document.addEventListener('DOMContentLoaded', function() {
-        const warning = document.createElement('div');
-        warning.className = 'config-warning';
-        warning.innerHTML = `
-            <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-yellow-800">Configuration Required</h3>
-                        <div class="mt-2 text-sm text-yellow-700">
-                            <p>Please update the following in <code>config.js</code>:</p>
-                            <ul class="list-disc list-inside mt-1">
-                                ${missingConfig.map(key => `<li>${key}</li>`).join('')}
-                            </ul>
-                            <p class="mt-2">
-                                <a href="https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app" 
-                                   target="_blank" class="underline">
-                                   Create a GitHub OAuth App
-                                </a> to get started.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        const main = document.querySelector('.main-content');
-        if (main) {
-            main.insertBefore(warning, main.firstChild);
-        }
-    });
-}
+// Configuration is now localStorage-based, no GitHub setup required
+console.log('✅ HDPSA Task Management System loaded - using localStorage with MongoDB Atlas integration ready');
 
 // Make CONFIG globally available
 window.CONFIG = CONFIG;

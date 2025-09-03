@@ -147,7 +147,7 @@ class TaskBoard {
                             <i class="fas fa-exclamation-triangle mr-2"></i>
                             No Members Loaded
                         </h3>
-                        <p class="text-xs mt-1" style="color: var(--color-muted);">Check if members.json is accessible</p>
+                        <p class="text-xs mt-1" style="color: var(--color-muted);">Check MongoDB Atlas connection</p>
                     </div>
                 </div>
             `;
