@@ -1,0 +1,69 @@
+name: Weekly Task Data Sync
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC (adjust timezone as needed)
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  sync-task-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch full history for merge
+        
+    - name: Configure Git
+      run: |
+        git config --global user.name 'Task Sync Bot'
+        git config --global user.email 'noreply@github.com'
+        
+    - name: Sync taskAssignment data to main
+      run: |
+        # Switch to main branch
+        git checkout main
+        git pull origin main
+        
+        # Check if there are new commits on taskAssignment
+        MAIN_COMMIT=$(git rev-parse main)
+        TASK_COMMIT=$(git rev-parse origin/taskAssignment)
+        
+        if [ "$MAIN_COMMIT" != "$TASK_COMMIT" ]; then
+          echo "Changes detected in taskAssignment branch"
+          
+          # Merge only the JSON data files from taskAssignment
+          git checkout origin/taskAssignment -- 01_TaskManagement/data/tasks.json || true
+          git checkout origin/taskAssignment -- 01_TaskManagement/data/task_assignments.json || true
+          git checkout origin/taskAssignment -- 01_TaskManagement/data/members.json || true
+          git checkout origin/taskAssignment -- 01_TaskManagement/data/milestones.json || true
+          
+          # Check if there are changes to commit
+          if ! git diff --quiet --staged; then
+            git add 01_TaskManagement/data/*.json
+            git commit -m "chore(tasks): weekly sync from taskAssignment
+
+Automated weekly sync of task data from taskAssignment branch.
+
+🤖 Generated with GitHub Actions
+Co-Authored-By: Task Sync Bot <noreply@github.com>"
+            
+            git push origin main
+            echo "✅ Successfully synced task data to main branch"
+          else
+            echo "ℹ️ No task data changes to sync"
+          fi
+        else
+          echo "ℹ️ No new commits on taskAssignment branch"
+        fi
+        
+    - name: Summary
+      run: |
+        echo "## Weekly Sync Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger**: Scheduled weekly sync (Monday 9 AM UTC)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Source**: taskAssignment branch" >> $GITHUB_STEP_SUMMARY
+        echo "- **Target**: main branch" >> $GITHUB_STEP_SUMMARY
+        echo "- **Files**: JSON data files only" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: Check job logs for details" >> $GITHUB_STEP_SUMMARY
