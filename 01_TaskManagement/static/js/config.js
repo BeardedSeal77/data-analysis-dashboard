@@ -2,7 +2,7 @@
 const CONFIG = {
     // GitHub OAuth Configuration
     GITHUB_CLIENT_ID: 'Ov23liVYz4U4Ik2BhZvQ', // GitHub App Client ID
-    REDIRECT_URI: window.location.origin + '/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
+    REDIRECT_URI: 'https://beardedseal77.github.io/data-analysis-dashboard/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
     
     // Repository Configuration
     GITHUB_OWNER: 'BeardedSeal77', // GitHub username
@@ -78,6 +78,9 @@ const CONFIG = {
 if (CONFIG.DEV_MODE) {
     CONFIG.REDIRECT_URI = window.location.origin + '/01_TaskManagement/pages/dashboard.html';
     CONFIG.REFRESH_INTERVAL = 10000; // 10 seconds for development
+} else {
+    // Production mode - use hardcoded GitHub Pages URL
+    CONFIG.REDIRECT_URI = 'https://beardedseal77.github.io/data-analysis-dashboard/01_TaskManagement/pages/dashboard.html';
 }
 
 // Validate required configuration
