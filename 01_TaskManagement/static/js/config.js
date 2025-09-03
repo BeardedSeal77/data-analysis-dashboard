@@ -1,11 +1,11 @@
 // Configuration for HDPSA Task Management System
 const CONFIG = {
     // GitHub OAuth Configuration
-    GITHUB_CLIENT_ID: 'YOUR_GITHUB_CLIENT_ID', // Replace with your GitHub App Client ID
-    REDIRECT_URI: window.location.origin + '/01_TaskManagement/public/', // GitHub Pages URL
+    GITHUB_CLIENT_ID: 'Ov23liVYz4U4Ik2BhZvQ', // GitHub App Client ID
+    REDIRECT_URI: window.location.origin + '/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
     
     // Repository Configuration
-    GITHUB_OWNER: 'YOUR_USERNAME', // Replace with your GitHub username
+    GITHUB_OWNER: 'BeardedSeal77', // GitHub username
     GITHUB_REPO: 'data-analysis-dashboard', // Repository name
     TASK_BRANCH: 'taskAssignment', // Branch for live task data
     
@@ -58,7 +58,7 @@ const CONFIG = {
     },
     
     // GitHub Pages Configuration
-    GITHUB_PAGES_URL: 'https://YOUR_USERNAME.github.io/data-analysis-dashboard/01_TaskManagement/public/', // Replace with your GitHub Pages URL
+    GITHUB_PAGES_URL: 'https://beardedseal77.github.io/data-analysis-dashboard/01_TaskManagement/', // GitHub Pages URL
     
     // Development Configuration
     DEV_MODE: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
@@ -76,7 +76,7 @@ const CONFIG = {
 
 // Environment-specific overrides
 if (CONFIG.DEV_MODE) {
-    CONFIG.REDIRECT_URI = window.location.origin + '/01_TaskManagement/public/';
+    CONFIG.REDIRECT_URI = window.location.origin + '/01_TaskManagement/pages/dashboard.html';
     CONFIG.REFRESH_INTERVAL = 10000; // 10 seconds for development
 }
 
