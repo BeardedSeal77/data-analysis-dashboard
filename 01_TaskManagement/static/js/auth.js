@@ -106,7 +106,7 @@ class GitHubAuth {
 
     showPATInputModal() {
         // Check if PAT is already stored
-        if (sessionStorage.getItem('github_pat')) {
+        if (localStorage.getItem('github_pat')) {
             this.showMemberSelectionModal();
             return;
         }
@@ -143,7 +143,7 @@ class GitHubAuth {
         }
         
         // Store PAT
-        sessionStorage.setItem('github_pat', pat);
+        localStorage.setItem('github_pat', pat);
         CONFIG.GITHUB_PAT = pat;
         
         // Close modal and show member selection
@@ -179,7 +179,7 @@ class GitHubAuth {
     selectMember(githubUsername) {
         document.querySelector('.fixed.inset-0').remove();
         
-        this.accessToken = sessionStorage.getItem('github_pat');
+        this.accessToken = localStorage.getItem('github_pat');
         sessionStorage.setItem('github_access_token', this.accessToken);
         
         const member = this.members.find(m => m.githubUsername === githubUsername);
@@ -191,7 +191,7 @@ class GitHubAuth {
                 githubProfile: { login: githubUsername }
             };
             
-            sessionStorage.setItem('github_user', JSON.stringify(this.currentUser));
+            localStorage.setItem('github_user', JSON.stringify(this.currentUser));
             this.updateUserInterface();
             this.notifyAuthChange();
             this.showNotification(`Welcome, ${this.currentUser.displayName}!`, 'success');
@@ -247,7 +247,7 @@ class GitHubAuth {
                 };
                 
                 // Store user info
-                sessionStorage.setItem('github_user', JSON.stringify(this.currentUser));
+                localStorage.setItem('github_user', JSON.stringify(this.currentUser));
                 
                 // Update last login
                 await this.updateMemberLastLogin();
@@ -289,7 +289,7 @@ class GitHubAuth {
             this.currentUser = await response.json();
             
             // Store user info
-            sessionStorage.setItem('github_user', JSON.stringify(this.currentUser));
+            localStorage.setItem('github_user', JSON.stringify(this.currentUser));
             
             // Update UI
             this.updateUserInterface();
@@ -307,7 +307,7 @@ class GitHubAuth {
 
     checkExistingSession() {
         const token = sessionStorage.getItem('github_access_token');
-        const userInfo = sessionStorage.getItem('github_user');
+        const userInfo = localStorage.getItem('github_user');
         
         if (token && userInfo) {
             try {

@@ -22,7 +22,7 @@ class DataLoader {
         try {
             let data;
             
-            const storedPAT = sessionStorage.getItem('github_pat');
+            const storedPAT = localStorage.getItem('github_pat');
             if (this.isDevMode || !storedPAT) {
                 // Development mode - use local fetch
                 const response = await fetch(`../data/${filename}`);
