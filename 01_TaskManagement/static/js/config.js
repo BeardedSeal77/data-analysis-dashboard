@@ -1,7 +1,8 @@
 // Configuration for HDPSA Task Management System
 const CONFIG = {
-    // GitHub OAuth Configuration
-    GITHUB_CLIENT_ID: 'Ov23liVYz4U4Ik2BhZvQ', // GitHub App Client ID
+    // GitHub Configuration
+    GITHUB_CLIENT_ID: 'Ov23liVYz4U4Ik2BhZvQ', // GitHub App Client ID (for display only)
+    GITHUB_PAT: sessionStorage.getItem('github_pat') || null, // Will be set during login
     REDIRECT_URI: 'https://beardedseal77.github.io/data-analysis-dashboard/01_TaskManagement/pages/dashboard.html', // GitHub Pages URL
     
     // Repository Configuration
