@@ -70,7 +70,12 @@ class GitHubAuth {
 
     async loadMembers() {
         try {
-            this.members = await window.dataLoader.loadMembers();
+            // Load members.json directly without authentication (for GitHub Pages)
+            const response = await fetch('./data/members.json');
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            this.members = await response.json();
         } catch (error) {
             console.error('Error loading members:', error);
             this.members = [];
