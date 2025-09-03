@@ -5,12 +5,36 @@
 
 ## Team Members
 
-| Name | Role |
-|------|------|
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>[Add Name]</td>
+      <td>[Add Role]</td>
+    </tr>
+    <tr style="background-color: #f0f0f0;">
+      <td>[Add Name]</td>
+      <td>[Add Role]</td>
+    </tr>
+    <tr>
+      <td>[Add Name]</td>
+      <td>[Add Role]</td>
+    </tr>
+    <tr style="background-color: #f0f0f0;">
+      <td>[Add Name]</td>
+      <td>[Add Role]</td>
+    </tr>
+    <tr>
+      <td>[Add Name]</td>
+      <td>[Add Role]</td>
+    </tr>
+  </tbody>
+</table>
 
 ## What This Project Does
 
