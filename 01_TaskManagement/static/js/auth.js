@@ -71,7 +71,7 @@ class GitHubAuth {
     async loadMembers() {
         try {
             // Load members.json directly without authentication (for GitHub Pages)
-            const response = await fetch('./data/members.json');
+            const response = await fetch('../data/members.json');
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
