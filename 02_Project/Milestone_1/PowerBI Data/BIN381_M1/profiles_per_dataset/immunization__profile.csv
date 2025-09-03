@@ -1,0 +1,30 @@
+column,dtype,non_null,missing,missing_pct,n_unique,examples,min,q25,median,mean,q75,max,std
+ISO3,object,117,0,0.0,2,"#country+code, ZAF",,,,,,,
+DataId,object,117,0,0.0,117,"#meta+id, 330965, 139796",,,,,,,
+Indicator,object,117,0,0.0,33,"#indicator+name, BCG vaccination received, DPT 1 vaccination received",,,,,,,
+Value,object,117,0,0.0,79,"#indicator+value+num, 96.8, 94.9",,,,,,,
+Precision,object,117,0,0.0,3,"#indicator+precision, 1, 0",,,,,,,
+DHS_CountryCode,object,116,1,0.85,1,ZA,,,,,,,
+CountryName,object,117,0,0.0,2,"#country+name, South Africa",,,,,,,
+SurveyYear,object,117,0,0.0,3,"#date+year, 1998, 2016",,,,,,,
+SurveyId,object,117,0,0.0,3,"#survey+id, ZA1998DHS, ZA2016DHS",,,,,,,
+IndicatorId,object,117,0,0.0,53,"#indicator+code, CH_VACS_C_BCG, CH_VACS_C_DP1",,,,,,,
+IndicatorOrder,float64,116,1,0.85,52,"93886010.0, 93886020.0, 93886030.0",93886010.0,93886090.0,93886270.0,93902500.94827586,93906270.0,93936280.0,19891.063579096754
+IndicatorType,object,116,1,0.85,3,"I, D, U",,,,,,,
+CharacteristicId,float64,116,1,0.85,2,"268002.0, 1000.0",1000.0,1000.0,268002.0,139104.4827586207,268002.0,268002.0,133421.60599951973
+CharacteristicOrder,float64,116,1,0.85,2,"268002.0, 0.0",0.0,0.0,268002.0,138621.72413793104,268002.0,268002.0,133921.30864594007
+CharacteristicCategory,object,116,1,0.85,2,"Source of vaccination informat, Total",,,,,,,
+CharacteristicLabel,object,116,1,0.85,2,"Either source, Total",,,,,,,
+ByVariableId,object,117,0,0.0,4,"#indicator+label+code, 258001, 258002",,,,,,,
+ByVariableLabel,object,61,56,47.86,3,"#indicator+label, 12-23, 24-35",,,,,,,
+IsTotal,float64,116,1,0.85,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+IsPreferred,float64,116,1,0.85,2,"1.0, 0.0",0.0,0.0,1.0,0.7413793103448276,1.0,1.0,0.4378767275586309
+SDRID,object,116,1,0.85,52,"CHVACSCBCG, CHVACSCDP1, CHVACSCDP2",,,,,,,
+RegionId,float64,0,117,100.0,0,,,,,,,,
+SurveyYearLabel,float64,116,1,0.85,2,"1998.0, 2016.0",1998.0,1998.0,2016.0,2007.7758620689656,2016.0,2016.0,8.9664953047409
+SurveyType,object,116,1,0.85,1,DHS,,,,,,,
+DenominatorWeighted,float64,108,9,7.69,6,"973.0, 933.0, 3734.0",660.0,677.0,933.0,1203.898148148148,973.0,3734.0,958.3480089679674
+DenominatorUnweighted,float64,108,9,7.69,6,"971.0, 951.0, 3761.0",670.0,670.0,951.0,1209.9166666666667,971.0,3761.0,966.4359889994437
+CILow,float64,0,117,100.0,0,,,,,,,,
+CIHigh,float64,0,117,100.0,0,,,,,,,,
+LevelRank,float64,0,117,100.0,0,,,,,,,,

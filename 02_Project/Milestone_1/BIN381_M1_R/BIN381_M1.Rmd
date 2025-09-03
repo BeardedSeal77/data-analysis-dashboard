@@ -1,0 +1,290 @@
+
+---
+title: "BIN381 — Milestone 1: Data Understanding (Full QA, Clean Headings)"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readr)
+  library(readxl)
+  library(janitor)
+  library(gt)
+})
+theme_set(theme_minimal())
+```
+
+# 1. Load All Datasets
+
+```{r}
+base <- "."
+# Optional: set to TRUE to write CSV exports alongside this HTML
+write_exports <- FALSE
+# Optional: print full duplicate rows if count <= this threshold (to avoid huge output)
+dup_print_threshold <- 200L
+
+# Detect files
+files_csv  <- list.files(base, pattern = "\\.(csv)$", ignore.case = TRUE, full.names = TRUE)
+files_xlsx <- list.files(base, pattern = "\\.(xlsx)$", ignore.case = TRUE, full.names = TRUE)
+
+# Read helpers
+read_csv_clean <- function(path){
+  readr::read_csv(path, show_col_types = FALSE) |> janitor::clean_names()
+}
+read_xlsx_all <- function(path){
+  sh <- readxl::excel_sheets(path)
+  setNames(
+    purrr::map(sh, ~ readxl::read_excel(path, sheet = .x) |> janitor::clean_names() |> as_tibble() ),
+    paste0(tools::file_path_sans_ext(basename(path)), "__", sh)
+  )
+}
+
+# Load data
+dfs_csv  <- purrr::map(files_csv, read_csv_clean); names(dfs_csv)  <- tools::file_path_sans_ext(basename(files_csv))
+dfs_xlsx <- purrr::map(files_xlsx, read_xlsx_all); dfs_xlsx <- if(length(dfs_xlsx)) purrr::list_flatten(dfs_xlsx) else list()
+dfs <- c(dfs_csv, dfs_xlsx)
+
+# Ensure unique names
+if(length(dfs)){
+  names(dfs) <- make.unique(names(dfs), sep = "_")
+}
+
+# Inventory
+inventory <- tibble(
+  dataset = names(dfs),
+  rows = purrr::map_int(dfs, nrow),
+  cols = purrr::map_int(dfs, ncol)
+) |> arrange(dataset)
+
+if(nrow(inventory) == 0){
+  stop("No datasets found. Place this .Rmd in the folder with your CSV/XLSX files and Knit again.")
+}
+
+gt::gt(inventory)
+```
+
+# 2. Dataset-Level Summary
+
+```{r}
+dataset_summary <- purrr::imap_dfr(dfs, function(df, nm){
+  n_rows <- nrow(df); n_cols <- ncol(df)
+  dup_rows <- sum(duplicated(df))
+  total_cells <- n_rows * n_cols
+  miss_cells <- sum(is.na(df))
+  miss_pct <- if (total_cells > 0) round(100 * miss_cells / total_cells, 2) else 0
+  num_cols <- df |> dplyr::select(where(is.numeric)) |> ncol()
+  tibble(
+    dataset = nm,
+    rows = n_rows,
+    cols = n_cols,
+    duplicate_rows = dup_rows,
+    missing_cells = miss_cells,
+    missing_pct = miss_pct,
+    numeric_cols = num_cols,
+    categorical_cols = n_cols - num_cols
+  )
+}) |> arrange(dataset)
+
+gt::gt(dataset_summary)
+
+if (write_exports) {
+  readr::write_csv(dataset_summary, "M1_dataset_summary.csv")
+}
+```
+
+# 3. Data Quality Assessment
+
+## 3.1 Missing Values (Per Column, All Datasets)
+
+```{r}
+missingness_by_dataset <- purrr::imap(dfs, function(df, nm){
+  tibble(
+    dataset = nm,
+    column = names(df),
+    missing_pct = round(colMeans(is.na(df))*100, 2),
+    missing_count = colSums(is.na(df))
+  )
+})
+
+# Full table (all columns with any missingness first)
+missingness_all <- bind_rows(missingness_by_dataset) |>
+  arrange(desc(missing_pct), dataset, column)
+
+gt::gt(missingness_all)
+
+if (write_exports) {
+  readr::write_csv(missingness_all, "M1_missingness_all_columns.csv")
+}
+```
+
+### 3.1.1 Missingness Charts (Per Dataset)
+
+```{r, fig.width=8, fig.height=4}
+plot_missingness <- function(df, nm){
+  miss <- tibble(column = names(df), missing_pct = round(colMeans(is.na(df))*100, 2))
+  ggplot(miss, aes(x = reorder(column, -missing_pct), y = missing_pct)) +
+    geom_col() +
+    coord_cartesian(ylim = c(0, 100)) +
+    labs(title = paste0(nm, " — Missingness by column (%)"), x = NULL, y = "Missing %") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+}
+purrr::iwalk(dfs, function(df, nm) print(plot_missingness(df, nm)))
+```
+
+## 3.2 Duplicates (Row-Level)
+
+```{r}
+# Count duplicates per dataset (across all columns)
+dup_summary <- purrr::imap_dfr(dfs, function(df, nm){
+  tibble(dataset = nm, duplicate_rows = sum(duplicated(df)))
+}) |> arrange(desc(duplicate_rows))
+
+gt::gt(dup_summary)
+
+if (write_exports) {
+  readr::write_csv(dup_summary, "M1_duplicates_by_dataset.csv")
+}
+
+# Optionally show duplicate rows when counts are manageable
+purrr::iwalk(dfs, function(df, nm){
+  dup_ct <- sum(duplicated(df))
+  if (dup_ct > 0 && dup_ct <= dup_print_threshold) {
+    cat("\n\n### Duplicate Rows —", nm, "(showing all duplicates because count <=", dup_print_threshold, ")\n\n")
+    dups <- df[duplicated(df) | duplicated(df, fromLast = TRUE), , drop = FALSE]
+    print(dups)
+    if (write_exports) readr::write_csv(dups, paste0("M1_duplicates__", nm, ".csv"))
+  } else if (dup_ct > dup_print_threshold) {
+    cat("\n\n### Duplicate Rows —", nm, "(too many to print; exporting if write_exports=TRUE)\n\n")
+    if (write_exports) {
+      dups <- df[duplicated(df) | duplicated(df, fromLast = TRUE), , drop = FALSE]
+      readr::write_csv(dups, paste0("M1_duplicates__", nm, ".csv"))
+    }
+  }
+})
+```
+
+## 3.3 Outliers (Numeric Columns, |z| > 3)
+
+```{r}
+outlier_counts <- function(df){
+  nums <- df |> dplyr::select(where(is.numeric))
+  if(ncol(nums) == 0) return(tibble(column=character(), outliers_abs_z_gt_3=integer()))
+  purrr::map_dfr(names(nums), function(col){
+    v <- nums[[col]]
+    v <- v[!is.na(v)]
+    if(length(v) < 5 || sd(v) == 0) return(tibble(column = col, outliers_abs_z_gt_3 = 0L))
+    z <- (v - mean(v)) / sd(v)
+    tibble(column = col, outliers_abs_z_gt_3 = as.integer(sum(abs(z) > 3)))
+  }) |> arrange(desc(outliers_abs_z_gt_3))
+}
+
+outliers_by_dataset <- purrr::imap(dfs, function(df, nm){
+  oc <- outlier_counts(df) |> mutate(dataset = nm, .before = 1)
+  oc
+})
+outliers_all <- bind_rows(outliers_by_dataset)
+
+if(nrow(outliers_all) > 0){
+  gt::gt(outliers_all)
+} else {
+  cat("No numeric columns suitable for outlier analysis were found.")
+}
+
+if (write_exports) {
+  readr::write_csv(outliers_all, "M1_outliers_all_numeric_columns.csv")
+}
+```
+
+## 3.4 Consolidated Data Quality Issues Log
+
+```{r}
+# Build a tidy issues log: one row per issue instance
+issues_missing <- missingness_all |>
+  filter(missing_count > 0) |>
+  transmute(dataset, issue_type = "missing", column, detail = paste0(missing_pct, "% (", missing_count, " cells)"))
+
+issues_dup <- dup_summary |>
+  filter(duplicate_rows > 0) |>
+  transmute(dataset, issue_type = "duplicates", column = NA_character_, detail = paste0(duplicate_rows, " duplicate rows"))
+
+issues_outliers <- outliers_all |>
+  filter(outliers_abs_z_gt_3 > 0) |>
+  transmute(dataset, issue_type = "outliers", column, detail = paste0(outliers_abs_z_gt_3, " outliers (|z|>3)"))
+
+issues_log <- bind_rows(issues_missing, issues_dup, issues_outliers) |>
+  arrange(dataset, issue_type, desc(detail))
+
+gt::gt(issues_log)
+
+if (write_exports) {
+  readr::write_csv(issues_log, "M1_data_quality_issues_log.csv")
+}
+```
+
+# 4. Preliminary Visualizations
+
+## 4.1 Numeric Distributions (Highest-Variance Column per Dataset)
+
+```{r, fig.width=7, fig.height=4}
+plot_numeric_hist <- function(df, nm){
+  nums <- df |> dplyr::select(where(is.numeric))
+  if(ncol(nums) == 0) return(NULL)
+  var_tbl <- summarize(nums, across(everything(), function(y) var(y, na.rm = TRUE)))
+  var_col <- var_tbl |> pivot_longer(everything(), names_to="col", values_to="v") |>
+    arrange(desc(v)) |> slice(1) |> pull(col)
+  ggplot(df, aes(x = .data[[var_col]])) +
+    geom_histogram(bins = 20) +
+    labs(title = paste0(nm, " — Distribution of ", var_col), x = var_col, y = "Count")
+}
+purrr::iwalk(dfs, function(df, nm){ p <- plot_numeric_hist(df, nm); if(!is.null(p)) print(p) })
+```
+
+## 4.2 Top Categories (First Categorical Column)
+
+```{r, fig.width=7, fig.height=4}
+plot_top_category <- function(df, nm){
+  cats <- df |> dplyr::select(where(negate(is.numeric)))
+  if(ncol(cats) == 0) return(NULL)
+  col1 <- names(cats)[1]
+  top5 <- df |> mutate(across(all_of(col1), as.character)) |>
+    count(.data[[col1]], sort = TRUE) |> slice_head(n = 5)
+  ggplot(top5, aes(x = reorder(.data[[col1]], -n), y = n)) +
+    geom_col() +
+    labs(title = paste0(nm, " — Top 5 of ", col1), x = col1, y = "Count")
+}
+purrr::iwalk(dfs, function(df, nm){ p <- plot_top_category(df, nm); if(!is.null(p)) print(p) })
+```
+
+# 5. Correlations (All Numeric Columns)
+
+```{r, fig.width=7, fig.height=5}
+plot_corr_heatmap_all <- function(df, nm){
+  nums <- df |> dplyr::select(where(is.numeric))
+  if(ncol(nums) < 2) return(NULL)
+  mat <- cor(nums, use = "pairwise.complete.obs")
+  tidy <- as_tibble(mat, rownames = "row") |>
+    pivot_longer(-row, names_to = "col", values_to = "corr")
+  ggplot(tidy, aes(x = row, y = col, fill = corr)) +
+    geom_tile() +
+    scale_fill_gradient2(limits = c(-1, 1)) +
+    labs(title = paste0(nm, " — Correlation heatmap (all numeric columns)"),
+         x = NULL, y = NULL, fill = "r") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+purrr::iwalk(dfs, function(df, nm){ p <- plot_corr_heatmap_all(df, nm); if(!is.null(p)) print(p) })
+```
+
+# Appendix. Session Info
+
+```{r}
+sessionInfo()
+```

@@ -1,0 +1,30 @@
+column,dtype,non_null,missing,missing_pct,n_unique,examples,min,q25,median,mean,q75,max,std
+ISO3,object,38,0,0.0,2,"#country+code, ZAF",,,,,,,
+DataId,object,38,0,0.0,38,"#meta+id, 198690, 198687",,,,,,,
+Indicator,object,38,0,0.0,34,"#indicator+name, Children severely stunted, Children stunted",,,,,,,
+Value,object,38,0,0.0,37,"#indicator+value+num, 9.8, 27.4",,,,,,,
+Precision,object,38,0,0.0,3,"#indicator+precision, 1, 0",,,,,,,
+DHS_CountryCode,object,37,1,2.63,1,ZA,,,,,,,
+CountryName,object,38,0,0.0,2,"#country+name, South Africa",,,,,,,
+SurveyYear,object,38,0,0.0,2,"#date+year, 2016",,,,,,,
+SurveyId,object,38,0,0.0,2,"#survey+id, ZA2016DHS",,,,,,,
+IndicatorId,object,38,0,0.0,38,"#indicator+code, CN_NUTS_C_HA3, CN_NUTS_C_HA2",,,,,,,
+IndicatorOrder,float64,37,1,2.63,37,"104236010.0, 104236020.0, 104236030.0",104236010.0,104236100.0,114563080.0,111493274.86486487,114564170.0,114564260.0,4720409.244842289
+IndicatorType,object,37,1,2.63,3,"I, D, U",,,,,,,
+CharacteristicId,float64,37,1,2.63,2,"1000.0, 10000.0",1000.0,1000.0,1000.0,4162.1621621621625,10000.0,10000.0,4296.532313348681
+CharacteristicOrder,float64,37,1,2.63,2,"0.0, 10000.0",0.0,0.0,0.0,3513.5135135135133,10000.0,10000.0,4773.924792609647
+CharacteristicCategory,object,37,1,2.63,2,"Total, Total 15-49",,,,,,,
+CharacteristicLabel,object,37,1,2.63,2,"Total, Total 15-49",,,,,,,
+ByVariableId,object,38,0,0.0,2,"#indicator+label+code, 0",,,,,,,
+ByVariableLabel,object,1,37,97.37,1,#indicator+label,,,,,,,
+IsTotal,float64,37,1,2.63,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+IsPreferred,float64,37,1,2.63,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+SDRID,object,37,1,2.63,37,"CNNUTSCHA3, CNNUTSCHA2, CNNUTSCHAM",,,,,,,
+RegionId,float64,0,38,100.0,0,,,,,,,,
+SurveyYearLabel,float64,37,1,2.63,1,2016.0,2016.0,2016.0,2016.0,2016.0,2016.0,2016.0,0.0
+SurveyType,object,37,1,2.63,1,DHS,,,,,,,
+DenominatorWeighted,float64,33,5,13.16,7,"1404.0, 1384.0, 1416.0",1384.0,1416.0,2336.0,2336.757575757576,3081.0,3272.0,735.7535419988272
+DenominatorUnweighted,float64,33,5,13.16,7,"1468.0, 1449.0, 1479.0",1449.0,1479.0,2457.0,2432.939393939394,3210.0,3405.0,753.7483680828182
+CILow,float64,0,38,100.0,0,,,,,,,,
+CIHigh,float64,0,38,100.0,0,,,,,,,,
+LevelRank,float64,0,38,100.0,0,,,,,,,,

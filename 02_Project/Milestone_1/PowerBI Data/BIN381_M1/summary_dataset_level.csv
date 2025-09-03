@@ -1,0 +1,13 @@
+dataset,rows,cols,duplicate_rows,missing_cells,missing_pct,numeric_cols,categorical_cols
+access_to_health_care,276,29,0,1199,14.98,12,17
+anthropometry,38,29,0,211,19.15,12,17
+ari_symptoms,27,29,0,138,17.62,12,17
+child_mortality_rates,41,29,0,210,17.66,12,17
+covid19_prevention,35,29,0,192,18.92,12,17
+dhs_quickstats,53,29,0,267,17.37,12,17
+hiv_behavior,119,29,0,685,19.85,12,17
+immunization,117,29,0,554,16.33,12,17
+iycf,23,29,0,132,19.79,12,17
+literacy,21,29,0,122,20.03,12,17
+maternal_mortality,22,29,0,151,23.67,12,17
+toilet_facilities,47,29,0,256,18.78,12,17

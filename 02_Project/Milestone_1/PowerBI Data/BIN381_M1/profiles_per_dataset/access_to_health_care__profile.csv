@@ -1,0 +1,30 @@
+column,dtype,non_null,missing,missing_pct,n_unique,examples,min,q25,median,mean,q75,max,std
+ISO3,object,276,0,0.0,2,"#country+code, ZAF",,,,,,,
+DataId,object,276,0,0.0,276,"#meta+id, 751751, 567476",,,,,,,
+Indicator,object,276,0,0.0,69,"#indicator+name, Antenatal care provider: Docto, Antenatal care provider: Nurse",,,,,,,
+Value,object,276,0,0.0,191,"#indicator+value+num, 28.5, 30",,,,,,,
+Precision,object,276,0,0.0,3,"#indicator+precision, 1, 0",,,,,,,
+DHS_CountryCode,object,275,1,0.36,1,ZA,,,,,,,
+CountryName,object,276,0,0.0,2,"#country+name, South Africa",,,,,,,
+SurveyYear,object,276,0,0.0,3,"#date+year, 1998, 2016",,,,,,,
+SurveyId,object,276,0,0.0,3,"#survey+id, ZA1998DHS, ZA2016DHS",,,,,,,
+IndicatorId,object,276,0,0.0,73,"#indicator+code, RH_ANCP_W_DOC, RH_ANCP_W_NRS",,,,,,,
+IndicatorOrder,float64,275,1,0.36,72,"83363010.0, 83363020.0, 83363070.0",83363010.0,83566030.0,83606090.0,87126424.21090908,93966070.0,94096170.0,4993117.405225053
+IndicatorType,object,275,1,0.36,5,"I, S, T",,,,,,,
+CharacteristicId,float64,275,1,0.36,1,1000.0,1000.0,1000.0,1000.0,1000.0,1000.0,1000.0,0.0
+CharacteristicOrder,float64,275,1,0.36,1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+CharacteristicCategory,object,275,1,0.36,1,Total,,,,,,,
+CharacteristicLabel,object,275,1,0.36,1,Total,,,,,,,
+ByVariableId,object,276,0,0.0,5,"#indicator+label+code, 14000, 14001",,,,,,,
+ByVariableLabel,object,263,13,4.71,4,"#indicator+label, Three years preceding the surv, Five years preceding the surve",,,,,,,
+IsTotal,float64,275,1,0.36,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+IsPreferred,float64,275,1,0.36,2,"0.0, 1.0",0.0,0.0,0.0,0.4218181818181818,1.0,1.0,0.49384977807607144
+SDRID,object,275,1,0.36,72,"RHANCPWDOC, RHANCPWNRS, RHANCPWTBA",,,,,,,
+RegionId,float64,0,276,100.0,0,,,,,,,,
+SurveyYearLabel,float64,275,1,0.36,2,"1998.0, 2016.0",1998.0,1998.0,2016.0,2007.621818181818,2016.0,2016.0,8.978493311728885
+SurveyType,object,275,1,0.36,1,DHS,,,,,,,
+DenominatorWeighted,float64,241,35,12.68,26,"2871.0, 4122.0, 2010.0",68.0,627.0,2010.0,2048.647302904564,3072.0,4992.0,1425.9603025044041
+DenominatorUnweighted,float64,241,35,12.68,26,"2903.0, 4148.0, 2041.0",59.0,634.0,2041.0,2062.1659751037346,3119.0,5066.0,1442.1406336786426
+CILow,float64,0,276,100.0,0,,,,,,,,
+CIHigh,float64,0,276,100.0,0,,,,,,,,
+LevelRank,float64,0,276,100.0,0,,,,,,,,

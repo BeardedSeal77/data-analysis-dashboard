@@ -1,0 +1,30 @@
+column,dtype,non_null,missing,missing_pct,n_unique,examples,min,q25,median,mean,q75,max,std
+ISO3,object,119,0,0.0,2,"#country+code, ZAF",,,,,,,
+DataId,object,119,0,0.0,119,"#meta+id, 795160, 795161",,,,,,,
+Indicator,object,119,0,0.0,78,"#indicator+name, Sex before the age of 15 [Wome, Number of young women",,,,,,,
+Value,object,119,0,0.0,100,"#indicator+value+num, 8, 4324",,,,,,,
+Precision,object,119,0,0.0,3,"#indicator+precision, 1, 0",,,,,,,
+DHS_CountryCode,object,118,1,0.84,1,ZA,,,,,,,
+CountryName,object,119,0,0.0,2,"#country+name, South Africa",,,,,,,
+SurveyYear,object,119,0,0.0,3,"#date+year, 1998, 2016",,,,,,,
+SurveyId,object,119,0,0.0,3,"#survey+id, ZA1998DHS, ZA2016DHS",,,,,,,
+IndicatorId,object,119,0,0.0,102,"#indicator+code, HA_AFSY_W_A15, HA_AFSY_W_NM1",,,,,,,
+IndicatorOrder,float64,118,1,0.84,101,"135763010.0, 135763020.0, 135763030.0",135403010.0,135451387.5,135763045.0,135657340.84745762,135804127.5,135864060.0,177065.92183098954
+IndicatorType,object,118,1,0.84,3,"I, D, U",,,,,,,
+CharacteristicId,float64,118,1,0.84,2,"1000.0, 10000.0",1000.0,1000.0,1000.0,4889.830508474576,10000.0,10000.0,4458.440668172183
+CharacteristicOrder,float64,118,1,0.84,2,"0.0, 10000.0",0.0,0.0,0.0,4322.033898305085,10000.0,10000.0,4953.822964635757
+CharacteristicCategory,object,118,1,0.84,2,"Total, Total 15-49",,,,,,,
+CharacteristicLabel,object,118,1,0.84,2,"Total, Total 15-49",,,,,,,
+ByVariableId,object,119,0,0.0,2,"#indicator+label+code, 0",,,,,,,
+ByVariableLabel,object,1,118,99.16,1,#indicator+label,,,,,,,
+IsTotal,float64,118,1,0.84,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+IsPreferred,float64,118,1,0.84,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+SDRID,object,118,1,0.84,101,"HAAFSYWA15, HAAFSYWNM1, HAAFSYWUN1",,,,,,,
+RegionId,float64,0,119,100.0,0,,,,,,,,
+SurveyYearLabel,float64,118,1,0.84,2,"1998.0, 2016.0",1998.0,2016.0,2016.0,2013.406779661017,2016.0,2016.0,6.320852345623929
+SurveyType,object,118,1,0.84,1,DHS,,,,,,,
+DenominatorWeighted,float64,79,40,33.61,35,"4324.0, 55.0, 2955.0",15.0,544.0,1787.0,2380.6582278481014,3202.0,8514.0,2306.064941865946
+DenominatorUnweighted,float64,80,39,32.77,31,"4459.0, 2993.0, 3857.0",86.0,871.0,1995.0,2566.2875,3179.0,8514.0,2218.0484732854125
+CILow,float64,0,119,100.0,0,,,,,,,,
+CIHigh,float64,0,119,100.0,0,,,,,,,,
+LevelRank,float64,0,119,100.0,0,,,,,,,,

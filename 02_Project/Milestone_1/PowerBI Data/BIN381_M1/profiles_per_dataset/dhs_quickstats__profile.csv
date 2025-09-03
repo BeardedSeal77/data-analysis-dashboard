@@ -1,0 +1,30 @@
+column,dtype,non_null,missing,missing_pct,n_unique,examples,min,q25,median,mean,q75,max,std
+ISO3,object,53,0,0.0,2,"#country+code, ZAF",,,,,,,
+DataId,object,53,0,0.0,53,"#meta+id, 796527, 795692",,,,,,,
+Indicator,object,53,0,0.0,28,"#indicator+name, Total fertility rate 15-49, Married women currently using ",,,,,,,
+Value,object,53,0,0.0,52,"#indicator+value+num, 2.9, 56.3",,,,,,,
+Precision,object,53,0,0.0,3,"#indicator+precision, 1, 0",,,,,,,
+DHS_CountryCode,object,52,1,1.89,1,ZA,,,,,,,
+CountryName,object,53,0,0.0,2,"#country+name, South Africa",,,,,,,
+SurveyYear,object,53,0,0.0,3,"#date+year, 1998, 2016",,,,,,,
+SurveyId,object,53,0,0.0,3,"#survey+id, ZA1998DHS, ZA2016DHS",,,,,,,
+IndicatorId,object,53,0,0.0,28,"#indicator+code, FE_FRTR_W_TFR, FP_CUSM_W_ANY",,,,,,,
+IndicatorOrder,float64,52,1,1.89,27,"11763080.0, 32633010.0, 32633020.0",11763080.0,60330295.0,83566070.0,93178551.53846154,104261072.5,260321010.0,60552983.27613447
+IndicatorType,object,52,1,1.89,1,I,,,,,,,
+CharacteristicId,float64,52,1,1.89,2,"1000.0, 10000.0",1000.0,1000.0,1000.0,2557.6923076923076,1000.0,10000.0,3404.823849156808
+CharacteristicOrder,float64,52,1,1.89,2,"0.0, 10000.0",0.0,0.0,0.0,1730.7692307692307,0.0,10000.0,3783.137610174231
+CharacteristicCategory,object,52,1,1.89,2,"Total, Total 15-49",,,,,,,
+CharacteristicLabel,object,52,1,1.89,2,"Total, Total 15-49",,,,,,,
+ByVariableId,object,53,0,0.0,7,"#indicator+label+code, 0, 14001",,,,,,,
+ByVariableLabel,object,20,33,62.26,6,"#indicator+label, Five years preceding the surve, Ten years preceding the survey",,,,,,,
+IsTotal,float64,52,1,1.89,1,1.0,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+IsPreferred,float64,52,1,1.89,2,"1.0, 0.0",0.0,1.0,1.0,0.7884615384615384,1.0,1.0,0.40839924195375576
+SDRID,object,52,1,1.89,27,"FEFRTRWTFR, FPCUSMWANY, FPCUSMWMOD",,,,,,,
+RegionId,float64,0,53,100.0,0,,,,,,,,
+SurveyYearLabel,float64,52,1,1.89,2,"1998.0, 2016.0",1998.0,1998.0,2016.0,2008.7307692307693,2016.0,2016.0,8.832012107658283
+SurveyType,object,52,1,1.89,1,DHS,,,,,,,
+DenominatorWeighted,float64,34,19,35.85,28,"5077.0, 3695.0, 3072.0",246.0,1414.5,3050.0,3832.205882352941,5055.75,12247.0,3279.493126002067
+DenominatorUnweighted,float64,34,19,35.85,29,"4948.0, 3590.0, 3119.0",256.0,1470.75,2841.0,3999.029411764706,4948.0,12247.0,3628.0099186362736
+CILow,float64,14,39,73.58,13,"38.0, 37.0, 50.0",11.5,27.75,37.5,67.67142857142858,50.0,270.0,77.06725660626779
+CIHigh,float64,14,39,73.58,13,"53.0, 48.0, 68.0",17.3,45.0,52.0,160.5357142857143,66.75,802.0,249.20089029634264
+LevelRank,float64,0,53,100.0,0,,,,,,,,
