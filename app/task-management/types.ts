@@ -45,8 +45,21 @@ export interface Member {
 export interface Milestone {
   id: number
   name: string
+  subtitle: string
   description: string
   dueDate: string
   status: 'planning' | 'active' | 'completed' | 'paused'
   progress: number
+  color: string
+  about: {
+    description: string
+    sections: Array<{
+      title: string
+      icon: string
+      color: string
+      items: string[]
+    }>
+  }
+  deliverables?: string[]
+  estimatedDuration?: string
 }

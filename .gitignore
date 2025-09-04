@@ -385,3 +385,10 @@ FodyWeavers.xsd
 /_GroupMembers
 /_old
 /.next
+
+# Secrets and sensitive configuration
+secrets.txt
+config.txt
+.env
+*.env
+credentials.txt

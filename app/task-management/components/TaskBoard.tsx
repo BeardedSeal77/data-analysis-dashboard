@@ -25,9 +25,9 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
       setLoading(true)
       
       const [tasksRes, assignmentsRes, membersRes] = await Promise.all([
-        fetch('/api/task/tasks'),
-        fetch('/api/task/assignments'),
-        fetch('/api/task/members')
+        fetch('http://localhost:5000/api/tasks'),
+        fetch('http://localhost:5000/api/assignments'),
+        fetch('http://localhost:5000/api/members')
       ])
 
       const [tasksData, assignmentsData, membersData] = await Promise.all([
@@ -68,24 +68,29 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
     }
 
     try {
-      const newAssignment: Assignment = {
-        assignmentId: 'a' + Date.now(),
-        taskId,
-        memberId: currentUser.id,
-        status: 'assigned',
-        progress: 0,
-        assignedDate: new Date().toISOString()
-      }
-
-      const response = await fetch('/api/task/assignments', {
+      const response = await fetch('http://localhost:5000/api/assignments/assign-task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newAssignment)
+        body: JSON.stringify({
+          taskId: taskId,
+          memberId: currentUser.id
+        })
       })
 
       if (response.ok) {
+        const result = await response.json()
+        const newAssignment = result.assignment
         setAssignments([...assignments, newAssignment])
         showNotification('Task assigned successfully!', 'success')
+      } else {
+        const errorText = await response.text()
+        console.error('API Error Response:', errorText)
+        try {
+          const error = JSON.parse(errorText)
+          showNotification(error.error || 'Error assigning task', 'error')
+        } catch {
+          showNotification(`API Error: ${response.status} - ${errorText.substring(0, 100)}`, 'error')
+        }
       }
     } catch (error) {
       console.error('Error assigning task:', error)
@@ -93,65 +98,32 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
     }
   }
 
-  const handleStartTask = async (assignmentId: string) => {
-    try {
-      const updatedAssignments = assignments.map(a =>
-        a.assignmentId === assignmentId
-          ? { ...a, status: 'in-progress' as const, startedDate: new Date().toISOString(), progress: 10 }
-          : a
-      )
-
-      // Update local state
-      setAssignments(updatedAssignments)
-      
-      // Send to API
-      await updateAssignment(assignmentId, { 
-        status: 'in-progress', 
-        startedDate: new Date().toISOString(),
-        progress: 10
-      })
-      
-      showNotification('Task started!', 'success')
-    } catch (error) {
-      console.error('Error starting task:', error)
-      showNotification('Error starting task', 'error')
-    }
-  }
 
   const handleCompleteTask = async (assignmentId: string) => {
     try {
-      const updatedAssignments = assignments.map(a =>
-        a.assignmentId === assignmentId
-          ? { ...a, status: 'completed' as const, completedDate: new Date().toISOString(), progress: 100 }
-          : a
-      )
-
-      setAssignments(updatedAssignments)
-      
-      await updateAssignment(assignmentId, {
-        status: 'completed',
-        completedDate: new Date().toISOString(),
-        progress: 100
+      const response = await fetch(`http://localhost:5000/api/assignments/${assignmentId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'completed' })
       })
-      
-      showNotification('Task completed!', 'success')
+
+      if (response.ok) {
+        const result = await response.json()
+        const updatedAssignments = assignments.map(a =>
+          a.assignmentId === assignmentId ? result.assignment : a
+        )
+        setAssignments(updatedAssignments)
+        showNotification('Task completed!', 'success')
+      } else {
+        const error = await response.json()
+        showNotification(error.error || 'Error completing task', 'error')
+      }
     } catch (error) {
       console.error('Error completing task:', error)
       showNotification('Error completing task', 'error')
     }
   }
 
-  const updateAssignment = async (assignmentId: string, updates: Partial<Assignment>) => {
-    try {
-      await fetch(`/api/task/assignments/${assignmentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      })
-    } catch (error) {
-      console.error('Error updating assignment:', error)
-    }
-  }
 
   const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     // Create toast notification
@@ -227,7 +199,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
   const tasksByAssignment = getTasksByAssignment()
 
   return (
-    <div className="taskboard-container">
+    <div className="space-y-6">
       {/* Toolbar */}
       <div className="mb-6 flex justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -248,7 +220,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
       {/* Task Board */}
       <div className="space-y-8">
         {/* Backlog */}
-        <div className="member-block bg-surface rounded-lg shadow-sm border border-highlight-med">
+        <div className="transition-shadow duration-200 bg-surface rounded-lg shadow-sm border border-highlight-med hover:shadow-md">
           <div className="member-header px-4 py-3 rounded-t-lg bg-overlay border-b border-highlight-med">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium flex items-center text-text">
@@ -261,7 +233,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
             </div>
             <p className="text-xs mt-1 text-subtle">Available tasks waiting to be assigned</p>
           </div>
-          <div className="member-tasks p-4 space-y-3 min-h-32">
+          <div className="p-4 space-y-3 min-h-32">
             {tasksByAssignment.backlog.map(task => (
               <TaskCard
                 key={task.id}
@@ -269,7 +241,6 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
                 assignment={null}
                 currentUser={currentUser}
                 onAssign={() => handleAssignTask(task.id)}
-                onStart={() => {}}
                 onComplete={() => {}}
               />
             ))}
@@ -282,7 +253,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
           const memberTasks = tasksByAssignment.members[member.id] || []
 
           return (
-            <div key={member.id} className="member-block bg-surface rounded-lg shadow-sm border border-highlight-med">
+            <div key={member.id} className="transition-shadow duration-200 bg-surface rounded-lg shadow-sm border border-highlight-med hover:shadow-md">
               <div className={`member-header px-4 py-3 rounded-t-lg ${colorStyles.headerBg} border-b border-highlight-med`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
@@ -308,7 +279,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
                   </div>
                 </div>
               </div>
-              <div className="member-tasks p-4 space-y-3 min-h-32">
+              <div className="p-4 space-y-3 min-h-32">
                 {memberTasks.map(({ task, assignment }) => (
                   <TaskCard
                     key={`${task.id}-${assignment.assignmentId}`}
@@ -316,7 +287,6 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
                     assignment={assignment}
                     currentUser={currentUser}
                     onAssign={() => {}}
-                    onStart={() => handleStartTask(assignment.assignmentId)}
                     onComplete={() => handleCompleteTask(assignment.assignmentId)}
                   />
                 ))}
@@ -327,7 +297,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
       </div>
 
       {members.length === 0 && (
-        <div className="member-block bg-surface rounded-lg shadow-sm border border-danger mt-6">
+        <div className="transition-shadow duration-200 bg-surface rounded-lg shadow-sm border border-danger mt-6">
           <div className="member-header px-4 py-3 rounded-t-lg bg-danger/10 border-b border-danger">
             <h3 className="text-sm font-medium text-danger">
               <i className="fas fa-exclamation-triangle mr-2"></i>

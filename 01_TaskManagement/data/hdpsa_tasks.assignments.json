@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "68b93649c0c41a244fdb05d0"
+  },
+  "assignmentId": "a1756968521820",
+  "taskId": 1,
+  "memberId": 1,
+  "status": "assigned",
+  "assignedDate": "2025-09-04T06:48:41.820Z",
+  "completedDate": null,
+  "timeSpent": 0,
+  "notes": null
+}]
