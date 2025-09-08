@@ -1,39 +1,57 @@
-[{
-  "_id": {
-    "$oid": "68be95bdcb0f24ca8220f387"
+[
+  {
+    "_id": "68be95bdcb0f24ca8220f387",
+    "assignmentId": "a1757313437407",
+    "taskId": 7,
+    "memberId": 4,
+    "status": "assigned",
+    "assignedDate": "2025-09-08T08:37:17.407911Z",
+    "completedDate": null,
+    "timeSpent": 0,
+    "notes": null
   },
-  "assignmentId": "a1757313437407",
-  "taskId": 7,
-  "memberId": 4,
-  "status": "assigned",
-  "assignedDate": "2025-09-08T08:37:17.407911Z",
-  "completedDate": null,
-  "timeSpent": 0,
-  "notes": null
-},
-{
-  "_id": {
-    "$oid": "68be95c0cb0f24ca8220f388"
+  {
+    "_id": "68be95c0cb0f24ca8220f388",
+    "assignmentId": "a1757313440735",
+    "taskId": 8,
+    "memberId": 4,
+    "status": "completed",
+    "assignedDate": "2025-09-08T08:37:20.735855Z",
+    "completedDate": "2025-09-08T08:55:09.135315Z",
+    "timeSpent": 0,
+    "notes": null
   },
-  "assignmentId": "a1757313440735",
-  "taskId": 8,
-  "memberId": 4,
-  "status": "completed",
-  "assignedDate": "2025-09-08T08:37:20.735855Z",
-  "completedDate": "2025-09-08T08:55:09.135315Z",
-  "timeSpent": 0,
-  "notes": null
-},
-{
-  "_id": {
-    "$oid": "68be9a1dcb0f24ca8220f389"
+  {
+    "_id": "68be9a1dcb0f24ca8220f389",
+    "assignmentId": "a1757314557825",
+    "taskId": 6,
+    "memberId": 4,
+    "status": "completed",
+    "assignedDate": "2025-09-08T08:55:57.825535Z",
+    "completedDate": "2025-09-08T09:25:45.014582Z",
+    "timeSpent": 0,
+    "notes": null
   },
-  "assignmentId": "a1757314557825",
-  "taskId": 6,
-  "memberId": 4,
-  "status": "completed",
-  "assignedDate": "2025-09-08T08:55:57.825535Z",
-  "completedDate": "2025-09-08T09:25:45.014582Z",
-  "timeSpent": 0,
-  "notes": null
-}]
+  {
+    "_id": "68bed006bd1ddd0e38117aff",
+    "assignmentId": "a1757335558200",
+    "taskId": 1,
+    "memberId": 1,
+    "status": "assigned",
+    "assignedDate": "2025-09-08T09:.8:58.200924Z",
+    "completedDate": null,
+    "timeSpent": 0,
+    "notes": null
+  },
+  {
+    "_id": "68bed039bd1ddd0e38117b00",
+    "assignmentId": "a1757335609722",
+    "taskId": 3,
+    "memberId": 1,
+    "status": "assigned",
+    "assignedDate": "2025-09-08T09:38:49.722257Z",
+    "completedDate": null,
+    "timeSpent": 0,
+    "notes": null
+  }
+]

@@ -1,80 +1,72 @@
-[{
-  "_id": {
-    "$oid": "68b806e6881f36d185098dde"
+[
+  {
+    "_id": "68b806e6881f36d185098dda",
+    "id": 1,
+    "name": "Erin Cullen",
+    "studentNumber": "600531",
+    "githubUsername": "BeardedSeal77",
+    "displayName": "Erin Cullen",
+    "email": null,
+    "role": "Project Lead",
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "memberColor": "blue"
   },
-  "id": 5,
-  "name": "Qhamaninande Ndlume",
-  "studentNumber": "601436",
-  "githubUsername": "Qama-Athe",
-  "displayName": "Qhamaninande Ndlume",
-  "email": null,
-  "role": "Research Analyst",
-  "joinedDate": "2025-01-15T00:00:00Z",
-  "isActive": true,
-  "githubId": null,
-  "memberColor": "cyan"
-},
-{
-  "_id": {
-    "$oid": "68b806e6881f36d185098dda"
+  {
+    "_id": "68b806e6881f36d185098ddb",
+    "id": 2,
+    "name": "Karl Christiaan Schmutz",
+    "studentNumber": "577511",
+    "githubUsername": "KCSchmutz",
+    "displayName": "Karl Christiaan Schmutz",
+    "email": null,
+    "role": "Data Scientist",
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "memberColor": "purple"
   },
-  "id": 1,
-  "name": "Erin Cullen",
-  "studentNumber": "600531",
-  "githubUsername": "BeardedSeal77",
-  "displayName": "Erin Cullen",
-  "email": null,
-  "role": "Project Lead",
-  "joinedDate": "2025-01-15T00:00:00Z",
-  "isActive": true,
-  "githubId": null,
-  "memberColor": "blue"
-},
-{
-  "_id": {
-    "$oid": "68b806e6881f36d185098ddd"
+  {
+    "_id": "68b806e6881f36d185098ddc",
+    "id": 3,
+    "name": "Juan Oosthuizen",
+    "studentNumber": "600161",
+    "githubUsername": "Juan-Oosthuizen-Projects",
+    "displayName": "Juan Oosthuizen",
+    "email": null,
+    "role": "Data Analyst",
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "memberColor": "green"
   },
-  "id": 4,
-  "name": "Llewellyn Jakobus Fourie",
-  "studentNumber": "601314",
-  "githubUsername": "llewellyn04",
-  "displayName": "Llewellyn Jakobus Fourie",
-  "email": null,
-  "role": "Data Engineer",
-  "joinedDate": "2025-01-15T00:00:00Z",
-  "isActive": true,
-  "githubId": null,
-  "memberColor": "orange"
-},
-{
-  "_id": {
-    "$oid": "68b806e6881f36d185098ddb"
+  {
+    "_id": "68b806e6881f36d185098ddd",
+    "id": 4,
+    "name": "Llewellyn Jakobus Fourie",
+    "studentNumber": "601314",
+    "githubUsername": "llewellyn04",
+    "displayName": "Llewellyn Jakobus Fourie",
+    "email": null,
+    "role": "Data Engineer",
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "memberColor": "orange"
   },
-  "id": 2,
-  "name": "Karl Christiaan Schmutz",
-  "studentNumber": "577511",
-  "githubUsername": "KCSchmutz",
-  "displayName": "Karl Christiaan Schmutz",
-  "email": null,
-  "role": "Data Scientist",
-  "joinedDate": "2025-01-15T00:00:00Z",
-  "isActive": true,
-  "githubId": null,
-  "memberColor": "purple"
-},
-{
-  "_id": {
-    "$oid": "68b806e6881f36d185098ddc"
-  },
-  "id": 3,
-  "name": "Juan Oosthuizen",
-  "studentNumber": "600161",
-  "githubUsername": "Juan-Oosthuizen-Projects",
-  "displayName": "Juan Oosthuizen",
-  "email": null,
-  "role": "Data Analyst",
-  "joinedDate": "2025-01-15T00:00:00Z",
-  "isActive": true,
-  "githubId": null,
-  "memberColor": "green"
-}]
+  {
+    "_id": "68b806e6881f36d185098dde",
+    "id": 5,
+    "name": "Qhamaninande Ndlume",
+    "studentNumber": "601436",
+    "githubUsername": "Qama-Athe",
+    "displayName": "Qhamaninande Ndlume",
+    "email": null,
+    "role": "Research Analyst",
+    "joinedDate": "2025-01-15T00:00:00Z",
+    "isActive": true,
+    "githubId": null,
+    "memberColor": "cyan"
+  }
+]
