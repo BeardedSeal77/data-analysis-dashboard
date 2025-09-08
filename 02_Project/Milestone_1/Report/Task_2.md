@@ -1,7 +1,3 @@
-
-
-
-
 # Task 2: Business Objectives and Success Criteria Definition
 
 ## Business Relevance
