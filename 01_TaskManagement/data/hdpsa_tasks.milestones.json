@@ -42,55 +42,8 @@
     "Project charter and scope definition"
   ],
   "estimatedDuration": "2-3 weeks",
-  "dependencies": []
-},
-{
-  "_id": {
-    "$oid": "68b80701881f36d185098dee"
-  },
-  "id": 2,
-  "name": "Data Preparation",
-  "subtitle": "CRISP-DM Phase 3 - Cleaning and Preparing Data for Analysis",
-  "icon": "fas fa-broom",
-  "color": "purple",
-  "status": "pending",
-  "about": {
-    "description": "Transform and clean the raw datasets to create analysis-ready data that meets quality standards for the HDPSA project.",
-    "sections": [
-      {
-        "title": "Data Cleaning",
-        "icon": "fas fa-broom",
-        "color": "purple",
-        "items": [
-          "Handle missing values and outliers",
-          "Standardize data formats and naming conventions",
-          "Remove duplicates and inconsistencies",
-          "Validate data integrity across datasets"
-        ]
-      },
-      {
-        "title": "Data Integration",
-        "icon": "fas fa-link",
-        "color": "cyan",
-        "items": [
-          "Merge datasets using common identifiers",
-          "Resolve conflicts between data sources",
-          "Create unified data schema",
-          "Establish data lineage documentation"
-        ]
-      }
-    ]
-  },
-  "deliverables": [
-    "Clean, integrated dataset",
-    "Data preparation scripts",
-    "Data cleaning report",
-    "Data quality metrics dashboard"
-  ],
-  "estimatedDuration": "3-4 weeks",
-  "dependencies": [
-    1
-  ]
+  "dependencies": [],
+  "progress": 12
 },
 {
   "_id": {
@@ -189,6 +142,54 @@
     1,
     2,
     3
+  ]
+},
+{
+  "_id": {
+    "$oid": "68b80701881f36d185098dee"
+  },
+  "id": 2,
+  "name": "Data Preparation",
+  "subtitle": "CRISP-DM Phase 3 - Cleaning and Preparing Data for Analysis",
+  "icon": "fas fa-broom",
+  "color": "purple",
+  "status": "pending",
+  "about": {
+    "description": "Transform and clean the raw datasets to create analysis-ready data that meets quality standards for the HDPSA project.",
+    "sections": [
+      {
+        "title": "Data Cleaning",
+        "icon": "fas fa-broom",
+        "color": "purple",
+        "items": [
+          "Handle missing values and outliers",
+          "Standardize data formats and naming conventions",
+          "Remove duplicates and inconsistencies",
+          "Validate data integrity across datasets"
+        ]
+      },
+      {
+        "title": "Data Integration",
+        "icon": "fas fa-link",
+        "color": "cyan",
+        "items": [
+          "Merge datasets using common identifiers",
+          "Resolve conflicts between data sources",
+          "Create unified data schema",
+          "Establish data lineage documentation"
+        ]
+      }
+    ]
+  },
+  "deliverables": [
+    "Clean, integrated dataset",
+    "Data preparation scripts",
+    "Data cleaning report",
+    "Data quality metrics dashboard"
+  ],
+  "estimatedDuration": "3-4 weeks",
+  "dependencies": [
+    1
   ]
 },
 {

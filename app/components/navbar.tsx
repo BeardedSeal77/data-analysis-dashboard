@@ -103,9 +103,9 @@ export default function Navbar() {
         let inProgressTasks = 0
         
         milestoneTasks.forEach(task => {
-          const assignment = assignments.find(a => 
+          const assignment = Array.isArray(assignments) ? assignments.find(a => 
             a.taskId === task.id && a.status !== 'reassigned'
-          )
+          ) : null
           
           if (assignment) {
             if (assignment.status === 'completed') {
@@ -187,7 +187,7 @@ export default function Navbar() {
       case 'completed':
         return <i className="fas fa-check-circle" style={{ color: 'var(--color-success)' }}></i>
       case 'in-progress':
-        return <span style={{ color: 'var(--color-primary)' }}>{status.progress}%</span>
+        return <i className="fas fa-play-circle" style={{ color: 'var(--color-primary)' }}></i>
       default:
         return <i className="fas fa-circle" style={{ color: 'var(--color-muted)' }}></i>
     }

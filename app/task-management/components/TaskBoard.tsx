@@ -101,10 +101,10 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
 
   const handleCompleteTask = async (assignmentId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/assignments/${assignmentId}/status`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:5000/api/tasks/assignments/${assignmentId}/complete`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'completed' })
+        body: JSON.stringify({ notes: null })
       })
 
       if (response.ok) {
@@ -155,9 +155,9 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
     })
 
     filteredTasks.forEach(task => {
-      const assignment = assignments.find(a => 
+      const assignment = Array.isArray(assignments) ? assignments.find(a => 
         a.taskId === task.id && a.status !== 'reassigned'
-      )
+      ) : null
 
       if (!assignment) {
         result.backlog.push(task)
@@ -176,11 +176,46 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
 
   const getMemberColorStyles = (color: string) => {
     const colorMap: Record<string, any> = {
-      blue: { headerBg: 'member-color-blue', badgeBg: 'bg-blue-500/20' },
-      purple: { headerBg: 'member-color-purple', badgeBg: 'bg-purple-500/20' },
-      green: { headerBg: 'member-color-green', badgeBg: 'bg-green-500/20' },
-      orange: { headerBg: 'member-color-orange', badgeBg: 'bg-orange-500/20' },
-      cyan: { headerBg: 'member-color-cyan', badgeBg: 'bg-cyan-500/20' }
+      blue: { 
+        headerStyle: { backgroundColor: '#dbeafe', borderColor: '#bfdbfe' },
+        badgeStyle: { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+        textColor: '#1e40af'
+      },
+      purple: { 
+        headerStyle: { backgroundColor: '#e9d5ff', borderColor: '#c4b5fd' },
+        badgeStyle: { backgroundColor: 'rgba(147, 51, 234, 0.1)' },
+        textColor: '#7c2d12'
+      },
+      green: { 
+        headerStyle: { backgroundColor: '#dcfce7', borderColor: '#bbf7d0' },
+        badgeStyle: { backgroundColor: 'rgba(34, 197, 94, 0.1)' },
+        textColor: '#166534'
+      },
+      orange: { 
+        headerStyle: { backgroundColor: '#fed7aa', borderColor: '#fdba74' },
+        badgeStyle: { backgroundColor: 'rgba(249, 115, 22, 0.1)' },
+        textColor: '#9a3412'
+      },
+      cyan: { 
+        headerStyle: { backgroundColor: '#cffafe', borderColor: '#a5f3fc' },
+        badgeStyle: { backgroundColor: 'rgba(6, 182, 212, 0.1)' },
+        textColor: '#155e75'
+      },
+      red: { 
+        headerStyle: { backgroundColor: '#fecaca', borderColor: '#fca5a5' },
+        badgeStyle: { backgroundColor: 'rgba(239, 68, 68, 0.1)' },
+        textColor: '#991b1b'
+      },
+      yellow: { 
+        headerStyle: { backgroundColor: '#fef3c7', borderColor: '#fde68a' },
+        badgeStyle: { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
+        textColor: '#92400e'
+      },
+      indigo: { 
+        headerStyle: { backgroundColor: '#e0e7ff', borderColor: '#c7d2fe' },
+        badgeStyle: { backgroundColor: 'rgba(99, 102, 241, 0.1)' },
+        textColor: '#3730a3'
+      }
     }
     return colorMap[color] || colorMap.blue
   }
@@ -234,7 +269,13 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
             <p className="text-xs mt-1 text-subtle">Available tasks waiting to be assigned</p>
           </div>
           <div className="p-4 space-y-3 min-h-32">
-            {tasksByAssignment.backlog.map(task => (
+            {tasksByAssignment.backlog
+              .sort((a, b) => {
+                // Sort by ID first, then by prerequisites (tasks with fewer prerequisites first)
+                if (a.id !== b.id) return a.id - b.id
+                return (a.prerequisites?.length || 0) - (b.prerequisites?.length || 0)
+              })
+              .map(task => (
               <TaskCard
                 key={task.id}
                 task={task}
@@ -248,13 +289,13 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
         </div>
 
         {/* Member Blocks */}
-        {members.map(member => {
+        {members.sort((a, b) => a.name.localeCompare(b.name)).map(member => {
           const colorStyles = getMemberColorStyles(member.memberColor)
           const memberTasks = tasksByAssignment.members[member.id] || []
 
           return (
             <div key={member.id} className="transition-shadow duration-200 bg-surface rounded-lg shadow-sm border border-highlight-med hover:shadow-md">
-              <div className={`member-header px-4 py-3 rounded-t-lg ${colorStyles.headerBg} border-b border-highlight-med`}>
+              <div className="member-header px-4 py-3 rounded-t-lg border-b" style={colorStyles.headerStyle}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <img 
@@ -266,14 +307,14 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
                       }}
                     />
                     <div>
-                      <h3 className="text-sm font-medium text-text">{member.displayName}</h3>
-                      <p className="text-xs text-muted">
+                      <h3 className="text-base font-medium">{member.displayName}</h3>
+                      <p className="text-xs text-surface">
                         {member.role} {member.githubUsername && `• @${member.githubUsername}`}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center justify-center w-6 h-6 text-xs rounded-full ${colorStyles.badgeBg} text-text`}>
+                    <span className="inline-flex items-center justify-center w-6 h-6 text-xs rounded-full text-text" style={colorStyles.badgeStyle}>
                       {memberTasks.length}
                     </span>
                   </div>

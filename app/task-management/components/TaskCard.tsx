@@ -46,7 +46,12 @@ export default function TaskCard({
       
       {/* Task header */}
       <div className="flex items-start justify-between mb-2">
-        <h4 className="text-sm font-semibold flex-1 mr-2 text-text">{task.title}</h4>
+        <div className="flex items-center flex-1 mr-2">
+          <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 mr-2">
+            {task.id}
+          </span>
+          <h4 className="text-sm font-semibold text-text">{task.title}</h4>
+        </div>
         <span className={getComplexityStyle(task.complexity)}>
           {task.complexity}
         </span>
@@ -60,6 +65,27 @@ export default function TaskCard({
         <span className="px-2 py-1 rounded bg-highlight-med text-text text-xs">{task.category}</span>
       </div>
 
+      {/* Prerequisites */}
+      {(task as any).prerequisiteStatus && Object.keys((task as any).prerequisiteStatus).length > 0 && (
+        <div className="mb-3">
+          <div className="text-xs text-muted mb-1">Prerequisites:</div>
+          <div className="flex flex-wrap gap-1">
+            {Object.entries((task as any).prerequisiteStatus).map(([prereqId, status]: [string, any]) => (
+              <span 
+                key={prereqId}
+                className={`inline-flex items-center px-2 py-1 text-base font-medium rounded-full ${
+                  status === 'completed' ? 'bg-green-500 text-white' :
+                  status === 'assigned' ? 'bg-yellow-500 text-white' :
+                  'bg-red-500 text-white'
+                }`}
+                title={`Task ${prereqId}: ${status}`}
+              >
+                {prereqId}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Action buttons */}
       <div className="flex gap-2">

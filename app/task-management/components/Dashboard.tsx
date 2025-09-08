@@ -1,46 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-
-interface Task {
-  id: string
-  title: string
-  description: string
-  milestoneId: number
-  complexity: 'low' | 'medium' | 'high'
-  category: string
-  skills: string[]
-  estimatedHours: number
-  createdDate: string
-}
-
-interface Assignment {
-  assignmentId: string
-  taskId: string
-  memberId: number
-  memberDisplayName?: string
-  status: 'assigned' | 'in-progress' | 'completed' | 'reassigned'
-  progress: number
-  assignedDate: string
-  startedDate?: string
-  completedDate?: string
-}
-
-interface Member {
-  id: number
-  name: string
-  displayName: string
-  role: string
-  githubUsername?: string
-  memberColor: string
-  isActive?: boolean
-}
+import { apiService } from '../services/api'
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [assignments, setAssignments] = useState<Assignment[]>([])
-  const [members, setMembers] = useState<Member[]>([])
+  const [projectOverview, setProjectOverview] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     loadData()
@@ -55,161 +21,18 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       setLoading(true)
+      setError(null)
       
-      const [tasksRes, assignmentsRes, membersRes] = await Promise.all([
-        fetch('http://localhost:5000/api/tasks'),
-        fetch('http://localhost:5000/api/assignments'), 
-        fetch('http://localhost:5000/api/members')
-      ])
-
-      const [tasksData, assignmentsData, membersData] = await Promise.all([
-        tasksRes.json(),
-        assignmentsRes.json(),
-        membersRes.json()
-      ])
-
-      setTasks(tasksData)
-      setAssignments(assignmentsData)
-      setMembers(membersData)
+      // All business logic is now in the backend API
+      const overview = await apiService.getProjectOverview()
+      setProjectOverview(overview)
+      
     } catch (error) {
       console.error('Error loading dashboard data:', error)
+      setError('Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
-  }
-
-  const getTaskCounts = () => {
-    const total = tasks.length
-    const assigned = assignments.filter(a => a.status === 'assigned').length
-    const completed = assignments.filter(a => a.status === 'completed').length
-    const activeMembers = members.filter(m => m.isActive !== false).length
-
-    return { total, assigned, completed, teamMembers: activeMembers }
-  }
-
-  const getMilestoneProgress = () => {
-    const milestoneNames = {
-      1: 'Business & Data Understanding',
-      2: 'Data Preparation',
-      3: 'Modeling',
-      4: 'Evaluation',
-      5: 'Deployment',
-      6: 'Final Report'
-    }
-
-    return [1, 2, 3, 4, 5, 6].map(id => {
-      const milestoneTasks = tasks.filter(task => task.milestoneId === id)
-      const totalTasks = milestoneTasks.length
-      
-      if (totalTasks === 0) {
-        return { id, name: milestoneNames[id as keyof typeof milestoneNames], completed: 0, total: 0, percentage: 0 }
-      }
-
-      let completedTasks = 0
-      milestoneTasks.forEach(task => {
-        const assignment = assignments.find(a => 
-          a.taskId === task.id && a.status === 'completed'
-        )
-        if (assignment) {
-          completedTasks++
-        }
-      })
-
-      const percentage = Math.round((completedTasks / totalTasks) * 100)
-      return { id, name: milestoneNames[id as keyof typeof milestoneNames], completed: completedTasks, total: totalTasks, percentage }
-    })
-  }
-
-  const getProgressColor = (percentage: number) => {
-    if (percentage === 100) return 'bg-green-500'
-    if (percentage >= 75) return 'bg-blue-500'
-    if (percentage >= 50) return 'bg-yellow-500'
-    if (percentage >= 25) return 'bg-orange-500'
-    return 'bg-red-500'
-  }
-
-  const getTeamActivity = () => {
-    return assignments
-      .filter(a => a.assignedDate || a.completedDate)
-      .sort((a, b) => {
-        const dateA = new Date(a.completedDate || a.assignedDate)
-        const dateB = new Date(b.completedDate || b.assignedDate)
-        return dateB.getTime() - dateA.getTime()
-      })
-      .slice(0, 5)
-      .map(assignment => {
-        const task = tasks.find(t => t.id === assignment.taskId)
-        const member = members.find(m => m.id === assignment.memberId)
-        
-        let actionText = 'assigned'
-        let actionColor = 'text-blue-600'
-        let actionDate = assignment.assignedDate
-
-        if (assignment.completedDate) {
-          actionText = 'completed'
-          actionColor = 'text-green-600'
-          actionDate = assignment.completedDate
-        }
-
-        const timeAgo = getTimeAgo(new Date(actionDate))
-
-        return {
-          assignment,
-          task,
-          member,
-          actionText,
-          actionColor,
-          timeAgo
-        }
-      })
-  }
-
-  const getRecentTasks = () => {
-    return tasks
-      .sort((a, b) => new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime())
-      .slice(0, 5)
-      .map(task => {
-        const assignment = assignments.find(a => a.taskId === task.id && a.status !== 'reassigned')
-        return { task, assignment }
-      })
-  }
-
-  const getTaskStatusColor = (task: Task, assignment?: Assignment) => {
-    if (!assignment) return 'bg-gray-100 text-gray-800'
-    
-    switch (assignment.status) {
-      case 'completed': return 'bg-green-100 text-green-800'
-      case 'in-progress': return 'bg-yellow-100 text-yellow-800'
-      case 'assigned': return 'bg-blue-100 text-blue-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getTaskStatusText = (task: Task, assignment?: Assignment) => {
-    if (!assignment) return 'Available'
-    
-    switch (assignment.status) {
-      case 'completed': return 'Completed'
-      case 'in-progress': return 'In Progress'
-      case 'assigned': return 'Assigned'
-      default: return 'Available'
-    }
-  }
-
-  const getTimeAgo = (date: Date) => {
-    const now = new Date()
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-    
-    if (diffInMinutes < 1) return 'just now'
-    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`
-    
-    const diffInHours = Math.floor(diffInMinutes / 60)
-    if (diffInHours < 24) return `${diffInHours} hours ago`
-    
-    const diffInDays = Math.floor(diffInHours / 24)
-    if (diffInDays < 7) return `${diffInDays} days ago`
-    
-    return date.toLocaleDateString()
   }
 
   if (loading) {
@@ -217,19 +40,36 @@ export default function Dashboard() {
       <div className="bg-gray-50 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <i className="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-          <p className="text-gray-600">Redirecting to dashboard...</p>
-          <p className="text-sm text-gray-500 mt-2">
-            If you are not redirected, <a href="pages/dashboard.html" className="text-blue-600 hover:underline">click here</a>
-          </p>
+          <p className="text-gray-600">Loading project overview...</p>
         </div>
       </div>
     )
   }
 
-  const counts = getTaskCounts()
-  const milestoneProgress = getMilestoneProgress()
-  const teamActivity = getTeamActivity()
-  const recentTasks = getRecentTasks()
+  if (error) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <i className="fas fa-exclamation-triangle text-4xl text-red-600 mb-4"></i>
+          <p className="text-gray-600">{error}</p>
+          <button 
+            onClick={loadData}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!projectOverview) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">No project data available</p>
+      </div>
+    )
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -242,7 +82,7 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-900">Total Tasks</h3>
-              <p className="text-3xl font-bold text-blue-600">{counts.total}</p>
+              <p className="text-3xl font-bold text-blue-600">{projectOverview.total_tasks}</p>
             </div>
           </div>
         </div>
@@ -253,8 +93,8 @@ export default function Dashboard() {
               <i className="fas fa-clock text-yellow-600 text-2xl"></i>
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-900">Assigned</h3>
-              <p className="text-3xl font-bold text-yellow-600">{counts.assigned}</p>
+              <h3 className="text-lg font-semibold text-gray-900">Active Assignments</h3>
+              <p className="text-3xl font-bold text-yellow-600">{projectOverview.active_assignments}</p>
             </div>
           </div>
         </div>
@@ -266,7 +106,7 @@ export default function Dashboard() {
             </div>
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-900">Completed</h3>
-              <p className="text-3xl font-bold text-green-600">{counts.completed}</p>
+              <p className="text-3xl font-bold text-green-600">{projectOverview.completed_tasks}</p>
             </div>
           </div>
         </div>
@@ -274,110 +114,105 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <i className="fas fa-users text-purple-600 text-2xl"></i>
+              <i className="fas fa-chart-line text-purple-600 text-2xl"></i>
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
-              <p className="text-3xl font-bold text-purple-600">{counts.teamMembers}</p>
+              <h3 className="text-lg font-semibold text-gray-900">Progress</h3>
+              <p className="text-3xl font-bold text-purple-600">{projectOverview.overall_progress}%</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Milestone Progress */}
+      {/* Current Milestone */}
+      {projectOverview.current_milestone && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-bold text-gray-900">Current Milestone</h2>
+          </div>
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {projectOverview.current_milestone.name}
+                </h3>
+                <p className="text-sm text-gray-600">{projectOverview.current_milestone.subtitle}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-blue-600">
+                  {projectOverview.current_milestone.progress}%
+                </p>
+                <p className="text-xs text-gray-500">complete</p>
+              </div>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="h-2 rounded-full bg-blue-500 transition-all duration-300" 
+                style={{ width: `${projectOverview.current_milestone.progress}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Milestones Overview */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Milestone Progress</h2>
+          <h2 className="text-xl font-bold text-gray-900">All Milestones</h2>
         </div>
         <div className="p-6">
-          <div className="space-y-4">
-            {milestoneProgress.map(milestone => (
-              <div key={milestone.id} className="milestone-progress-item">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projectOverview.milestones?.map((milestone: any) => (
+              <div key={milestone.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm font-medium text-gray-900">Milestone {milestone.id}</span>
-                    <span className="text-xs text-gray-500">{milestone.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-900">{milestone.percentage}%</span>
-                    <span className="text-xs text-gray-500">({milestone.completed}/{milestone.total})</span>
-                  </div>
+                  <h4 className="font-medium text-gray-900">{milestone.name}</h4>
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                    milestone.status === 'completed' ? 'bg-green-100 text-green-800' :
+                    milestone.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {milestone.status}
+                  </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(milestone.percentage)}`} style={{ width: `${milestone.percentage}%` }}></div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      milestone.status === 'completed' ? 'bg-green-500' :
+                      milestone.status === 'active' ? 'bg-blue-500' :
+                      'bg-gray-400'
+                    }`}
+                    style={{ width: `${milestone.progress}%` }}
+                  ></div>
                 </div>
+                <p className="text-xs text-gray-500">{milestone.progress}% complete</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Team Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Team Activity</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {teamActivity.length > 0 ? (
-                teamActivity.map(({ assignment, task, member, actionText, actionColor, timeAgo }, index) => (
-                  <div key={assignment.assignmentId || index} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-medium text-gray-600">
-                          {(member?.name || assignment.memberDisplayName || 'Unknown').split(' ').map(n => n[0]).join('').substring(0, 2)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900">
-                        <span className="font-medium">{member?.name || assignment.memberDisplayName}</span>
-                        <span className={actionColor}> {actionText}</span>
-                        <span className="font-medium"> {task?.title || 'Unknown Task'}</span>
-                      </p>
-                      <p className="text-xs text-gray-500">{timeAgo}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm">No recent activity</p>
-              )}
-            </div>
-          </div>
+      {/* Project Statistics */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">Project Statistics</h2>
         </div>
-
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Recent Tasks</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              {recentTasks.length > 0 ? (
-                recentTasks.map(({ task, assignment }) => (
-                  <div key={task.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 truncate">{task.title}</h4>
-                      <p className="text-xs text-gray-500 mt-1">
-                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                          task.complexity === 'low' ? 'bg-green-100 text-green-800' :
-                          task.complexity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>{task.complexity}</span>
-                        <span className="ml-2">{task.estimatedHours}h</span>
-                        {assignment && <span className="ml-2">• {assignment.memberDisplayName}</span>}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 ml-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTaskStatusColor(task, assignment)}`}>
-                        {getTaskStatusText(task, assignment)}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 text-sm">No recent tasks</p>
-              )}
+        <div className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-gray-900">{projectOverview.total_milestones}</p>
+              <p className="text-sm text-gray-600">Total Milestones</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-green-600">{projectOverview.completed_milestones}</p>
+              <p className="text-sm text-gray-600">Completed</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-blue-600">{projectOverview.active_milestones}</p>
+              <p className="text-sm text-gray-600">Active</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-purple-600">{projectOverview.total_time_spent}h</p>
+              <p className="text-sm text-gray-600">Time Logged</p>
             </div>
           </div>
         </div>
