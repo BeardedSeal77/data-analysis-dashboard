@@ -1,6 +1,6 @@
 
 
-<!-- Ed here, just a bit of stuff for task 2 -->
+<!-- Ed here, just a bit of stuff for task 6 -->
 
 # Task 6: Comprehensive Data Description
 
