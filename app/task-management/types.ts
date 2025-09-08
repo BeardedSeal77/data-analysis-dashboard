@@ -5,8 +5,6 @@ export interface Task {
   milestoneId: number
   complexity: 'low' | 'medium' | 'high'
   category: string
-  skills: string[]
-  estimatedHours?: number
   dueDate?: string
   priority?: 'low' | 'medium' | 'high'
   createdDate: string

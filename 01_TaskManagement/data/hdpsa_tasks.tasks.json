@@ -1,277 +1,122 @@
-[{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de0"
+[
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de0"
+    },
+    "id": 1,
+    "title": "Background Research and Context Analysis",
+    "description": "Research and document the background context of health challenges in South Africa, including current health disparities, government initiatives, demographic factors, and the role of data analytics in public health decision-making.",
+    "category": "Business Understanding",
+    "complexity": "medium",
+    "milestoneId": 1,
+    "prerequisites": [],
+    "deliverables": [
+      "Background"
+    ]
   },
-  "id": 1,
-  "title": "Define Business Problem and Objectives",
-  "description": "Clearly articulate the business problem focusing on health challenges in South Africa. Define main objectives including identifying health risk zones, analyzing healthcare access, and linking hygiene to disease outcomes.",
-  "category": "Business Understanding",
-  "complexity": "low",
-  "estimatedHours": 3,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "business_problem_definition.md",
-    "project_objectives.md"
-  ],
-  "skills": [
-    "CRISP-DM",
-    "Business Analysis",
-    "Documentation"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de1"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de1"
+    },
+    "id": 2,
+    "title": "Business Objectives and Success Criteria Definition",
+    "description": "Define clear business objectives focusing on health risk identification, healthcare access analysis, and hygiene-disease outcome relationships. Establish measurable success criteria and KPIs for project evaluation.",
+    "category": "Business Understanding",
+    "complexity": "medium",
+    "milestoneId": 1,
+    "prerequisites": [1],
+    "deliverables": [
+      "Business Objectives and Success Criteria"
+    ]
   },
-  "id": 2,
-  "title": "Identify Stakeholders and Requirements",
-  "description": "Document key stakeholders including SA Department of Health, provincial authorities, NGOs like UNICEF and WHO. Define their specific requirements and expectations from the HDPSA project analysis.",
-  "category": "Business Understanding",
-  "complexity": "low",
-  "estimatedHours": 2,
-  "milestoneId": 1,
-  "prerequisites": [1],
-  "deliverables": [
-    "stakeholder_analysis.md",
-    "requirements_document.md"
-  ],
-  "skills": [
-    "Stakeholder Management",
-    "Requirements Analysis"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de2"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de2"
+    },
+    "id": 3,
+    "title": "Inventory of Resources Assessment",
+    "description": "Document and assess all available resources including datasets, tools, team expertise, time constraints, and technical infrastructure. Create comprehensive inventory for project planning.",
+    "category": "Business Understanding",
+    "complexity": "low",
+    "milestoneId": 1,
+    "prerequisites": [1],
+    "deliverables": [
+      "Inventory of Resources"
+    ]
   },
-  "id": 3,
-  "title": "Establish Success Criteria and KPIs",
-  "description": "Define measurable success criteria for the HDPSA project. Establish key performance indicators and metrics that will determine project success and impact assessment.",
-  "category": "Business Understanding",
-  "complexity": "medium",
-  "estimatedHours": 4,
-  "milestoneId": 1,
-  "prerequisites": [1, 2],
-  "deliverables": [
-    "success_criteria.md",
-    "kpi_framework.md"
-  ],
-  "skills": [
-    "KPI Development",
-    "Success Metrics",
-    "Business Analysis"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de3"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de3"
+    },
+    "id": 4,
+    "title": "Risks, Assumptions, and Constraints Analysis",
+    "description": "Identify and document project assumptions about data quality and representativeness. Assess risks including missing data, sampling bias, and resource constraints. Define project limitations and mitigation strategies.",
+    "category": "Business Understanding",
+    "complexity": "medium",
+    "milestoneId": 1,
+    "prerequisites": [1, 3],
+    "deliverables": [
+      "Risks, Assumptions, and Constraints"
+    ]
   },
-  "id": 4,
-  "title": "Document Assumptions, Risks, and Constraints",
-  "description": "Identify and document project assumptions about data quality, representativeness, and methodology. Assess risks including missing data, sampling bias, and resource constraints.",
-  "category": "Business Understanding",
-  "complexity": "medium",
-  "estimatedHours": 3,
-  "milestoneId": 1,
-  "prerequisites": [1],
-  "deliverables": [
-    "assumptions_document.md",
-    "risk_assessment.md",
-    "constraints_analysis.md"
-  ],
-  "skills": [
-    "Risk Assessment",
-    "Project Management",
-    "Critical Thinking"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de4"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de4"
+    },
+    "id": 5,
+    "title": "Data Mining Goals and Success Criteria",
+    "description": "Define specific data mining objectives and analytical goals. Establish technical success criteria for data analysis, pattern identification, and model development phases of the CRISP-DM methodology.",
+    "category": "Data Understanding",
+    "complexity": "medium",
+    "milestoneId": 1,
+    "prerequisites": [2],
+    "deliverables": [
+      "Data Mining Goals and Success Criteria"
+    ]
   },
-  "id": 5,
-  "title": "Explore Healthcare Access Dataset",
-  "description": "Conduct comprehensive exploration of Access to Health Care dataset including variables like distance to facilities, travel time, facility types, and provider density. Document data structure and quality issues.",
-  "category": "Data Understanding",
-  "complexity": "medium",
-  "estimatedHours": 4,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "healthcare_access_eda.R",
-    "healthcare_data_summary.md"
-  ],
-  "skills": [
-    "R",
-    "Data Exploration",
-    "Healthcare Analytics"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de5"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de5"
+    },
+    "id": 6,
+    "title": "Comprehensive Data Description",
+    "description": "Create detailed descriptions of all 12 HDPSA datasets including variable definitions, data types, value ranges, distributions, and structural characteristics. Document data sources and collection methodologies.",
+    "category": "Data Understanding",
+    "complexity": "high",
+    "milestoneId": 1,
+    "prerequisites": [5],
+    "deliverables": [
+      "Data Description"
+    ]
   },
-  "id": 6,
-  "title": "Analyze Child and Maternal Mortality Datasets",
-  "description": "Explore Child Mortality and Maternal Mortality datasets. Examine mortality rates, patterns across provinces, and relationships with socioeconomic factors. Document data quality and missing values.",
-  "category": "Data Understanding",
-  "complexity": "medium",
-  "estimatedHours": 5,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "mortality_analysis_eda.R",
-    "mortality_data_report.md",
-    "mortality_visualizations.png"
-  ],
-  "skills": [
-    "R",
-    "Statistical Analysis",
-    "Public Health",
-    "Data Visualization"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de6"
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de6"
+    },
+    "id": 7,
+    "title": "Data Exploration and Visualization",
+    "description": "Conduct comprehensive exploratory data analysis across all datasets. Create visualizations showing distributions, relationships, and patterns. Generate interactive dashboard for stakeholder review using Power BI and web technologies.",
+    "category": "Data Understanding",
+    "complexity": "high",
+    "milestoneId": 1,
+    "prerequisites": [6],
+    "deliverables": [
+      "Data Exploration and Visualization"
+    ]
   },
-  "id": 7,
-  "title": "Examine Water and Sanitation Infrastructure Data",
-  "description": "Analyze Water and Toilet Facilities datasets to understand access patterns, infrastructure quality, and regional disparities. Focus on improved vs unimproved access and distance factors.",
-  "category": "Data Understanding",
-  "complexity": "medium",
-  "estimatedHours": 4,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "water_sanitation_eda.R",
-    "infrastructure_analysis.md",
-    "access_patterns_viz.png"
-  ],
-  "skills": [
-    "R",
-    "Infrastructure Analysis",
-    "Spatial Analysis",
-    "ggplot2"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de7"
-  },
-  "id": 8,
-  "title": "Investigate Health Behavior Patterns",
-  "description": "Explore HIV Behavior, Immunization, and COVID-19 Prevention datasets. Analyze behavioral patterns, vaccination coverage, and health compliance across different demographics and regions.",
-  "category": "Data Understanding",
-  "complexity": "high",
-  "estimatedHours": 6,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "health_behavior_eda.R",
-    "behavior_patterns_report.md",
-    "vaccination_analysis.html"
-  ],
-  "skills": [
-    "R",
-    "Behavioral Analytics",
-    "Public Health",
-    "Statistical Modeling"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de8"
-  },
-  "id": 9,
-  "title": "Analyze Nutrition and Child Health Indicators",
-  "description": "Examine Anthropometry, ARI Symptoms, and IYCF datasets focusing on child nutrition, stunting, wasting, feeding practices, and respiratory health patterns across provinces.",
-  "category": "Data Understanding",
-  "complexity": "medium",
-  "estimatedHours": 5,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "nutrition_health_eda.R",
-    "child_health_summary.md",
-    "nutrition_dashboard.html"
-  ],
-  "skills": [
-    "R",
-    "Nutrition Analysis",
-    "Child Health",
-    "Data Visualization"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098de9"
-  },
-  "id": 10,
-  "title": "Assess Literacy and Education Patterns",
-  "description": "Explore Literacy dataset examining overall, male, and female literacy rates. Analyze education patterns across provinces and potential correlations with health outcomes.",
-  "category": "Data Understanding",
-  "complexity": "low",
-  "estimatedHours": 3,
-  "milestoneId": 1,
-  "prerequisites": [],
-  "deliverables": [
-    "literacy_analysis.R",
-    "education_patterns.md",
-    "literacy_map.png"
-  ],
-  "skills": [
-    "R",
-    "Education Analytics",
-    "Demographics",
-    "Correlation Analysis"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098dea"
-  },
-  "id": 11,
-  "title": "Create Comprehensive Data Dictionary",
-  "description": "Develop detailed data dictionary documenting all variables across 12 datasets including definitions, data types, value ranges, missing value patterns, and data quality assessments.",
-  "category": "Data Understanding",
-  "complexity": "medium",
-  "estimatedHours": 6,
-  "milestoneId": 1,
-  "prerequisites": [5, 6, 7, 8, 9, 10],
-  "deliverables": [
-    "master_data_dictionary.xlsx",
-    "data_quality_report.md"
-  ],
-  "skills": [
-    "Data Documentation",
-    "Data Quality",
-    "Excel",
-    "Technical Writing"
-  ]
-},
-{
-  "_id": {
-    "$oid": "68b806f3881f36d185098deb"
-  },
-  "id": 12,
-  "title": "Generate Preliminary Visualizations Dashboard",
-  "description": "Create preliminary dashboard using Power BI showing key insights from all datasets. Include interactive visualizations for stakeholder review and initial pattern identification.",
-  "category": "Data Understanding",
-  "complexity": "high",
-  "estimatedHours": 8,
-  "milestoneId": 1,
-  "prerequisites": [5, 6, 7, 8, 9, 10],
-  "deliverables": [
-    "preliminary_dashboard.pbix",
-    "visualization_guide.md",
-    "insights_summary.md"
-  ],
-  "skills": [
-    "Power BI",
-    "Dashboard Design",
-    "Data Visualization",
-    "Stakeholder Communication"
-  ]
-}]
+  {
+    "_id": {
+      "$oid": "68b806f3881f36d185098de7"
+    },
+    "id": 8,
+    "title": "Data Quality Assessment",
+    "description": "Perform thorough data quality assessment including missing value analysis, outlier detection, consistency checks, and completeness evaluation. Document quality issues and recommend data preparation strategies.",
+    "category": "Data Understanding",
+    "complexity": "high",
+    "milestoneId": 1,
+    "prerequisites": [6, 7],
+    "deliverables": [
+      "Data Quality Assessment"
+    ]
+  }
+]

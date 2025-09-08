@@ -58,21 +58,7 @@ export default function TaskCard({
       {/* Task metadata */}
       <div className="flex items-center justify-between mb-3 text-xs text-subtle">
         <span className="px-2 py-1 rounded bg-highlight-med text-text text-xs">{task.category}</span>
-        {task.estimatedHours && (
-          <span className="px-2 py-1 rounded bg-blue-600 text-white text-xs">{task.estimatedHours}h</span>
-        )}
       </div>
-
-      {/* Skills */}
-      {task.skills && task.skills.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-3">
-          {task.skills.map((skill, index) => (
-            <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              {skill}
-            </span>
-          ))}
-        </div>
-      )}
 
 
       {/* Action buttons */}
