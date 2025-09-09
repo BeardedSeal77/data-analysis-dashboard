@@ -1,18 +1,18 @@
 
 ---
-title: "BIN381 — Milestone 1: Data Understanding (Full QA, Clean Headings)"
+title: 'BIN381 — Milestone 1: Data Understanding (Full QA, Clean Headings)'
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
-  html_document:
+  word_document:
     toc: true
-    toc_float: true
     number_sections: true
-    df_print: paged
+  pdf_document:
+    toc: true
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, 
+                      out.width = "100%", fig.pos = "H")
 suppressPackageStartupMessages({
   library(tidyverse)
   library(readr)
@@ -23,10 +23,12 @@ suppressPackageStartupMessages({
 theme_set(theme_minimal())
 ```
 
+\newpage
+
 # 1. Load All Datasets
 
 ```{r}
-base <- "02_Project/Data/01_Raw"
+base <- "../../Data/01_Raw"
 # Optional: set to TRUE to write CSV exports alongside this HTML
 write_exports <- FALSE
 # Optional: print full duplicate rows if count <= this threshold (to avoid huge output)
@@ -79,6 +81,8 @@ if(nrow(inventory) == 0){
 gt::gt(inventory)
 ```
 
+\newpage
+
 # 2. Dataset-Level Summary
 
 ```{r}
@@ -107,6 +111,8 @@ if (write_exports) {
   readr::write_csv(dataset_summary, "M1_dataset_summary.csv")
 }
 ```
+
+\newpage
 
 # 3. Data Quality Assessment
 
@@ -143,17 +149,19 @@ missingness_2d <- purrr::imap_dfr(dfs, function(df, nm){
 numeric_cols <- names(missingness_2d)[-1]  # exclude 'dataset' column
 
 # Create numeric version for gt color scaling
-missingness_for_gt <- missingness_2d
+missingdata <- missingness_2d
 for(col in numeric_cols) {
-  missingness_for_gt[[col]] <- ifelse(missingness_2d[[col]] == "N/A", NA, as.numeric(missingness_2d[[col]]))
+  missingdata[[col]] <- ifelse(missingness_2d[[col]] == "N/A", NA, as.numeric(missingness_2d[[col]]))
 }
 
 # Get the actual range of values for proper scaling
-all_values <- unlist(missingness_for_gt[numeric_cols])
+all_values <- unlist(missingdata[numeric_cols])
 all_values <- all_values[!is.na(all_values)]
 max_val <- if(length(all_values) > 0) max(all_values) else 1
+# Display a simplified missing values table that fits on A4
+print("Creating missing values table...")
 
-gt::gt(missingness_for_gt) |>
+gt::gt(missingdata) |>
   gt::tab_header(title = "Missing Values (Count) - 2D View") |>
   gt::data_color(
     columns = all_of(numeric_cols),
@@ -161,7 +169,12 @@ gt::gt(missingness_for_gt) |>
     domain = c(0, max_val),
     na_color = "lightgray"
   ) |>
-  gt::fmt_missing(columns = all_of(numeric_cols), missing_text = "N/A")
+  gt::fmt_missing(columns = all_of(numeric_cols), missing_text = "N/A") |>
+  gt::tab_options(
+    table.font.size = px(8),
+    column_labels.font.size = px(8),
+    data_row.padding = px(2)
+  )
 
 # Also keep the flat format for exports if needed
 missingness_all <- purrr::imap(dfs, function(df, nm){
@@ -179,6 +192,8 @@ if (write_exports) {
 }
 ```
 
+
+\newpage
 
 ## 3.2 Duplicates (Row-Level)
 
@@ -226,6 +241,8 @@ purrr::iwalk(dfs, function(df, nm){
   }
 })
 ```
+
+\newpage
 
 ## 3.3 Outliers (Numeric Columns, |z| > 3)
 
@@ -307,57 +324,139 @@ if (write_exports) {
 }
 ```
 
+\newpage
+
 # 4. Preliminary Visualizations
 
-## 4.1 Numeric Distributions (Highest-Variance Column per Dataset)
+## 4.1 Highest Variance Numeric Columns Summary
 
-```{r, fig.width=7, fig.height=4}
-plot_numeric_hist <- function(df, nm){
+```{r}
+# Get highest variance column and its variance for each dataset
+variance_summary <- purrr::imap_dfr(dfs, function(df, nm){
   nums <- df |> dplyr::select(where(is.numeric))
-  if(ncol(nums) == 0) return(NULL)
+  if(ncol(nums) == 0) return(tibble(dataset = nm, highest_var_column = "N/A", variance = "N/A"))
+  
   var_tbl <- summarize(nums, across(everything(), function(y) var(y, na.rm = TRUE)))
-  var_col <- var_tbl |> pivot_longer(everything(), names_to="col", values_to="v") |>
-    arrange(desc(v)) |> slice(1) |> pull(col)
-  ggplot(df, aes(x = .data[[var_col]])) +
-    geom_histogram(bins = 20) +
-    labs(title = paste0(nm, " — Distribution of ", var_col), x = var_col, y = "Count")
-}
-purrr::iwalk(dfs, function(df, nm){ p <- plot_numeric_hist(df, nm); if(!is.null(p)) print(p) })
+  var_results <- var_tbl |> pivot_longer(everything(), names_to="col", values_to="v") |>
+    arrange(desc(v)) |> slice(1)
+  
+  tibble(
+    dataset = nm,
+    highest_var_column = var_results$col,
+    variance = as.character(round(var_results$v, 2))
+  )
+})
+
+# Apply heatmap styling to variance values
+variance_for_gt <- variance_summary
+variance_for_gt$variance_numeric <- ifelse(variance_summary$variance == "N/A", NA, as.numeric(variance_summary$variance))
+
+max_var <- max(variance_for_gt$variance_numeric, na.rm = TRUE)
+
+gt::gt(variance_for_gt |> select(-variance_numeric)) |>
+  gt::tab_header(title = "Highest Variance Numeric Columns by Dataset") |>
+  gt::data_color(
+    columns = variance,
+    palette = c("white", "darkblue"),
+    domain = c(0, max_var),
+    na_color = "lightgray"
+  )
 ```
 
-## 4.2 Top Categories (First Categorical Column)
+## 4.2 Most Frequent Categories Summary
 
-```{r, fig.width=7, fig.height=4}
-plot_top_category <- function(df, nm){
+```{r}
+# Get most frequent category from first categorical column for each dataset
+category_summary <- purrr::imap_dfr(dfs, function(df, nm){
   cats <- df |> dplyr::select(where(negate(is.numeric)))
-  if(ncol(cats) == 0) return(NULL)
+  if(ncol(cats) == 0) return(tibble(dataset = nm, categorical_column = "N/A", most_frequent_value = "N/A", frequency = "N/A"))
+  
   col1 <- names(cats)[1]
-  top5 <- df |> mutate(across(all_of(col1), as.character)) |>
-    count(.data[[col1]], sort = TRUE) |> slice_head(n = 5)
-  ggplot(top5, aes(x = reorder(.data[[col1]], -n), y = n)) +
-    geom_col() +
-    labs(title = paste0(nm, " — Top 5 of ", col1), x = col1, y = "Count")
-}
-purrr::iwalk(dfs, function(df, nm){ p <- plot_top_category(df, nm); if(!is.null(p)) print(p) })
+  top_category <- df |> mutate(across(all_of(col1), as.character)) |>
+    count(.data[[col1]], sort = TRUE) |> slice_head(n = 1)
+  
+  tibble(
+    dataset = nm,
+    categorical_column = col1,
+    most_frequent_value = top_category[[col1]][1],
+    frequency = as.character(top_category$n[1])
+  )
+})
+
+# Apply heatmap styling to frequency values
+category_for_gt <- category_summary
+category_for_gt$frequency_numeric <- ifelse(category_summary$frequency == "N/A", NA, as.numeric(category_summary$frequency))
+
+max_freq <- max(category_for_gt$frequency_numeric, na.rm = TRUE)
+
+gt::gt(category_for_gt |> select(-frequency_numeric)) |>
+  gt::tab_header(title = "Most Frequent Categories by Dataset") |>
+  gt::data_color(
+    columns = frequency,
+    palette = c("white", "darkgreen"),
+    domain = c(0, max_freq),
+    na_color = "lightgray"
+  )
 ```
 
-# 5. Correlations (All Numeric Columns)
+\newpage
 
-```{r, fig.width=7, fig.height=5}
-plot_corr_heatmap_all <- function(df, nm){
-  nums <- df |> dplyr::select(where(is.numeric))
-  if(ncol(nums) < 2) return(NULL)
-  mat <- cor(nums, use = "pairwise.complete.obs")
-  tidy <- as_tibble(mat, rownames = "row") |>
-    pivot_longer(-row, names_to = "col", values_to = "corr")
-  ggplot(tidy, aes(x = row, y = col, fill = corr)) +
-    geom_tile() +
-    scale_fill_gradient2(limits = c(-1, 1)) +
-    labs(title = paste0(nm, " — Correlation heatmap (all numeric columns)"),
-         x = NULL, y = NULL, fill = "r") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# 5. Average Correlation Heatmap (Across All Datasets)
+
+```{r, fig.width=10, fig.height=8}
+# Get all unique numeric column names across datasets
+all_numeric_columns <- unique(unlist(lapply(dfs, function(df) names(df |> dplyr::select(where(is.numeric))))))
+
+if(length(all_numeric_columns) >= 2) {
+  # Calculate correlation matrices for each dataset and average them
+  correlation_matrices <- purrr::map(dfs, function(df){
+    nums <- df |> dplyr::select(where(is.numeric))
+    if(ncol(nums) < 2) return(NULL)
+    
+    # Ensure we have all columns (fill missing with NA)
+    for(col in all_numeric_columns) {
+      if(!col %in% names(nums)) {
+        nums[[col]] <- NA
+      }
+    }
+    
+    # Reorder columns to match all_numeric_columns
+    nums <- nums |> select(all_of(all_numeric_columns))
+    
+    # Calculate correlation matrix
+    cor(nums, use = "pairwise.complete.obs")
+  })
+  
+  # Remove NULL matrices (datasets with < 2 numeric columns)
+  correlation_matrices <- correlation_matrices[!sapply(correlation_matrices, is.null)]
+  
+  if(length(correlation_matrices) > 0) {
+    # Average the correlation matrices
+    avg_corr_matrix <- Reduce("+", correlation_matrices) / length(correlation_matrices)
+    
+    # Convert to tidy format for ggplot
+    tidy_corr <- as_tibble(avg_corr_matrix, rownames = "row") |>
+      pivot_longer(-row, names_to = "col", values_to = "corr")
+    
+    # Create heatmap
+    ggplot(tidy_corr, aes(x = row, y = col, fill = corr)) +
+      geom_tile(color = "white", size = 0.5) +
+      scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                          midpoint = 0, limits = c(-1, 1), name = "Correlation") +
+      labs(title = "Average Correlation Heatmap (Across All Datasets)",
+           subtitle = paste("Averaged across", length(correlation_matrices), "datasets"),
+           x = NULL, y = NULL) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+            axis.text.y = element_text(size = 8),
+            plot.title = element_text(hjust = 0.5),
+            plot.subtitle = element_text(hjust = 0.5))
+  } else {
+    cat("No datasets have sufficient numeric columns for correlation analysis.")
+  }
+} else {
+  cat("Insufficient numeric columns across all datasets for correlation analysis.")
 }
-purrr::iwalk(dfs, function(df, nm){ p <- plot_corr_heatmap_all(df, nm); if(!is.null(p)) print(p) })
 ```
 
 # Appendix. Session Info
