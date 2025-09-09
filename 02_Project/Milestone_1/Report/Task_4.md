@@ -1,5 +1,3 @@
-
-
 # Topic 4: Risks, Assumptions and Constraints 
 
 ## Risks

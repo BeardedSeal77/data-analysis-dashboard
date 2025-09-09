@@ -26,11 +26,16 @@ theme_set(theme_minimal())
 # 1. Load All Datasets
 
 ```{r}
-base <- "."
+base <- "02_Project/Data/01_Raw"
 # Optional: set to TRUE to write CSV exports alongside this HTML
 write_exports <- FALSE
 # Optional: print full duplicate rows if count <= this threshold (to avoid huge output)
 dup_print_threshold <- 200L
+
+# Debug: check working directory and if base path exists
+cat("Working directory:", getwd(), "\n")
+cat("Base path exists:", dir.exists(base), "\n")
+cat("Base path contents:", length(list.files(base)), "files\n")
 
 # Detect files
 files_csv  <- list.files(base, pattern = "\\.(csv)$", ignore.case = TRUE, full.names = TRUE)
@@ -38,7 +43,9 @@ files_xlsx <- list.files(base, pattern = "\\.(xlsx)$", ignore.case = TRUE, full.
 
 # Read helpers
 read_csv_clean <- function(path){
-  readr::read_csv(path, show_col_types = FALSE) |> janitor::clean_names()
+  # Read first line as headers, skip the comment line
+  headers <- readr::read_lines(path, n_max = 1)
+  readr::read_csv(path, show_col_types = FALSE, skip = 2, col_names = strsplit(headers, ",")[[1]]) |> janitor::clean_names()
 }
 read_xlsx_all <- function(path){
   sh <- readxl::excel_sheets(path)
@@ -106,39 +113,72 @@ if (write_exports) {
 ## 3.1 Missing Values (Per Column, All Datasets)
 
 ```{r}
-missingness_by_dataset <- purrr::imap(dfs, function(df, nm){
+# Get all unique column names across datasets
+all_columns <- unique(unlist(lapply(dfs, names)))
+
+# Create 2D table: rows = datasets, columns = fields, values = missing counts
+missingness_2d <- purrr::imap_dfr(dfs, function(df, nm){
+  total_rows <- nrow(df)
+  
+  # Create row for this dataset with all possible columns
+  row_data <- tibble(dataset = nm)
+  for(col in all_columns) {
+    if(col %in% names(df)) {
+      missing_count <- sum(is.na(df[[col]]))
+      # If all entries are missing, the field effectively doesn't exist
+      if(missing_count == total_rows) {
+        row_data[[col]] <- "N/A"
+      } else {
+        row_data[[col]] <- as.character(missing_count)
+      }
+    } else {
+      # Column doesn't exist in this dataset
+      row_data[[col]] <- "N/A"
+    }
+  }
+  row_data
+})
+
+# Display the 2D table with heatmap background colors
+numeric_cols <- names(missingness_2d)[-1]  # exclude 'dataset' column
+
+# Create numeric version for gt color scaling
+missingness_for_gt <- missingness_2d
+for(col in numeric_cols) {
+  missingness_for_gt[[col]] <- ifelse(missingness_2d[[col]] == "N/A", NA, as.numeric(missingness_2d[[col]]))
+}
+
+# Get the actual range of values for proper scaling
+all_values <- unlist(missingness_for_gt[numeric_cols])
+all_values <- all_values[!is.na(all_values)]
+max_val <- if(length(all_values) > 0) max(all_values) else 1
+
+gt::gt(missingness_for_gt) |>
+  gt::tab_header(title = "Missing Values (Count) - 2D View") |>
+  gt::data_color(
+    columns = all_of(numeric_cols),
+    palette = c("white", "darkred"),
+    domain = c(0, max_val),
+    na_color = "lightgray"
+  ) |>
+  gt::fmt_missing(columns = all_of(numeric_cols), missing_text = "N/A")
+
+# Also keep the flat format for exports if needed
+missingness_all <- purrr::imap(dfs, function(df, nm){
   tibble(
     dataset = nm,
     column = names(df),
     missing_pct = round(colMeans(is.na(df))*100, 2),
     missing_count = colSums(is.na(df))
   )
-})
-
-# Full table (all columns with any missingness first)
-missingness_all <- bind_rows(missingness_by_dataset) |>
-  arrange(desc(missing_pct), dataset, column)
-
-gt::gt(missingness_all)
+}) |> bind_rows() |> arrange(desc(missing_pct), dataset, column)
 
 if (write_exports) {
+  readr::write_csv(missingness_2d, "M1_missingness_2d_table.csv")
   readr::write_csv(missingness_all, "M1_missingness_all_columns.csv")
 }
 ```
 
-### 3.1.1 Missingness Charts (Per Dataset)
-
-```{r, fig.width=8, fig.height=4}
-plot_missingness <- function(df, nm){
-  miss <- tibble(column = names(df), missing_pct = round(colMeans(is.na(df))*100, 2))
-  ggplot(miss, aes(x = reorder(column, -missing_pct), y = missing_pct)) +
-    geom_col() +
-    coord_cartesian(ylim = c(0, 100)) +
-    labs(title = paste0(nm, " — Missingness by column (%)"), x = NULL, y = "Missing %") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-}
-purrr::iwalk(dfs, function(df, nm) print(plot_missingness(df, nm)))
-```
 
 ## 3.2 Duplicates (Row-Level)
 
@@ -148,9 +188,24 @@ dup_summary <- purrr::imap_dfr(dfs, function(df, nm){
   tibble(dataset = nm, duplicate_rows = sum(duplicated(df)))
 }) |> arrange(desc(duplicate_rows))
 
-gt::gt(dup_summary)
+# Create 2D table: datasets as rows, duplicate_rows as column
+dup_2d <- dup_summary |>
+  select(dataset, duplicate_rows)
+
+# Apply heatmap styling to duplicates table
+max_dup_val <- max(dup_2d$duplicate_rows, na.rm = TRUE)
+
+gt::gt(dup_2d) |>
+  gt::tab_header(title = "Duplicate Rows Count - 2D View") |>
+  gt::data_color(
+    columns = duplicate_rows,
+    palette = c("white", "darkred"),
+    domain = c(0, max_dup_val),
+    na_color = "lightgray"
+  )
 
 if (write_exports) {
+  readr::write_csv(dup_2d, "M1_duplicates_2d_table.csv")
   readr::write_csv(dup_summary, "M1_duplicates_by_dataset.csv")
 }
 
@@ -194,12 +249,34 @@ outliers_by_dataset <- purrr::imap(dfs, function(df, nm){
 outliers_all <- bind_rows(outliers_by_dataset)
 
 if(nrow(outliers_all) > 0){
-  gt::gt(outliers_all)
+  # Get all unique numeric column names across datasets
+  all_numeric_columns <- unique(outliers_all$column)
+  
+  # Create 2D table: rows = datasets, columns = numeric fields, values = outlier counts
+  outliers_2d <- outliers_all |>
+    pivot_wider(names_from = column, values_from = outliers_abs_z_gt_3, values_fill = 0)
+  
+  # Apply heatmap styling to outliers table
+  outlier_cols <- names(outliers_2d)[-1]  # exclude 'dataset' column
+  max_outlier_val <- max(unlist(outliers_2d[outlier_cols]), na.rm = TRUE)
+  
+  gt::gt(outliers_2d) |>
+    gt::tab_header(title = "Outlier Counts (|z|>3) - 2D View") |>
+    gt::data_color(
+      columns = all_of(outlier_cols),
+      palette = c("white", "darkred"),
+      domain = c(0, max_outlier_val),
+      na_color = "lightgray"
+    )
+  
 } else {
   cat("No numeric columns suitable for outlier analysis were found.")
 }
 
 if (write_exports) {
+  if(nrow(outliers_all) > 0) {
+    readr::write_csv(outliers_2d, "M1_outliers_2d_table.csv")
+  }
   readr::write_csv(outliers_all, "M1_outliers_all_numeric_columns.csv")
 }
 ```
@@ -209,7 +286,7 @@ if (write_exports) {
 ```{r}
 # Build a tidy issues log: one row per issue instance
 issues_missing <- missingness_all |>
-  filter(missing_count > 0) |>
+  filter(missing_count > 0 & missing_pct < 100) |>  # Exclude 100% missing (field doesn't exist)
   transmute(dataset, issue_type = "missing", column, detail = paste0(missing_pct, "% (", missing_count, " cells)"))
 
 issues_dup <- dup_summary |>
