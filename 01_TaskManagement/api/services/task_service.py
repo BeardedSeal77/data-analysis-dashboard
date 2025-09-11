@@ -25,6 +25,10 @@ class TaskService:
         """Get a specific task by ID"""
         return self.db.get_task_by_id(task_id)
     
+    def get_task_by_composite_id(self, composite_id: str) -> Optional[Task]:
+        """Get a specific task by composite ID"""
+        return self.db.get_task_by_composite_id(composite_id)
+    
     def get_tasks_by_milestone(self, milestone_id: int) -> List[Dict[str, Any]]:
         """Get all tasks for a specific milestone with prerequisite status"""
         tasks = self.db.get_tasks_by_milestone(milestone_id)
@@ -41,8 +45,8 @@ class TaskService:
         
         available_tasks = []
         for task in tasks:
-            task_id = task.id if hasattr(task, 'id') else task['id']
-            assignments = self.db.get_assignments_by_task(task_id)
+            composite_id = task.composite_id if hasattr(task, 'composite_id') else task.get('compositeId')
+            assignments = self.db.get_assignments_by_composite_task_id(composite_id)
             # Check if task has any active assignments
             has_active_assignment = any(assignment.is_active() for assignment in assignments)
             if not has_active_assignment:
@@ -50,7 +54,7 @@ class TaskService:
         
         return available_tasks
     
-    def get_assignable_tasks(self, completed_task_ids: List[int], milestone_id: Optional[int] = None) -> List[Task]:
+    def get_assignable_tasks(self, completed_composite_ids: List[str], milestone_id: Optional[int] = None) -> List[Task]:
         """
         Get tasks that can be assigned based on prerequisites being met
         """
@@ -59,35 +63,38 @@ class TaskService:
         
         for task in available_tasks:
             prerequisites = task.prerequisites if hasattr(task, 'prerequisites') else task.get('prerequisites', [])
-            can_assign = all(prereq_id in completed_task_ids for prereq_id in prerequisites)
+            can_assign = all(prereq_id in completed_composite_ids for prereq_id in prerequisites)
             if can_assign:
                 assignable_tasks.append(task)
         
         return assignable_tasks
     
-    def get_completed_task_ids(self, milestone_id: Optional[int] = None) -> List[int]:
-        """Get IDs of all completed tasks"""
-        completed_ids = []
+    def get_completed_composite_ids(self, milestone_id: Optional[int] = None) -> List[str]:
+        """Get composite IDs of all completed tasks"""
+        completed_composite_ids = []
         assignments = self.db.get_all_assignments()
         
         for assignment in assignments:
             if assignment.is_completed():
-                # If milestone filter is specified, check if task belongs to that milestone
-                if milestone_id:
-                    task = self.get_task_by_id(assignment.task_id)
-                    if task and task.milestone_id == milestone_id:
-                        completed_ids.append(assignment.task_id)
-                else:
-                    completed_ids.append(assignment.task_id)
+                # Get the composite task ID directly from assignment
+                if hasattr(assignment, 'composite_task_id'):
+                    composite_task_id = assignment.composite_task_id
+                    # If milestone filter is specified, check milestone from composite ID
+                    if milestone_id:
+                        task_milestone = int(composite_task_id.split('-')[0])
+                        if task_milestone == milestone_id:
+                            completed_composite_ids.append(composite_task_id)
+                    else:
+                        completed_composite_ids.append(composite_task_id)
         
-        return list(set(completed_ids))  # Remove duplicates
+        return list(set(completed_composite_ids))  # Remove duplicates
     
-    def assign_task_to_member(self, task_id: int, member_id: int) -> Dict[str, Any]:
+    def assign_task_to_member(self, composite_task_id: str, member_id: int) -> Dict[str, Any]:
         """
         Assign a task to a member with business rule validation
         """
         # Check if task exists
-        task = self.get_task_by_id(task_id)
+        task = self.get_task_by_composite_id(composite_task_id)
         if not task:
             return {"success": False, "error": "Task not found"}
         
@@ -100,7 +107,7 @@ class TaskService:
             return {"success": False, "error": "Member is not active"}
         
         # Check if task is already assigned
-        existing_assignments = self.db.get_assignments_by_task(task_id)
+        existing_assignments = self.db.get_assignments_by_composite_task_id(composite_task_id)
         active_assignments = [a for a in existing_assignments if a.is_active()]
         if active_assignments:
             return {"success": False, "error": "Task is already assigned"}
@@ -108,7 +115,7 @@ class TaskService:
         # Prerequisites validation removed - tasks can be assigned regardless of prerequisites
         
         # Create assignment
-        assignment = Assignment.create_new(task_id, member_id)
+        assignment = Assignment.create_new(composite_task_id, member_id)
         success = self.db.create_assignment(assignment)
         
         if success:
@@ -170,12 +177,12 @@ class TaskService:
     def get_milestone_task_summary(self, milestone_id: int) -> Dict[str, Any]:
         """Get comprehensive task summary for a milestone"""
         tasks = self.get_tasks_by_milestone(milestone_id)  # This returns dictionaries now
-        completed_task_ids = self.get_completed_task_ids(milestone_id)
+        completed_composite_ids = self.get_completed_composite_ids(milestone_id)
         
         total_tasks = len(tasks)
-        completed_tasks = len([t for t in tasks if t['id'] in completed_task_ids])
+        completed_tasks = len([t for t in tasks if t.get('compositeId') in completed_composite_ids])
         available_tasks = len(self.get_available_tasks(milestone_id))
-        assignable_tasks = len(self.get_assignable_tasks(completed_task_ids, milestone_id))
+        assignable_tasks = len(self.get_assignable_tasks(completed_composite_ids, milestone_id))
         
         complexity_dist = {"low": 0, "medium": 0, "high": 0}
         category_dist = {}
@@ -253,7 +260,7 @@ class TaskService:
             return {"success": False, "error": "Task not found"}
         
         # Check if task has active assignments
-        assignments = self.db.get_assignments_by_task(task_id)
+        assignments = self.db.get_assignments_by_composite_task_id(task.composite_id)
         active_assignments = [a for a in assignments if a.is_active()]
         if active_assignments:
             return {"success": False, "error": "Cannot delete task with active assignments"}
@@ -275,18 +282,18 @@ class TaskService:
         # Get all assignments to determine task statuses
         all_assignments = []
         for task in tasks:
-            task_id = task.id if hasattr(task, 'id') else task['id']
-            assignments = self.db.get_assignments_by_task(task_id)
+            composite_id = task.composite_id if hasattr(task, 'composite_id') else task.get('compositeId')
+            assignments = self.db.get_assignments_by_composite_task_id(composite_id)
             all_assignments.extend(assignments)
         
         # Create a mapping of task_id -> status
         task_status_map = {}
         for assignment in all_assignments:
-            task_id = assignment.task_id
+            composite_task_id = assignment.composite_task_id
             if assignment.status.value == 'completed':
-                task_status_map[task_id] = 'completed'
-            elif assignment.status.value in ['assigned', 'in-progress'] and task_id not in task_status_map:
-                task_status_map[task_id] = 'assigned'
+                task_status_map[composite_task_id] = 'completed'
+            elif assignment.status.value in ['assigned', 'in-progress'] and composite_task_id not in task_status_map:
+                task_status_map[composite_task_id] = 'assigned'
         
         # Enrich each task with prerequisite status
         enriched_tasks = []

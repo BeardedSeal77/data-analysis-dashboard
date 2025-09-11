@@ -20,7 +20,7 @@ interface Task {
 }
 
 interface Assignment {
-  taskId: string
+  compositeTaskId: string
   status: 'assigned' | 'in-progress' | 'completed' | 'reassigned'
 }
 
@@ -104,7 +104,7 @@ export default function Navbar() {
         
         milestoneTasks.forEach(task => {
           const assignment = Array.isArray(assignments) ? assignments.find(a => 
-            a.taskId === task.id && a.status !== 'reassigned'
+            a.compositeTaskId === task.compositeId && a.status !== 'reassigned'
           ) : null
           
           if (assignment) {

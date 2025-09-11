@@ -10,12 +10,12 @@ class AssignmentStatus(Enum):
     REASSIGNED = "reassigned"
 
 class Assignment:
-    def __init__(self, assignment_id: str, task_id: int, member_id: int,
+    def __init__(self, assignment_id: str, composite_task_id: str, member_id: int,
                  status: str = "assigned", assigned_date: Optional[str] = None,
                  completed_date: Optional[str] = None, time_spent: int = 0,
                  notes: Optional[str] = None):
         self.assignment_id = assignment_id
-        self.task_id = task_id
+        self.composite_task_id = composite_task_id
         self.member_id = member_id
         self.status = AssignmentStatus(status)
         self.assigned_date = assigned_date or datetime.now().isoformat() + "Z"
@@ -29,7 +29,7 @@ class Assignment:
         """Create Assignment from dictionary (MongoDB document)"""
         assignment = cls(
             assignment_id=data.get('assignmentId'),
-            task_id=data.get('taskId'),
+            composite_task_id=data.get('compositeTaskId'),
             member_id=data.get('memberId'),
             status=data.get('status', 'assigned'),
             assigned_date=data.get('assignedDate'),
@@ -43,7 +43,7 @@ class Assignment:
         """Convert Assignment to dictionary for MongoDB storage"""
         return {
             'assignmentId': self.assignment_id,
-            'taskId': self.task_id,
+            'compositeTaskId': self.composite_task_id,
             'memberId': self.member_id,
             'status': self.status.value,
             'assignedDate': self.assigned_date,
@@ -53,11 +53,11 @@ class Assignment:
         }
     
     @classmethod
-    def create_new(cls, task_id: int, member_id: int) -> 'Assignment':
+    def create_new(cls, composite_task_id: str, member_id: int) -> 'Assignment':
         """Create a new assignment with auto-generated ID"""
         timestamp = int(datetime.now().timestamp() * 1000)
         assignment_id = f"a{timestamp}"
-        return cls(assignment_id=assignment_id, task_id=task_id, member_id=member_id)
+        return cls(assignment_id=assignment_id, composite_task_id=composite_task_id, member_id=member_id)
     
     def start_work(self):
         """Mark assignment as in progress"""
@@ -113,7 +113,7 @@ class Assignment:
         return (completed - assigned).days
     
     def __str__(self) -> str:
-        return f"Assignment({self.assignment_id}): Task {self.task_id} -> Member {self.member_id} [{self.status.value}]"
+        return f"Assignment({self.assignment_id}): Task {self.composite_task_id} -> Member {self.member_id} [{self.status.value}]"
     
     def __repr__(self) -> str:
         return self.__str__()

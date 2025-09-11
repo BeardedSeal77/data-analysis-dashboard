@@ -2,6 +2,7 @@
   {
     "_id": "68b806f3881f36d185098de0",
     "id": 1,
+    "compositeId": "1-1",
     "title": "Background",
     "description": "Provide context about the South African health datasets and establish CRISP-DM methodology as the project framework. Include overview of dataset domains and research context.",
     "category": "Business Understanding",
@@ -15,13 +16,14 @@
   {
     "_id": "68b806f3881f36d185098de1",
     "id": 2,
+    "compositeId": "1-2",
     "title": "Business Objectives and Success Criteria Definition",
     "description": "Clearly define the business problem and objectives. Identify stakeholders and their requirements. Determine success criteria for the project and establish KPIs for evaluation.",
     "category": "Business Understanding",
     "complexity": "medium",
     "milestoneId": 1,
     "prerequisites": [
-      1
+      "1-1"
     ],
     "deliverables": [
       "Business Objectives and Success Criteria"
@@ -30,13 +32,14 @@
   {
     "_id": "68b806f3881f36d185098de2",
     "id": 3,
+    "compositeId": "1-3",
     "title": "Inventory of Resources Assessment",
     "description": "Create inventory of all available project resources: datasets, analytical tools, team expertise, time constraints, and technical infrastructure.",
     "category": "Business Understanding",
     "complexity": "low",
     "milestoneId": 1,
     "prerequisites": [
-      1
+      "1-1"
     ],
     "deliverables": [
       "Inventory of Resources"
@@ -45,14 +48,15 @@
   {
     "_id": "68b806f3881f36d185098de3",
     "id": 4,
+    "compositeId": "1-4",
     "title": "Risks, Assumptions, and Constraints Analysis",
     "description": "Identify project assumptions, risks, and constraints. Document potential issues with data quality, sampling bias, resource limitations, and define mitigation strategies.",
     "category": "Business Understanding",
     "complexity": "medium",
     "milestoneId": 1,
     "prerequisites": [
-      1,
-      3
+      "1-1",
+      "1-3"
     ],
     "deliverables": [
       "Risks, Assumptions, and Constraints"
@@ -61,13 +65,14 @@
   {
     "_id": "68b806f3881f36d185098de4",
     "id": 5,
+    "compositeId": "1-5",
     "title": "Data Mining Goals and Success Criteria",
     "description": "Define specific data mining objectives and analytical goals. Establish technical success criteria for data analysis, pattern identification, and model development.",
     "category": "Data Understanding",
     "complexity": "medium",
     "milestoneId": 1,
     "prerequisites": [
-      2
+      "1-2"
     ],
     "deliverables": [
       "Data Mining Goals and Success Criteria"
@@ -76,13 +81,14 @@
   {
     "_id": "68b806f3881f36d185098de5",
     "id": 6,
+    "compositeId": "1-6",
     "title": "Comprehensive Data Description",
     "description": "Create detailed descriptions of all HDPSA datasets including variable definitions, data types, value ranges, and structural characteristics.",
     "category": "Data Understanding",
     "complexity": "high",
     "milestoneId": 1,
     "prerequisites": [
-      5
+      "1-5"
     ],
     "deliverables": [
       "Data Description"
@@ -91,13 +97,14 @@
   {
     "_id": "68b806f3881f36d185098de6",
     "id": 7,
+    "compositeId": "1-7",
     "title": "Data Exploration and Visualization",
     "description": "Conduct exploratory data analysis across all datasets. Create visualizations showing distributions, relationships, and patterns using Power BI and other tools.",
     "category": "Data Understanding",
     "complexity": "high",
     "milestoneId": 1,
     "prerequisites": [
-      6
+      "1-6"
     ],
     "deliverables": [
       "Data Exploration and Visualization"
@@ -106,14 +113,15 @@
   {
     "_id": "68b806f3881f36d185098de7",
     "id": 8,
+    "compositeId": "1-8",
     "title": "Data Quality Assessment",
     "description": "Perform data quality assessment including missing values, outlier detection, consistency checks, and completeness evaluation. Document quality issues and preparation recommendations.",
     "category": "Data Understanding",
     "complexity": "high",
     "milestoneId": 1,
     "prerequisites": [
-      6,
-      7
+      "1-6",
+      "1-7"
     ],
     "deliverables": [
       "Data Quality Assessment"

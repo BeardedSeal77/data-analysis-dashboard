@@ -80,6 +80,17 @@ class DatabaseManager:
             print(f"[ERROR] Failed to fetch task {task_id}: {e}")
             return None
     
+    def get_task_by_composite_id(self, composite_id: str) -> Optional[Task]:
+        """Retrieve a specific task by composite ID"""
+        try:
+            task_doc = self.db.tasks.find_one({"compositeId": composite_id})
+            if task_doc:
+                return Task.from_dict(self._convert_objectid(task_doc))
+            return None
+        except Exception as e:
+            print(f"[ERROR] Failed to fetch task {composite_id}: {e}")
+            return None
+    
     def get_tasks_by_milestone(self, milestone_id: int) -> List[Task]:
         """Retrieve all tasks for a specific milestone"""
         try:
@@ -225,12 +236,21 @@ class DatabaseManager:
             return []
     
     def get_assignments_by_task(self, task_id: int) -> List[Assignment]:
-        """Retrieve assignments for a specific task"""
+        """Retrieve assignments for a specific task (legacy method)"""
         try:
             assignment_docs = list(self.db.assignments.find({"taskId": task_id}))
             return [Assignment.from_dict(self._convert_objectid(doc)) for doc in assignment_docs]
         except Exception as e:
             print(f"[ERROR] Failed to fetch assignments for task {task_id}: {e}")
+            return []
+    
+    def get_assignments_by_composite_task_id(self, composite_task_id: str) -> List[Assignment]:
+        """Retrieve assignments for a specific task using composite ID"""
+        try:
+            assignment_docs = list(self.db.assignments.find({"compositeTaskId": composite_task_id}))
+            return [Assignment.from_dict(self._convert_objectid(doc)) for doc in assignment_docs]
+        except Exception as e:
+            print(f"[ERROR] Failed to fetch assignments for task {composite_task_id}: {e}")
             return []
     
     def get_assignment_by_id(self, assignment_id: str) -> Optional[Assignment]:
@@ -302,8 +322,8 @@ class DatabaseManager:
                 {
                     "$lookup": {
                         "from": "tasks",
-                        "localField": "taskId",
-                        "foreignField": "id", 
+                        "localField": "compositeTaskId",
+                        "foreignField": "compositeId", 
                         "as": "task"
                     }
                 },
