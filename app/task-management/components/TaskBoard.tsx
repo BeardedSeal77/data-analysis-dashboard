@@ -61,7 +61,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
     loadData()
   }
 
-  const handleAssignTask = async (taskId: string) => {
+  const handleAssignTask = async (compositeTaskId: string) => {
     if (!currentUser) {
       showNotification('Please select your profile first', 'error')
       return
@@ -72,7 +72,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          taskId: taskId,
+          compositeTaskId: compositeTaskId,
           memberId: currentUser.id
         })
       })
@@ -156,7 +156,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
 
     filteredTasks.forEach(task => {
       const assignment = Array.isArray(assignments) ? assignments.find(a => 
-        a.taskId === task.id && a.status !== 'reassigned'
+        a.compositeTaskId === task.compositeId && a.status !== 'reassigned'
       ) : null
 
       if (!assignment) {
@@ -281,7 +281,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
                 task={task}
                 assignment={null}
                 currentUser={currentUser}
-                onAssign={() => handleAssignTask(task.id)}
+                onAssign={() => handleAssignTask(task.compositeId)}
                 onComplete={() => {}}
               />
             ))}

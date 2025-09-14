@@ -48,7 +48,7 @@ export default function TaskCard({
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center flex-1 mr-2">
           <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 mr-2">
-            {task.id}
+            {task.compositeId}
           </span>
           <h4 className="text-sm font-semibold text-text">{task.title}</h4>
         </div>

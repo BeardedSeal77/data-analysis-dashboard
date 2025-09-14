@@ -73,7 +73,7 @@ export default function MilestoneComponent({ milestoneId }: MilestoneComponentPr
 
       const milestoneTasks = tasks.filter((task: any) => task.milestoneId === milestoneId)
       const milestoneAssignments = Array.isArray(assignments) ? assignments.filter((assignment: any) => {
-        return milestoneTasks.some((task: any) => task.id === assignment.taskId) &&
+        return milestoneTasks.some((task: any) => task.compositeId === assignment.compositeTaskId) &&
                assignment.status !== 'reassigned'
       }) : []
 

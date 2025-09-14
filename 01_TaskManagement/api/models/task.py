@@ -9,10 +9,10 @@ class TaskComplexity(Enum):
 
 class Task:
     def __init__(self, id: int, title: str, description: str, milestone_id: int, 
-                 complexity: str, category: str, prerequisites: Optional[List[int]] = None,
+                 complexity: str, category: str, prerequisites: Optional[List[str]] = None,
                  deliverables: Optional[List[str]] = None, due_date: Optional[str] = None,
                  priority: Optional[str] = None, created_date: Optional[str] = None,
-                 updated_date: Optional[str] = None):
+                 updated_date: Optional[str] = None, composite_id: Optional[str] = None):
         self.id = id
         self.title = title
         self.description = description
@@ -25,6 +25,7 @@ class Task:
         self.priority = priority
         self.created_date = created_date or datetime.now().isoformat()
         self.updated_date = updated_date or datetime.now().isoformat()
+        self.composite_id = composite_id or f"{milestone_id}-{id}"
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Task':
@@ -41,13 +42,15 @@ class Task:
             due_date=data.get('dueDate'),
             priority=data.get('priority'),
             created_date=data.get('createdDate'),
-            updated_date=data.get('updatedDate')
+            updated_date=data.get('updatedDate'),
+            composite_id=data.get('compositeId')
         )
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert Task to dictionary for MongoDB storage"""
         return {
             'id': self.id,
+            'compositeId': self.composite_id,
             'title': self.title,
             'description': self.description,
             'milestoneId': self.milestone_id,
@@ -76,21 +79,21 @@ class Task:
         self.due_date = due_date
         self.updated_date = datetime.now().isoformat()
     
-    def add_prerequisite(self, task_id: int):
-        """Add a prerequisite task"""
-        if task_id not in self.prerequisites:
-            self.prerequisites.append(task_id)
+    def add_prerequisite(self, composite_task_id: str):
+        """Add a prerequisite task using composite ID"""
+        if composite_task_id not in self.prerequisites:
+            self.prerequisites.append(composite_task_id)
             self.updated_date = datetime.now().isoformat()
     
-    def remove_prerequisite(self, task_id: int):
-        """Remove a prerequisite task"""
-        if task_id in self.prerequisites:
-            self.prerequisites.remove(task_id)
+    def remove_prerequisite(self, composite_task_id: str):
+        """Remove a prerequisite task using composite ID"""
+        if composite_task_id in self.prerequisites:
+            self.prerequisites.remove(composite_task_id)
             self.updated_date = datetime.now().isoformat()
     
-    def can_be_assigned(self, completed_task_ids: List[int]) -> bool:
-        """Check if task prerequisites are met"""
-        return all(prereq_id in completed_task_ids for prereq_id in self.prerequisites)
+    def can_be_assigned(self, completed_composite_ids: List[str]) -> bool:
+        """Check if task prerequisites are met using composite IDs"""
+        return all(prereq_id in completed_composite_ids for prereq_id in self.prerequisites)
     
     def get_complexity_weight(self) -> int:
         """Get numeric weight for complexity"""

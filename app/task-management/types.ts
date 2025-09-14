@@ -1,5 +1,6 @@
 export interface Task {
   id: string
+  compositeId: string
   title: string
   description: string
   milestoneId: number
@@ -13,7 +14,7 @@ export interface Task {
 
 export interface Assignment {
   assignmentId: string
-  taskId: string
+  compositeTaskId: string
   memberId: number
   memberDisplayName: string
   assigneeId: number

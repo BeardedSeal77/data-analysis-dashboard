@@ -89,8 +89,8 @@ def create_api_routes(db_manager: DatabaseManager) -> Blueprint:
         """Get tasks that can be assigned (prerequisites met)"""
         try:
             milestone_id = request.args.get('milestone_id', type=int)
-            completed_task_ids = task_service.get_completed_task_ids(milestone_id)
-            tasks = task_service.get_assignable_tasks(completed_task_ids, milestone_id)
+            completed_composite_ids = task_service.get_completed_composite_ids(milestone_id)
+            tasks = task_service.get_assignable_tasks(completed_composite_ids, milestone_id)
             return jsonify([task.to_dict() for task in tasks])
         except Exception as e:
             return jsonify({"error": str(e)}), 500
@@ -455,7 +455,8 @@ def create_api_routes(db_manager: DatabaseManager) -> Blueprint:
             tasks = task_service.get_all_tasks()
             for task_dict in tasks:
                 task_id = task_dict['id']
-                task_assignments = db_manager.get_assignments_by_task(task_id)
+                composite_id = task_dict.get('compositeId')
+                task_assignments = db_manager.get_assignments_by_composite_task_id(composite_id)
                 for assignment in task_assignments:
                     assignment_dict = assignment.to_dict()
                     assignment_dict["task"] = task_dict
@@ -469,10 +470,10 @@ def create_api_routes(db_manager: DatabaseManager) -> Blueprint:
         """Assign a task to a member - frontend compatibility"""
         try:
             data = request.get_json()
-            if not data or 'taskId' not in data or 'memberId' not in data:
-                return jsonify({"error": "taskId and memberId are required"}), 400
+            if not data or 'compositeTaskId' not in data or 'memberId' not in data:
+                return jsonify({"error": "compositeTaskId and memberId are required"}), 400
             
-            result = task_service.assign_task_to_member(data['taskId'], data['memberId'])
+            result = task_service.assign_task_to_member(data['compositeTaskId'], data['memberId'])
             if result.get("success"):
                 return jsonify(result), 201
             else:
@@ -493,17 +494,5 @@ def create_api_routes(db_manager: DatabaseManager) -> Blueprint:
     def legacy_get_assignments_by_member(member_id: int):
         """Legacy route for existing frontend compatibility"""
         return get_member_assignments(member_id)
-    
-    @api.route('/assignments/assign-task', methods=['POST'])
-    def legacy_assign_task():
-        """Legacy route for task assignment"""
-        try:
-            data = request.get_json()
-            if not data or 'taskId' not in data or 'memberId' not in data:
-                return jsonify({"error": "taskId and memberId are required"}), 400
-            
-            return assign_task(data['taskId']).get_json(), assign_task(data['taskId']).status_code
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
     
     return api
