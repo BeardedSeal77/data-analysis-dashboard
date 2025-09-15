@@ -1,0 +1,24 @@
+iso3,data_id,indicator,value,precision,dhs_country_code,country_name,survey_year,survey_id,indicator_id,indicator_order,indicator_type,characteristic_id,characteristic_order,characteristic_category,characteristic_label,by_variable_id,by_variable_label,is_total,is_preferred,sdrid,region_id,survey_year_label,survey_type,denominator_weighted,denominator_unweighted,ci_low,ci_high,level_rank
+#country+code,#meta+id,#indicator+name,#indicator+value+num,#indicator+precision,NA,#country+name,#date+year,#survey+id,#indicator+code,NA,NA,NA,NA,NA,NA,#indicator+label+code,#indicator+label,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+ZAF,795971,Children ever breastfed,87.4,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFI_C_EVR,100,I,100,0,Total,Total,0,NA,1,1,CNBRFICEVR,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795973,Children who started breastfeeding within 1 hour of birth,38.9,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFI_C_1HR,100,I,100,0,Total,Total,0,NA,1,1,CNBRFIC1HR,NA,100,DHS,100,100,NA,NA,NA
+ZAF,621666,Children exclusively breastfed,6.9,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFS_C_EXB,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCEXB,NA,100,DHS,100,100,NA,NA,NA
+ZAF,621667,Children breastfeeding and consuming plain water only,6.3,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFS_C_WAT,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCWAT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,621670,Children breastfeeding and consuming complementary foods,40.9,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFS_C_CMP,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCCMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,621664,Children currently breastfeeding,83.4,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFS_C_BRF,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCBRF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,621143,Children using a bottle with a nipple,59.4,1,ZA,South Africa,1998,ZA1998DHS,CN_BRFS_C_BNP,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCBNP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796663,Median duration of any breastfeeding,16,1,ZA,South Africa,1998,ZA1998DHS,CN_BFDR_C_MDA,100,I,100,0,Total,Total,0,NA,1,1,CNBFDRCMDA,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,719834,Children ever breastfed,84,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFI_C_EVR,100,I,100,0,Total,Total,0,NA,1,1,CNBRFICEVR,NA,100,DHS,100,100,NA,NA,NA
+ZAF,719833,Children who started breastfeeding within 1 hour of birth,67.3,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFI_C_1HR,100,I,100,0,Total,Total,0,NA,1,1,CNBRFIC1HR,NA,100,DHS,100,100,NA,NA,NA
+ZAF,376864,Children exclusively breastfed,31.6,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFS_C_EXB,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCEXB,NA,100,DHS,100,100,NA,NA,NA
+ZAF,376865,Children breastfeeding and consuming plain water only,13.6,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFS_C_WAT,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCWAT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,376871,Children breastfeeding and consuming complementary foods,17.6,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFS_C_CMP,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCCMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,376867,Children currently breastfeeding,74.8,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFS_C_BRF,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCBRF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,574102,Children using a bottle with a nipple,44.7,1,ZA,South Africa,2016,ZA2016DHS,CN_BRFS_C_BNP,100,I,100,100,Age in months (other groupings),0-5,0,NA,1,1,CNBRFSCBNP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198727,Median duration of any breastfeeding,10.7,1,ZA,South Africa,2016,ZA2016DHS,CN_BFDR_C_MDA,100,I,100,0,Total,Total,0,NA,1,1,CNBFDRCMDA,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,198806,Breastfed children 6-23 months fed both 4+ food groups and the minimum meal frequency,11.2,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_BTB,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFCBTB,NA,100,DHS,100,100,NA,NA,NA
+ZAF,710116,Non-breastfed children 6-23 months fed milk or milk products,68.4,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_MKN,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFCMKN,NA,100,DHS,100,100,NA,NA,NA
+ZAF,710119,Non-breastfed children 6-23 months with 3 IYCF practices,30.6,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_3PN,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFC3PN,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198845,Children 6-23 months fed 5+ food groups,39.9,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_4FA,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFC4FA,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198846,Children 6-23 months fed the minimum meal frequency,50.2,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_MNA,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFCMNA,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198847,Children 6-23 months with 3 IYCF practices,22.5,1,ZA,South Africa,2016,ZA2016DHS,CN_IYCF_C_3PA,100,I,100,0,Total,Total,0,NA,1,1,CNIYCFC3PA,NA,100,DHS,100,100,NA,NA,NA

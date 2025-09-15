@@ -1,0 +1,36 @@
+iso3,data_id,indicator,value,precision,dhs_country_code,country_name,survey_year,survey_id,indicator_id,indicator_order,indicator_type,characteristic_id,characteristic_order,characteristic_category,characteristic_label,by_variable_id,by_variable_label,is_total,is_preferred,sdrid,region_id,survey_year_label,survey_type,denominator_weighted,denominator_unweighted,ci_low,ci_high,level_rank
+#country+code,#meta+id,#indicator+name,#indicator+value+num,#indicator+precision,NA,#country+name,#date+year,#survey+id,#indicator+code,NA,NA,NA,NA,NA,NA,#indicator+label+code,#indicator+label,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+ZAF,795844,Population using an improved water source,83.5,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_IMP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPIMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795750,Population using water piped into dwelling,36,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_PIP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPPIP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795755,Population using water piped into yard/plot,23.1,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_PYD,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPPYD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795740,Population using a public tap/standpipe,19.3,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_TAP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPTAP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795744,Population with improved water source on the premises,60.3,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_IOP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPIOP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795754,Population with basic water service,80.2,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_BAS,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795749,Population with limited water service,3.3,1,ZA,South Africa,1998,ZA1998DHS,WS_SRCE_P_LTD,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPLTD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795743,Population with water more than 30 minutes away round trip,8.4,1,ZA,South Africa,1998,ZA1998DHS,WS_TIME_P_M30,100,I,100,0,Total,Total,0,NA,1,1,WSTIMEPM30,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795102,Population with an improved sanitation facility,46.4,1,ZA,South Africa,1998,ZA1998DHS,WS_TLET_P_IMP,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPIMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795108,Population with an unimproved sanitation facility,40.8,1,ZA,South Africa,1998,ZA1998DHS,WS_TLET_P_NIM,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPNIM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795106,Population using open defecation,12.8,1,ZA,South Africa,1998,ZA1998DHS,WS_TLET_P_NFC,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPNFC,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795769,Households with one room for sleeping,29.4,1,ZA,South Africa,1998,ZA1998DHS,HC_RMSL_H_1RM,100,I,100,0,Total,Total,0,NA,1,1,HCRMSLH1RM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796694,Mean number of persons per sleeping room,1.9,1,ZA,South Africa,1998,ZA1998DHS,HC_PPRM_H_MNP,100,I,100,0,Total,Total,0,NA,1,1,HCPPRMHMNP,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,796090,Mean number of household members,4.2,1,ZA,South Africa,1998,ZA1998DHS,HC_MEMB_H_MNM,100,I,100,0,Total,Total,0,NA,1,1,HCMEMBHMNM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414151,Population using an improved water source,93.4,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_IMP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPIMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414148,Population using water piped into dwelling,45.5,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_PIP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPPIP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414160,Population using water piped into yard/plot,24,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_PYD,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPPYD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414152,Population using a public tap/standpipe,13.6,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_TAP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPTAP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414180,Population with improved water source on the premises,76.5,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_IOP,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPIOP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414156,Population with basic water service,90.1,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_BAS,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414174,Population with limited water service,3.2,1,ZA,South Africa,2016,ZA2016DHS,WS_SRCE_P_LTD,100,I,100,0,Total,Total,0,NA,1,1,WSSRCEPLTD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,414179,Population with water more than 30 minutes away round trip,5.8,1,ZA,South Africa,2016,ZA2016DHS,WS_TIME_P_M30,100,I,100,0,Total,Total,0,NA,1,1,WSTIMEPM30,NA,100,DHS,100,100,NA,NA,NA
+ZAF,503287,Population with water not available for at least one day,33,0,ZA,South Africa,2016,ZA2016DHS,WS_WAVL_P_NAV,100,I,100,0,Total,Total,0,NA,1,1,WSWAVLPNAV,NA,100,DHS,100,100,NA,NA,NA
+ZAF,456199,Population with an improved sanitation facility,96,1,ZA,South Africa,2016,ZA2016DHS,WS_TLET_P_IMP,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPIMP,NA,100,DHS,100,100,NA,NA,NA
+ZAF,456204,Population with an unimproved sanitation facility,1.7,1,ZA,South Africa,2016,ZA2016DHS,WS_TLET_P_NIM,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPNIM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,456210,Population using open defecation,2.2,1,ZA,South Africa,2016,ZA2016DHS,WS_TLET_P_NFC,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPNFC,NA,100,DHS,100,100,NA,NA,NA
+ZAF,456218,Population with basic sanitation service,81.1,1,ZA,South Africa,2016,ZA2016DHS,WS_TLET_P_BAS,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,456217,Population with limited sanitation service,15,1,ZA,South Africa,2016,ZA2016DHS,WS_TLET_P_LTD,100,I,100,0,Total,Total,0,NA,1,1,WSTLETPLTD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,622821,Population with a place for handwashing was observed,86.1,1,ZA,South Africa,2016,ZA2016DHS,WS_HNDW_P_OBS,100,I,100,0,Total,Total,0,NA,1,1,WSHNDWPOBS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,30013,"Population with a basic handwashing facility, with soap and water available",46,1,ZA,South Africa,2016,ZA2016DHS,WS_HNDW_P_BAS,100,I,100,0,Total,Total,0,NA,1,1,WSHNDWPBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,30014,"Population with a limited handwashing facility, lacking soap and/or water",46.5,1,ZA,South Africa,2016,ZA2016DHS,WS_HNDW_P_LTD,100,I,100,0,Total,Total,0,NA,1,1,WSHNDWPLTD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,197801,Households with one room for sleeping,35.1,1,ZA,South Africa,2016,ZA2016DHS,HC_RMSL_H_1RM,100,I,100,0,Total,Total,0,NA,1,1,HCRMSLH1RM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,197811,Mean number of persons per sleeping room,1.5,1,ZA,South Africa,2016,ZA2016DHS,HC_PPRM_H_MNP,100,I,100,0,Total,Total,0,NA,1,1,HCPPRMHMNP,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,618821,Mean number of household members,3.4,1,ZA,South Africa,2016,ZA2016DHS,HC_MEMB_H_MNM,100,I,100,0,Total,Total,0,NA,1,1,HCMEMBHMNM,NA,100,DHS,100,100,NA,NA,NA

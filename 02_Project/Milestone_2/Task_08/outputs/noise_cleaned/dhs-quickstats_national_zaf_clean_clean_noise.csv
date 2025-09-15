@@ -1,0 +1,54 @@
+iso3,data_id,indicator,value,precision,dhs_country_code,country_name,survey_year,survey_id,indicator_id,indicator_order,indicator_type,characteristic_id,characteristic_order,characteristic_category,characteristic_label,by_variable_id,by_variable_label,is_total,is_preferred,sdrid,region_id,survey_year_label,survey_type,denominator_weighted,denominator_unweighted,ci_low,ci_high,level_rank
+#country+code,#meta+id,#indicator+name,#indicator+value+num,#indicator+precision,NA,#country+name,#date+year,#survey+id,#indicator+code,NA,NA,NA,NA,NA,NA,#indicator+label+code,#indicator+label,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+ZAF,796527,Total fertility rate 15-49,2.9,1,ZA,South Africa,1998,ZA1998DHS,FE_FRTR_W_TFR,100,I,100,0,Total,Total,0,NA,1,1,FEFRTRWTFR,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,795692,Married women currently using any method of contraception,56.3,1,ZA,South Africa,1998,ZA1998DHS,FP_CUSM_W_ANY,100,I,100,0,Total,Total,0,NA,1,1,FPCUSMWANY,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795693,Married women currently using any modern method of contraception,55.1,1,ZA,South Africa,1998,ZA1998DHS,FP_CUSM_W_MOD,100,I,100,0,Total,Total,0,NA,1,1,FPCUSMWMOD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795515,Unmet need for family planning,16.5,1,ZA,South Africa,1998,ZA1998DHS,FP_NADM_W_UNT,100,I,100,0,Total,Total,0,NA,1,1,FPNADMWUNT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,795357,Demand for family planning satisfied by modern methods,75.7,1,ZA,South Africa,1998,ZA1998DHS,FP_NADM_W_PDM,100,I,100,0,Total,Total,0,NA,1,1,FPNADMWPDM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796657,Median age at first marriage [Women]: 25-49,24.2,1,ZA,South Africa,1998,ZA1998DHS,MA_AAFM_W_M2B,100,I,100,0,Total,Total,0,NA,1,1,MAAAFMWM2B,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,796685,Median age at first sexual intercourse [Women]: 25-49,18.4,1,ZA,South Africa,1998,ZA1998DHS,SX_AAFS_W_M2B,100,I,100,0,Total,Total,0,NA,1,1,SXAAFSWM2B,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,61831,Infant mortality rate,45,0,ZA,South Africa,1998,ZA1998DHS,CM_ECMR_C_IMR,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CMECMRCIMR,NA,100,DHS,NA,NA,38,53,NA
+ZAF,76067,Infant mortality rate,42,0,ZA,South Africa,1998,ZA1998DHS,CM_ECMR_C_IMR,100,I,100,0,Total,Total,14003,Ten years preceding the survey,1,0,CMECMRCIMR,NA,100,DHS,NA,NA,37,48,NA
+ZAF,26522,Under-five mortality rate,59,0,ZA,South Africa,1998,ZA1998DHS,CM_ECMR_C_U5M,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CMECMRCU5M,NA,100,DHS,NA,NA,50,68,NA
+ZAF,775922,Under-five mortality rate,57,0,ZA,South Africa,1998,ZA1998DHS,CM_ECMR_C_U5M,100,I,100,0,Total,Total,14003,Ten years preceding the survey,1,0,CMECMRCU5M,NA,100,DHS,NA,NA,50,63,NA
+ZAF,713103,Pregnancy-related mortality ratio,150,0,ZA,South Africa,1998,ZA1998DHS,MM_MMRO_W_PMR,100,I,100,0,Total,Total,0,NA,1,1,MMMMROWPMR,NA,100,DHS,NA,NA,77,100,NA
+ZAF,334596,Place of delivery: Health facility,84.5,1,ZA,South Africa,1998,ZA1998DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14000,Three years preceding the survey,1,0,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,302268,Place of delivery: Health facility,83.4,1,ZA,South Africa,1998,ZA1998DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,0,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,3675,Place of delivery: Health facility,85.2,1,ZA,South Africa,1998,ZA1998DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14002,Two years preceding the survey,1,1,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796066,Fully vaccinated (8 basic antigens),63.4,1,ZA,South Africa,1998,ZA1998DHS,CH_VACC_C_BAS,100,I,100,0,Total,Total,0,NA,1,1,CHVACCCBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,15033,Treatment of diarrhea: Either ORS or RHF,83.1,1,ZA,South Africa,1998,ZA1998DHS,CH_DIAT_C_ORT,100,I,100,0,Total,Total,14000,Three years preceding the survey,1,0,CHDIATCORT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,607608,Treatment of diarrhea: Either ORS or RHF,81,1,ZA,South Africa,1998,ZA1998DHS,CH_DIAT_C_ORT,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CHDIATCORT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796661,Median duration of exclusive breastfeeding,0.4,1,ZA,South Africa,1998,ZA1998DHS,CN_BFDR_C_MDE,100,I,100,0,Total,Total,0,NA,1,1,CNBFDRCMDE,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,643532,Women with secondary or higher education,68.3,1,ZA,South Africa,1998,ZA1998DHS,ED_EDUC_W_SEH,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,EDEDUCWSEH,NA,100,DHS,100,100,NA,NA,NA
+ZAF,796453,Households with electricity,64.9,1,ZA,South Africa,1998,ZA1998DHS,HC_ELEC_H_ELC,100,I,100,0,Total,Total,0,NA,1,1,HCELECHELC,NA,100,DHS,100,100,NA,NA,NA
+ZAF,115127,Total fertility rate 15-49,2.6,1,ZA,South Africa,2016,ZA2016DHS,FE_FRTR_W_TFR,100,I,100,0,Total,Total,0,NA,1,1,FEFRTRWTFR,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,744,Married women currently using any method of contraception,54.6,1,ZA,South Africa,2016,ZA2016DHS,FP_CUSM_W_ANY,100,I,100,0,Total,Total,0,NA,1,1,FPCUSMWANY,NA,100,DHS,100,100,NA,NA,NA
+ZAF,745,Married women currently using any modern method of contraception,54,1,ZA,South Africa,2016,ZA2016DHS,FP_CUSM_W_MOD,100,I,100,0,Total,Total,0,NA,1,1,FPCUSMWMOD,NA,100,DHS,100,100,NA,NA,NA
+ZAF,592860,Unmet need for family planning,14.9,1,ZA,South Africa,2016,ZA2016DHS,FP_NADM_W_UNT,100,I,100,0,Total,Total,0,NA,1,1,FPNADMWUNT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,313221,Demand for family planning satisfied by modern methods,77.8,1,ZA,South Africa,2016,ZA2016DHS,FP_NADM_W_PDM,100,I,100,0,Total,Total,0,NA,1,1,FPNADMWPDM,NA,100,DHS,100,100,NA,NA,NA
+ZAF,227635,Median age at first sexual intercourse [Women]: 25-49,18.1,1,ZA,South Africa,2016,ZA2016DHS,SX_AAFS_W_M2B,100,I,100,0,Total,Total,0,NA,1,1,SXAAFSWM2B,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,62500,Infant mortality rate,35,0,ZA,South Africa,2016,ZA2016DHS,CM_ECMR_C_IMR,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CMECMRCIMR,NA,100,DHS,NA,NA,26,44,NA
+ZAF,67910,Infant mortality rate,43,0,ZA,South Africa,2016,ZA2016DHS,CM_ECMR_C_IMR,100,I,100,0,Total,Total,14003,Ten years preceding the survey,1,0,CMECMRCIMR,NA,100,DHS,NA,NA,35,51,NA
+ZAF,798705,Under-five mortality rate,42,0,ZA,South Africa,2016,ZA2016DHS,CM_ECMR_C_U5M,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CMECMRCU5M,NA,100,DHS,NA,NA,33,51,NA
+ZAF,66964,Under-five mortality rate,51,0,ZA,South Africa,2016,ZA2016DHS,CM_ECMR_C_U5M,100,I,100,0,Total,Total,14003,Ten years preceding the survey,1,0,CMECMRCU5M,NA,100,DHS,NA,NA,42,59,NA
+ZAF,171595,Pregnancy-related mortality ratio,536,0,ZA,South Africa,2016,ZA2016DHS,MM_MMRO_W_PMR,100,I,100,0,Total,Total,0,NA,1,1,MMMMROWPMR,NA,100,DHS,NA,NA,100,100,NA
+ZAF,773982,Maternal mortality ratio,475,0,ZA,South Africa,2016,ZA2016DHS,MM_MMRO_W_MMR,100,I,100,0,Total,Total,0,NA,1,1,MMMMROWMMR,NA,100,DHS,NA,NA,100,100,NA
+ZAF,157345,Place of delivery: Health facility,96,1,ZA,South Africa,2016,ZA2016DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14000,Three years preceding the survey,1,0,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,157336,Place of delivery: Health facility,95.9,1,ZA,South Africa,2016,ZA2016DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,0,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,463689,Place of delivery: Health facility,96.1,1,ZA,South Africa,2016,ZA2016DHS,RH_DELP_C_DHF,100,I,100,0,Total,Total,14002,Two years preceding the survey,1,1,RHDELPCDHF,NA,100,DHS,100,100,NA,NA,NA
+ZAF,509978,Fully vaccinated (8 basic antigens),61.2,1,ZA,South Africa,2016,ZA2016DHS,CH_VACC_C_BAS,100,I,100,0,Total,Total,0,NA,1,1,CHVACCCBAS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,707851,Treatment of diarrhea: Either ORS or RHF,75.4,1,ZA,South Africa,2016,ZA2016DHS,CH_DIAT_C_ORT,100,I,100,0,Total,Total,14000,Three years preceding the survey,1,0,CHDIATCORT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,545839,Treatment of diarrhea: Either ORS or RHF,80.5,1,ZA,South Africa,2016,ZA2016DHS,CH_DIAT_C_ORT,100,I,100,0,Total,Total,14001,Five years preceding the survey,1,1,CHDIATCORT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198687,Children stunted,27.4,1,ZA,South Africa,2016,ZA2016DHS,CN_NUTS_C_HA2,100,I,100,0,Total,Total,0,NA,1,1,CNNUTSCHA2,NA,100,DHS,100,100,NA,NA,NA
+ZAF,597228,Children wasted,2.5,1,ZA,South Africa,2016,ZA2016DHS,CN_NUTS_C_WH2,100,I,100,0,Total,Total,0,NA,1,1,CNNUTSCWH2,NA,100,DHS,100,100,NA,NA,NA
+ZAF,26823,Children underweight,5.9,1,ZA,South Africa,2016,ZA2016DHS,CN_NUTS_C_WA2,100,I,100,0,Total,Total,0,NA,1,1,CNNUTSCWA2,NA,100,DHS,100,100,NA,NA,NA
+ZAF,198731,Median duration of exclusive breastfeeding,0.8,1,ZA,South Africa,2016,ZA2016DHS,CN_BFDR_C_MDE,100,I,100,0,Total,Total,0,NA,1,1,CNBFDRCMDE,NA,100,DHS,NA,NA,NA,NA,NA
+ZAF,698647,Women receiving an HIV test and receiving test results in the last 12 months,58.5,1,ZA,South Africa,2016,ZA2016DHS,HA_CPHT_W_T1R,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,HACPHTWT1R,NA,100,DHS,100,100,NA,NA,NA
+ZAF,493147,Men receiving an HIV test and receiving test results in the last 12 months,44.6,1,ZA,South Africa,2016,ZA2016DHS,HA_CPHT_M_T1R,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,HACPHTMT1R,NA,100,DHS,100,100,NA,NA,NA
+ZAF,87982,HIV prevalence among women,27.3,1,ZA,South Africa,2016,ZA2016DHS,HA_HIVP_W_HIV,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,HAHIVPWHIV,NA,100,DHS,100,100,24.7,29.9,NA
+ZAF,80224,HIV prevalence among men,14.4,1,ZA,South Africa,2016,ZA2016DHS,HA_HIVP_M_HIV,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,HAHIVPMHIV,NA,100,DHS,100,100,11.5,17.3,NA
+ZAF,76035,HIV prevalence among general population,21.2,1,ZA,South Africa,2016,ZA2016DHS,HA_HIVP_B_HIV,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,HAHIVPBHIV,NA,100,DHS,100,100,19.2,23.3,NA
+ZAF,578059,Physical or sexual violence committed by husband/partner,15.8,1,ZA,South Africa,2016,ZA2016DHS,DV_SPVL_W_POS,100,I,100,100,Total 15-49,Total 15-49,631001,Ever-married,1,0,DVSPVLWPOS,NA,100,DHS,100,100,NA,NA,NA
+ZAF,46433,Women with secondary or higher education,88.9,1,ZA,South Africa,2016,ZA2016DHS,ED_EDUC_W_SEH,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,EDEDUCWSEH,NA,100,DHS,100,100,NA,NA,NA
+ZAF,563776,Women who are literate,96.3,1,ZA,South Africa,2016,ZA2016DHS,ED_LITR_W_LIT,100,I,100,100,Total 15-49,Total 15-49,0,NA,1,1,EDLITRWLIT,NA,100,DHS,100,100,NA,NA,NA
+ZAF,389262,Households with electricity,90,1,ZA,South Africa,2016,ZA2016DHS,HC_ELEC_H_ELC,100,I,100,0,Total,Total,0,NA,1,1,HCELECHELC,NA,100,DHS,100,100,NA,NA,NA
