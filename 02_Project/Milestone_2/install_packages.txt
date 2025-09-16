@@ -1,0 +1,31 @@
+R Package Installation Instructions
+=====================================
+
+To install all required packages for Tasks 4 and 5:
+
+1. Open R terminal/console
+2. Copy and paste the following command:
+
+install.packages(c('tidyverse', 'corrplot', 'pheatmap', 'VIM', 'mice', 'zoo', 'corrr', 'plotly', 'DT', 'kableExtra', 'FactoMineR', 'factoextra', 'psych', 'infotheo', 'igraph', 'networkD3'))
+
+3. Press Enter and wait for installation to complete
+
+Package List:
+- tidyverse: Data manipulation and visualization
+- corrplot: Correlation matrix visualization
+- pheatmap: Enhanced heatmaps
+- VIM: Visualization and imputation of missing values
+- mice: Multivariate imputation by chained equations
+- corrr: Correlation analysis tools
+- plotly: Interactive plots
+- DT: Interactive data tables
+- kableExtra: Enhanced table formatting
+- princomp: Principal component analysis
+- FactoMineR: Multivariate exploratory data analysis
+- factoextra: Extract and visualize multivariate analysis results
+- psych: Psychological, psychometric, and personality research
+- infotheo: Information theory measures
+- igraph: Network analysis and visualization
+- networkD3: Interactive network visualizations
+
+Note: Installation will use your default CRAN mirror and install to the global R library.
