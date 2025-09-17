@@ -167,42 +167,42 @@ if (ncol(cor_matrix) > 1) {
 - Numbers show exact correlation coefficients
 - Perfect correlations (1.0) appear on the diagonal
 
-## Significant Correlations Analysis
+## Strong Correlations Analysis
 
-```{r significant-correlations}
-# Find significant correlations
+```{r strong-correlations}
+# Find strong correlations based on magnitude
 cor_threshold <- 0.7
-significant_cors <- which(abs(cor_matrix) > cor_threshold & cor_matrix != 1, arr.ind = TRUE)
+strong_cors <- which(abs(cor_matrix) > cor_threshold & cor_matrix != 1, arr.ind = TRUE)
 
-if (nrow(significant_cors) > 0) {
-  significant_pairs <- data.frame(
-    Indicator1 = rownames(cor_matrix)[significant_cors[,1]],
-    Indicator2 = colnames(cor_matrix)[significant_cors[,2]],
-    Correlation = cor_matrix[significant_cors],
-    Strength = ifelse(cor_matrix[significant_cors] > 0, "Positive", "Negative"),
-    Abs_Correlation = abs(cor_matrix[significant_cors])
+if (nrow(strong_cors) > 0) {
+  strong_pairs <- data.frame(
+    Indicator1 = rownames(cor_matrix)[strong_cors[,1]],
+    Indicator2 = colnames(cor_matrix)[strong_cors[,2]],
+    Correlation = cor_matrix[strong_cors],
+    Strength = ifelse(cor_matrix[strong_cors] > 0, "Positive", "Negative"),
+    Abs_Correlation = abs(cor_matrix[strong_cors])
   ) %>%
     arrange(desc(Abs_Correlation))
 
-  cat("SIGNIFICANT CORRELATIONS FOUND:\n")
-  cat("Total significant correlations (|r| >", cor_threshold, "):", nrow(significant_pairs), "\n")
-  cat("Strongest positive correlation:", round(max(significant_pairs$Correlation), 3), "\n")
-  if (any(significant_pairs$Correlation < 0)) {
-    cat("Strongest negative correlation:", round(min(significant_pairs$Correlation), 3), "\n")
+  cat("STRONG CORRELATIONS FOUND:\n")
+  cat("Total strong correlations (|r| >", cor_threshold, "):", nrow(strong_pairs), "\n")
+  cat("Strongest positive correlation:", round(max(strong_pairs$Correlation), 3), "\n")
+  if (any(strong_pairs$Correlation < 0)) {
+    cat("Strongest negative correlation:", round(min(strong_pairs$Correlation), 3), "\n")
   }
 
   # Display as formatted table
-  kable(significant_pairs,
-        caption = paste("Significant Correlations (|r| >", cor_threshold, ")"),
+  kable(strong_pairs,
+        caption = paste("Strong Correlations (|r| >", cor_threshold, ")"),
         digits = 3) %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 
-  # Save significant correlations
-  write.csv(significant_pairs, "Data/significant_correlations.csv", row.names = FALSE)
-  cat("Significant correlations saved to Data/significant_correlations.csv\n")
+  # Save strong correlations
+  write.csv(strong_pairs, "Data/strong_correlations.csv", row.names = FALSE)
+  cat("Strong correlations saved to Data/strong_correlations.csv\n")
 
 } else {
-  cat("NO SIGNIFICANT CORRELATIONS FOUND\n")
+  cat("NO STRONG CORRELATIONS FOUND\n")
   cat("No correlations above threshold of", cor_threshold, "\n")
   cat("Features are relatively independent (beneficial for modeling)\n")
 }
@@ -330,11 +330,11 @@ cat("- Correlation matrix dimensions:", nrow(cor_matrix), "x", ncol(cor_matrix),
 cat("- Correlation range:", round(min(cor_matrix, na.rm = TRUE), 3),
     "to", round(max(cor_matrix, na.rm = TRUE), 3), "\n")
 
-if (exists("significant_pairs") && nrow(significant_pairs) > 0) {
-  cat("- Significant correlations found:", nrow(significant_pairs), "\n")
+if (exists("strong_pairs") && nrow(strong_pairs) > 0) {
+  cat("- Strong correlations found:", nrow(strong_pairs), "\n")
   cat("- Multicollinearity considerations required for modeling\n")
 } else {
-  cat("- No significant correlations above threshold\n")
+  cat("- No strong correlations above threshold\n")
   cat("- Features are relatively independent (ideal for modeling)\n")
 }
 
@@ -362,8 +362,14 @@ cat("3. Quantitative weight recommendations for modeling\n")
 
 ```{r save-results}
 # Save key R objects for Task 5 integration
-save(feature_variance, cor_matrix, weight_strategy, significant_pairs,
-     file = "Data/task_04_results.RData")
+# Save results (include strong_pairs if it exists)
+if (exists("strong_pairs")) {
+  save(feature_variance, cor_matrix, weight_strategy, strong_pairs,
+       file = "Data/task_04_results.RData")
+} else {
+  save(feature_variance, cor_matrix, weight_strategy,
+       file = "Data/task_04_results.RData")
+}
 
 cat("All results saved to Data/task_04_results.RData for Task 5 integration\n")
 cat("CSV files created in Data/ folder for external review and documentation\n")
@@ -380,7 +386,7 @@ This correlation analysis and feature importance evaluation provides a statistic
 ## Key Findings
 
 - **Data Coverage**: Successfully analyzed `r nrow(analysis_data)` observations across `r length(datasets)` datasets
-- **Feature Independence**: `r if(exists("significant_pairs") && nrow(significant_pairs) > 0) paste("Found", nrow(significant_pairs), "significant correlations requiring multicollinearity consideration") else "Features show good independence, beneficial for modeling"`
+- **Feature Independence**: `r if(exists("strong_pairs") && nrow(strong_pairs) > 0) paste("Found", nrow(strong_pairs), "strong correlations requiring multicollinearity consideration") else "Features show good independence, beneficial for modeling"`
 - **Importance Hierarchy**: Clear ranking established with top features showing substantially higher discriminatory power
 - **Evidence-Based Weighting**: Quantitative approach provides objective foundation for feature weighting in modeling phase
 

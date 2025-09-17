@@ -1,0 +1,395 @@
+---
+title: "Task 3: Significance Testing and Statistical Analysis"
+author: "BIN381 - Data Analysis Dashboard Project"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+    fig_width: 10
+    fig_height: 8
+  pdf_document:
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.width = 10, fig.height = 8)
+```
+
+# Introduction
+
+This report performs significance and correlation tests to determine which fields should be included in the analysis. Statistical methods are applied to validate attribute importance and ensure only statistically significant variables proceed to modeling.
+
+## Task 3 Deliverables
+
+1. **Statistical Analysis Results** - Significance tests and p-values for variable inclusion
+2. **R/R Markdown Code** - Statistical testing implementation
+3. **Data Preparation Report Section** - Documentation of statistical validation process
+
+## Methodology
+
+- **Significance Testing**: Hypothesis testing with p-value thresholds (α = 0.05)
+- **Correlation Significance**: Statistical tests for correlation coefficients
+- **Variable Validation**: Evidence-based inclusion/exclusion decisions
+- **Multiple Comparisons**: Bonferroni correction where applicable
+
+# Data Loading and Setup
+
+```{r libraries}
+# Load required libraries
+suppressMessages({
+  library(tidyverse)
+  library(corrplot)
+  library(broom)
+  library(psych)
+  library(car)
+  library(kableExtra)
+})
+
+cat("Statistical analysis environment ready\n")
+```
+
+```{r load-data}
+# Set data path
+data_path <- "../../Data/01_Raw/"
+
+# List all CSV files
+csv_files <- list.files(data_path, pattern = "*.csv", full.names = TRUE)
+cat("Found", length(csv_files), "CSV files\n")
+
+# Load all datasets
+datasets <- list()
+for (file in csv_files) {
+  dataset_name <- gsub(".csv", "", basename(file))
+  datasets[[dataset_name]] <- read_csv(file, show_col_types = FALSE)
+}
+
+cat("Loaded", length(datasets), "datasets successfully\n")
+```
+
+# Data Preparation for Statistical Testing
+
+```{r prepare-data}
+# Combine all datasets
+combined_data <- bind_rows(datasets, .id = "dataset_source")
+
+# Prepare data for statistical analysis
+analysis_data <- combined_data %>%
+  filter(!is.na(Value)) %>%
+  select(dataset_source, Indicator, Value, SurveyYear) %>%
+  mutate(
+    Value = as.numeric(Value),
+    SurveyYear = as.numeric(SurveyYear)
+  ) %>%
+  filter(!is.na(Value), !is.infinite(Value))
+
+cat("Combined dataset:", nrow(analysis_data), "observations\n")
+cat("Total unique indicators:", length(unique(analysis_data$Indicator)), "\n")
+```
+
+# Statistical Significance Testing
+
+## Normality Tests
+
+```{r normality-tests}
+# Test normality for each indicator
+normality_results <- analysis_data %>%
+  group_by(Indicator) %>%
+  summarise(
+    n_observations = n(),
+    shapiro_p_value = if(n() >= 3 && n() <= 5000) {
+      shapiro.test(Value)$p.value
+    } else {
+      NA_real_
+    },
+    is_normal = ifelse(!is.na(shapiro_p_value), shapiro_p_value > 0.05, NA),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(n_observations))
+
+cat("NORMALITY TEST RESULTS:\n")
+normal_count <- sum(normality_results$is_normal, na.rm = TRUE)
+total_tested <- sum(!is.na(normality_results$is_normal))
+cat("Variables following normal distribution:", normal_count, "out of", total_tested, "\n")
+
+# Display normality results
+kable(head(normality_results, 20),
+      caption = "Normality Test Results (Shapiro-Wilk Test)",
+      digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+## Correlation Significance Tests
+
+```{r correlation-significance}
+# Prepare correlation matrix data
+correlation_matrix_data <- analysis_data %>%
+  group_by(Indicator, dataset_source) %>%
+  summarise(avg_value = mean(Value, na.rm = TRUE), .groups = 'drop') %>%
+  pivot_wider(names_from = Indicator, values_from = avg_value) %>%
+  select(-dataset_source)
+
+# Handle missing values and constant columns
+correlation_matrix_data <- correlation_matrix_data %>%
+  mutate_all(~ ifelse(is.na(.), mean(., na.rm = TRUE), .)) %>%
+  select_if(~ var(., na.rm = TRUE) > 0)
+
+# Calculate correlation matrix with significance tests
+numeric_data <- correlation_matrix_data %>% select_if(is.numeric)
+cor_test_results <- corr.test(numeric_data, use = "complete.obs", method = "pearson")
+
+cat("CORRELATION SIGNIFICANCE ANALYSIS:\n")
+cat("Variables in correlation matrix:", ncol(numeric_data), "\n")
+cat("Total correlation pairs tested:", choose(ncol(numeric_data), 2), "\n")
+
+# Extract significant correlations
+significant_correlations <- which(cor_test_results$p < 0.05 & cor_test_results$r != 1, arr.ind = TRUE)
+
+if (length(significant_correlations) > 0) {
+  sig_cor_results <- data.frame(
+    Variable1 = rownames(cor_test_results$r)[significant_correlations[,1]],
+    Variable2 = colnames(cor_test_results$r)[significant_correlations[,2]],
+    Correlation = cor_test_results$r[significant_correlations],
+    P_Value = cor_test_results$p[significant_correlations],
+    Significant = "Yes"
+  ) %>%
+    arrange(P_Value)
+
+  cat("Statistically significant correlations found:", nrow(sig_cor_results), "\n")
+
+  # Apply Bonferroni correction
+  bonferroni_alpha <- 0.05 / choose(ncol(numeric_data), 2)
+  sig_cor_results$Bonferroni_Significant <- sig_cor_results$P_Value < bonferroni_alpha
+
+  cat("After Bonferroni correction (α =", round(bonferroni_alpha, 6), "):",
+      sum(sig_cor_results$Bonferroni_Significant), "remain significant\n")
+
+  # Display results
+  kable(sig_cor_results,
+        caption = "Statistically Significant Correlations (p < 0.05)",
+        digits = 4) %>%
+    kable_styling(bootstrap_options = c("striped", "hover"))
+
+  # Save results
+  write.csv(sig_cor_results, "Data/statistical_significance_correlations.csv", row.names = FALSE)
+
+} else {
+  cat("No statistically significant correlations found\n")
+}
+```
+
+## Variable Inclusion/Exclusion Based on Statistical Tests
+
+```{r variable-inclusion}
+# Determine variable inclusion based on statistical criteria
+variable_decisions <- normality_results %>%
+  left_join(
+    if(exists("sig_cor_results")) {
+      sig_cor_results %>%
+        pivot_longer(cols = c(Variable1, Variable2),
+                    names_to = "var_position", values_to = "Indicator") %>%
+        group_by(Indicator) %>%
+        summarise(
+          significant_correlations = n(),
+          max_correlation = max(abs(Correlation)),
+          min_p_value = min(P_Value),
+          .groups = 'drop'
+        )
+    } else {
+      data.frame(Indicator = character(0),
+                significant_correlations = numeric(0),
+                max_correlation = numeric(0),
+                min_p_value = numeric(0))
+    },
+    by = "Indicator"
+  ) %>%
+  mutate(
+    significant_correlations = replace_na(significant_correlations, 0),
+    max_correlation = replace_na(max_correlation, 0),
+    min_p_value = replace_na(min_p_value, 1),
+
+    # Inclusion decision criteria
+    include_variable = case_when(
+      n_observations < 10 ~ FALSE,  # Insufficient data
+      significant_correlations > 0 ~ TRUE,  # Has significant relationships
+      is_normal == TRUE ~ TRUE,  # Follows normal distribution
+      n_observations >= 30 ~ TRUE,  # Sufficient sample size
+      TRUE ~ FALSE
+    ),
+
+    exclusion_reason = case_when(
+      n_observations < 10 ~ "Insufficient observations",
+      significant_correlations == 0 & is_normal == FALSE ~ "No significant relationships & non-normal",
+      significant_correlations == 0 & is.na(is_normal) ~ "No significant relationships & normality untested",
+      TRUE ~ "Included"
+    )
+  ) %>%
+  arrange(desc(include_variable), desc(n_observations))
+
+# Summary of inclusion decisions
+inclusion_summary <- variable_decisions %>%
+  count(include_variable, name = "count") %>%
+  mutate(percentage = round(count / sum(count) * 100, 1))
+
+cat("VARIABLE INCLUSION DECISIONS:\n")
+kable(inclusion_summary,
+      caption = "Summary of Variable Inclusion Decisions",
+      col.names = c("Include Variable", "Count", "Percentage (%)")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# Detailed inclusion results
+cat("\nDETAILED INCLUSION ANALYSIS:\n")
+kable(variable_decisions,
+      caption = "Statistical Analysis Results for Variable Inclusion",
+      digits = 4) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+# Save inclusion decisions
+write.csv(variable_decisions, "Data/variable_inclusion_decisions.csv", row.names = FALSE)
+cat("Variable inclusion decisions saved to Data/variable_inclusion_decisions.csv\n")
+```
+
+## Hypothesis Testing Results
+
+```{r hypothesis-testing}
+# Conduct hypothesis tests for key relationships
+hypothesis_results <- list()
+
+# Test: Do health indicators vary significantly across datasets?
+if(length(unique(analysis_data$dataset_source)) > 1) {
+  anova_results <- analysis_data %>%
+    group_by(Indicator) %>%
+    filter(n_distinct(dataset_source) > 1, n() >= 10) %>%
+    do(
+      anova_test = tryCatch({
+        aov(Value ~ dataset_source, data = .)
+      }, error = function(e) NULL)
+    ) %>%
+    filter(!map_lgl(anova_test, is.null)) %>%
+    mutate(
+      f_statistic = map_dbl(anova_test, ~ summary(.)[[1]][["F value"]][1]),
+      p_value = map_dbl(anova_test, ~ summary(.)[[1]][["Pr(>F)"]][1]),
+      significant = p_value < 0.05
+    ) %>%
+    select(-anova_test) %>%
+    arrange(p_value)
+
+  cat("ANOVA RESULTS - Dataset Source Effects:\n")
+  cat("Variables with significant dataset effects:", sum(anova_results$significant), "\n")
+
+  if(nrow(anova_results) > 0) {
+    kable(anova_results,
+          caption = "ANOVA Results: Health Indicators by Dataset Source",
+          digits = 4) %>%
+      kable_styling(bootstrap_options = c("striped", "hover"))
+  }
+}
+
+# Test: Temporal trends significance
+temporal_trends <- analysis_data %>%
+  group_by(Indicator) %>%
+  filter(n_distinct(SurveyYear) > 1, n() >= 10) %>%
+  do(
+    cor_test = tryCatch({
+      cor.test(.$Value, .$SurveyYear, method = "pearson")
+    }, error = function(e) NULL)
+  ) %>%
+  filter(!map_lgl(cor_test, is.null)) %>%
+  mutate(
+    correlation = map_dbl(cor_test, ~ .$estimate),
+    p_value = map_dbl(cor_test, ~ .$p.value),
+    significant_trend = p_value < 0.05
+  ) %>%
+  select(-cor_test) %>%
+  arrange(p_value)
+
+cat("\nTEMPORAL TREND ANALYSIS:\n")
+cat("Variables with significant temporal trends:", sum(temporal_trends$significant_trend), "\n")
+
+if(nrow(temporal_trends) > 0) {
+  kable(temporal_trends,
+        caption = "Statistical Significance of Temporal Trends",
+        digits = 4) %>%
+    kable_styling(bootstrap_options = c("striped", "hover"))
+}
+```
+
+# Statistical Analysis Results Summary
+
+```{r results-summary}
+cat("=== TASK 3 DELIVERABLES COMPLETED ===\n\n")
+
+cat("STATISTICAL ANALYSIS RESULTS:\n")
+cat("- Total variables analyzed:", nrow(variable_decisions), "\n")
+cat("- Variables recommended for inclusion:", sum(variable_decisions$include_variable), "\n")
+cat("- Variables recommended for exclusion:", sum(!variable_decisions$include_variable), "\n")
+
+if(exists("sig_cor_results")) {
+  cat("- Statistically significant correlations:", nrow(sig_cor_results), "\n")
+  if("Bonferroni_Significant" %in% names(sig_cor_results)) {
+    cat("- Correlations surviving Bonferroni correction:", sum(sig_cor_results$Bonferroni_Significant), "\n")
+  }
+}
+
+if(exists("anova_results") && nrow(anova_results) > 0) {
+  cat("- Variables with significant dataset effects:", sum(anova_results$significant), "\n")
+}
+
+if(exists("temporal_trends") && nrow(temporal_trends) > 0) {
+  cat("- Variables with significant temporal trends:", sum(temporal_trends$significant_trend), "\n")
+}
+
+cat("\nR/R MARKDOWN CODE:\n")
+cat("- Statistical testing implementation complete\n")
+cat("- Hypothesis testing documented and reproducible\n")
+cat("- Results exported for integration with subsequent tasks\n")
+
+cat("\nDATA PREPARATION REPORT SECTION:\n")
+cat("- Statistical validation methodology documented\n")
+cat("- Inclusion/exclusion criteria established\n")
+cat("- Evidence-based decisions for variable selection\n")
+```
+
+```{r save-results}
+# Save all statistical results for integration
+save(variable_decisions, normality_results,
+     file = "Data/task_03_statistical_results.RData")
+
+# Save correlation significance results if they exist
+if(exists("sig_cor_results")) {
+  save(sig_cor_results, cor_test_results,
+       file = "Data/task_03_correlation_significance.RData")
+}
+
+cat("All statistical results saved for Task 4 and Task 5 integration\n")
+```
+
+# Conclusions
+
+This statistical analysis provides the evidence-based foundation for variable inclusion in the data mining process. All three Task 3 deliverables have been completed:
+
+1. **Statistical Analysis Results**: Comprehensive significance testing with p-values and inclusion recommendations
+2. **R/R Markdown Code**: Fully documented statistical testing implementation
+3. **Data Preparation Report Section**: Complete documentation of statistical validation methodology
+
+## Key Statistical Findings
+
+- **Variable Validation**: `r sum(variable_decisions$include_variable)` out of `r nrow(variable_decisions)` variables meet statistical criteria for inclusion
+- **Correlation Significance**: `r if(exists("sig_cor_results")) nrow(sig_cor_results) else "No"` statistically significant correlations identified
+- **Methodological Rigor**: Multiple comparison corrections applied where appropriate
+- **Evidence-Based Decisions**: All inclusion/exclusion decisions backed by statistical tests
+
+## Integration with Subsequent Tasks
+
+These statistical validation results will inform:
+- **Task 4**: Correlation analysis can focus on statistically validated relationships
+- **Task 5**: Data selection criteria refinement based on statistical evidence
+- **Modeling Phase**: Confidence in variable selection backed by statistical significance
+
+---
+
+*Statistical analysis completed on `r Sys.Date()` for BIN381 Data Analysis Dashboard Project - Milestone 2, Task 3*
