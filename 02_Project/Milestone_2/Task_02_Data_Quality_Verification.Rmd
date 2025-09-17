@@ -1,0 +1,770 @@
+---
+title: 'Task 2: Verify Data Quality - Statistical Validation and Field Selection'
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  word_document:
+    toc: true
+    number_sections: true
+  pdf_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      out.width = "100%", fig.pos = "H")
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readr)
+  library(janitor)
+  library(corrplot)
+  library(psych)
+  library(factoextra)
+  library(VIM)
+  library(car)
+  library(moments)
+  library(gt)
+})
+theme_set(theme_minimal())
+
+# Create outputs directory
+if (!dir.exists("outputs")) {
+  dir.create("outputs", recursive = TRUE)
+}
+```
+
+# 1. Data Preparation & Standardization
+
+## 1.1 Load All Datasets
+
+```{r load_data}
+# Set base path for raw data
+base_path <- "02_Project/Data/01_Raw"   #change this based on how you run the ocde
+
+# List all CSV files
+csv_files <- list.files(base_path, pattern = "\\.csv$", full.names = TRUE)
+cat("Found", length(csv_files), "CSV files:\n")
+for(file in csv_files) {
+  cat("- ", basename(file), "\n")
+}
+
+# Function to read CSV with proper header handling
+read_csv_clean <- function(path) {
+  # Skip the comment line and read with proper headers
+  readr::read_csv(path, show_col_types = FALSE, skip = 2) %>%
+    janitor::clean_names()
+}
+
+# Load all datasets
+datasets <- map(csv_files, read_csv_clean)
+names(datasets) <- tools::file_path_sans_ext(basename(csv_files))
+
+# Remove any datasets with no rows
+datasets <- datasets[map_int(datasets, nrow) > 0]
+
+cat("\nLoaded", length(datasets), "datasets with data\n")
+```
+
+## 1.2 Standardize Field Structure
+
+```{r standardize_fields}
+# Get all unique column names across datasets
+all_columns <- unique(unlist(map(datasets, names)))
+cat("Total unique columns across all datasets:", length(all_columns), "\n")
+
+# Identify core fields present in all datasets
+common_fields <- Reduce(intersect, map(datasets, names))
+cat("Common fields in all datasets:", length(common_fields), "\n")
+print(common_fields)
+
+# Categorize fields by type
+numeric_fields <- c("value", "precision", "survey_year", "indicator_order",
+                   "characteristic_order", "denominator_weighted",
+                   "denominator_unweighted", "ci_low", "ci_high", "level_rank")
+
+categorical_fields <- c("iso3", "indicator", "dhs_country_code", "country_name",
+                       "survey_id", "indicator_id", "indicator_type",
+                       "characteristic_id", "characteristic_category",
+                       "characteristic_label", "by_variable_id", "by_variable_label",
+                       "survey_year_label", "survey_type", "sdrid", "region_id")
+
+logical_fields <- c("is_total", "is_preferred")
+
+# Create standardized dataset summary
+dataset_summary <- map_dfr(datasets, function(df) {
+  tibble(
+    total_rows = nrow(df),
+    total_cols = ncol(df),
+    numeric_cols = sum(names(df) %in% numeric_fields),
+    categorical_cols = sum(names(df) %in% categorical_fields),
+    logical_cols = sum(names(df) %in% logical_fields),
+    missing_cells = sum(is.na(df)),
+    missing_pct = round(100 * sum(is.na(df)) / (nrow(df) * ncol(df)), 2)
+  )
+}, .id = "dataset")
+
+# Display summary
+gt(dataset_summary) %>%
+  tab_header(title = "Standardized Dataset Summary")
+
+# Export summary
+write_csv(dataset_summary, "outputs/standardized_datasets_summary.csv")
+cat("Exported: outputs/standardized_datasets_summary.csv\n")
+```
+
+# 2. Field Quality Assessment
+
+## 2.1 Comprehensive Field Quality Analysis
+
+```{r field_quality_assessment}
+# Function to assess field quality across multiple dimensions
+assess_field_quality <- function(df, dataset_name) {
+  all_cols <- names(df)
+
+  map_dfr(all_cols, function(col) {
+    values <- df[[col]]
+    non_missing <- values[!is.na(values)]
+
+    # Basic metrics
+    total_count <- length(values)
+    missing_count <- sum(is.na(values))
+    missing_rate <- missing_count / total_count
+    unique_count <- length(unique(non_missing))
+    unique_rate <- unique_count / length(non_missing)
+
+    # Initialize result
+    result <- tibble(
+      dataset = dataset_name,
+      field = col,
+      total_count = total_count,
+      missing_count = missing_count,
+      missing_rate = missing_rate,
+      unique_count = unique_count,
+      unique_rate = unique_rate
+    )
+
+    # Field type classification
+    is_numeric <- is.numeric(values)
+    is_categorical <- !is_numeric
+
+    if (is_numeric && length(non_missing) > 0) {
+      # Numeric field quality metrics
+      q25 <- quantile(non_missing, 0.25, na.rm = TRUE)
+      q75 <- quantile(non_missing, 0.75, na.rm = TRUE)
+      iqr <- q75 - q25
+      outlier_threshold_low <- q25 - 1.5 * iqr
+      outlier_threshold_high <- q75 + 1.5 * iqr
+      outliers <- sum(non_missing < outlier_threshold_low | non_missing > outlier_threshold_high)
+      outlier_rate <- outliers / length(non_missing)
+
+      result <- result %>%
+        mutate(
+          field_type = "numeric",
+          mean_value = mean(non_missing, na.rm = TRUE),
+          std_dev = sd(non_missing, na.rm = TRUE),
+          coefficient_of_variation = std_dev / abs(mean_value),
+          skewness = moments::skewness(non_missing),
+          kurtosis = moments::kurtosis(non_missing),
+          outlier_count = outliers,
+          outlier_rate = outlier_rate,
+          min_value = min(non_missing, na.rm = TRUE),
+          max_value = max(non_missing, na.rm = TRUE)
+        )
+    } else if (is_categorical && length(non_missing) > 0) {
+      # Categorical field quality metrics
+      value_counts <- table(non_missing)
+      max_frequency <- max(value_counts)
+      mode_frequency_rate <- max_frequency / length(non_missing)
+      rare_categories <- sum(value_counts <= 5)
+      cardinality_ratio <- unique_count / length(non_missing)
+
+      result <- result %>%
+        mutate(
+          field_type = "categorical",
+          mean_value = NA_real_,
+          std_dev = NA_real_,
+          coefficient_of_variation = NA_real_,
+          skewness = NA_real_,
+          kurtosis = NA_real_,
+          outlier_count = NA_integer_,
+          outlier_rate = NA_real_,
+          max_frequency = max_frequency,
+          mode_frequency_rate = mode_frequency_rate,
+          rare_categories = rare_categories,
+          cardinality_ratio = cardinality_ratio
+        )
+    } else {
+      # Empty or all-missing field
+      result <- result %>%
+        mutate(
+          field_type = ifelse(is_numeric, "numeric", "categorical"),
+          mean_value = NA_real_,
+          std_dev = NA_real_,
+          coefficient_of_variation = NA_real_,
+          skewness = NA_real_,
+          kurtosis = NA_real_,
+          outlier_count = NA_integer_,
+          outlier_rate = NA_real_
+        )
+    }
+
+    return(result)
+  })
+}
+
+# Run field quality assessment on all datasets
+field_quality_results <- map2_dfr(datasets, names(datasets), assess_field_quality)
+
+# Summarize quality by field across datasets
+field_quality_summary <- field_quality_results %>%
+  group_by(field, field_type) %>%
+  summarise(
+    datasets_present = n(),
+    avg_missing_rate = mean(missing_rate, na.rm = TRUE),
+    avg_unique_rate = mean(unique_rate, na.rm = TRUE),
+    avg_outlier_rate = mean(outlier_rate, na.rm = TRUE),
+    avg_cv = mean(coefficient_of_variation, na.rm = TRUE),
+    avg_skewness = mean(abs(skewness), na.rm = TRUE),
+    high_cardinality_issues = sum(cardinality_ratio > 0.8, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(field_type, desc(avg_missing_rate))
+
+gt(field_quality_summary %>% head(20)) %>%
+  tab_header(title = "Field Quality Summary (Top 20 by Missing Rate)") %>%
+  fmt_number(columns = c(avg_missing_rate, avg_unique_rate, avg_outlier_rate,
+                        avg_cv, avg_skewness), decimals = 3)
+
+# Export field quality results
+write_csv(field_quality_results, "outputs/field_quality_assessment.csv")
+write_csv(field_quality_summary, "outputs/field_quality_summary.csv")
+cat("Exported: field quality assessment results\n")
+```
+
+## 2.2 Quality Issues Identification
+
+```{r data_quality_issues}
+# Define quality thresholds for flagging issues
+MISSING_THRESHOLD <- 0.5      # 50% missing data
+OUTLIER_THRESHOLD <- 0.05     # 5% outliers
+LOW_VARIANCE_THRESHOLD <- 0.01 # CV < 0.01
+
+# Function to flag data quality issues
+flag_quality_issues <- function(field_quality_data) {
+  field_quality_data %>%
+    mutate(
+      # Flag high missing data
+      high_missing_flag = missing_rate > MISSING_THRESHOLD,
+
+      # Flag excessive outliers (numeric fields only)
+      excessive_outliers_flag = !is.na(outlier_rate) & outlier_rate > OUTLIER_THRESHOLD,
+
+      # Flag low variance (numeric fields only)
+      low_variance_flag = !is.na(coefficient_of_variation) &
+                         coefficient_of_variation < LOW_VARIANCE_THRESHOLD,
+
+      # Calculate total issue count per field
+      total_issues = as.numeric(high_missing_flag) +
+                    as.numeric(excessive_outliers_flag) +
+                    as.numeric(low_variance_flag)
+    ) %>%
+    # Create overall quality rating
+    mutate(
+      quality_rating = case_when(
+        total_issues == 0 ~ "Good Quality",
+        total_issues == 1 ~ "Moderate Issues",
+        total_issues >= 2 ~ "Significant Issues"
+      )
+    )
+}
+
+# Apply quality flagging
+flagged_quality <- flag_quality_issues(field_quality_results)
+
+# Summarize issues by field across all datasets
+issue_summary_by_field <- flagged_quality %>%
+  group_by(field, field_type) %>%
+  summarise(
+    datasets_present = n(),
+    high_missing_datasets = sum(high_missing_flag),
+    excessive_outliers_datasets = sum(excessive_outliers_flag, na.rm = TRUE),
+    low_variance_datasets = sum(low_variance_flag, na.rm = TRUE),
+    avg_issues_per_dataset = mean(total_issues),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(avg_issues_per_dataset), desc(high_missing_datasets))
+
+gt(issue_summary_by_field %>% head(15)) %>%
+  tab_header(title = "Data Quality Issues Summary by Field (Top 15 Problematic)") %>%
+  fmt_number(columns = avg_issues_per_dataset, decimals = 2)
+
+# Export quality issues data
+write_csv(flagged_quality, "outputs/flagged_quality_issues.csv")
+write_csv(issue_summary_by_field, "outputs/quality_issues_by_field.csv")
+cat("Exported: data quality issues flagging results\n")
+```
+
+# 3. Cross-Dataset Correlation Analysis
+
+## 3.1 Calculate Average Correlation Matrix
+
+```{r correlation_analysis}
+# Function to calculate correlation matrix for each dataset
+calc_correlation_matrix <- function(df) {
+  numeric_cols <- intersect(names(df), numeric_fields)
+  numeric_data <- df %>% select(all_of(numeric_cols))
+
+  if (ncol(numeric_data) < 2) return(NULL)
+
+  # Calculate correlation matrix
+  cor_matrix <- cor(numeric_data, use = "pairwise.complete.obs")
+  return(cor_matrix)
+}
+
+# Calculate correlation matrices for all datasets
+correlation_matrices <- map(datasets, calc_correlation_matrix)
+
+# Remove NULL matrices (datasets with insufficient numeric columns)
+correlation_matrices <- correlation_matrices[!map_lgl(correlation_matrices, is.null)]
+
+cat("Calculated correlation matrices for", length(correlation_matrices), "datasets\n")
+
+# Get common numeric fields across all datasets with correlations
+common_numeric_fields <- Reduce(intersect, map(correlation_matrices, rownames))
+cat("Common numeric fields for correlation:", length(common_numeric_fields), "\n")
+print(common_numeric_fields)
+
+# Standardize matrices to common fields
+standardized_matrices <- map(correlation_matrices, function(mat) {
+  mat[common_numeric_fields, common_numeric_fields]
+})
+
+# Calculate average correlation matrix
+if (length(standardized_matrices) > 0) {
+  avg_correlation_matrix <- Reduce(`+`, standardized_matrices) / length(standardized_matrices)
+
+  # Convert to tibble for export
+  avg_corr_tibble <- as_tibble(avg_correlation_matrix, rownames = "field") %>%
+    pivot_longer(-field, names_to = "field2", values_to = "correlation")
+
+  # Export average correlation matrix
+  write_csv(avg_corr_tibble, "outputs/averaged_correlation_matrix.csv")
+
+  # Create correlation summary
+  correlation_summary <- avg_corr_tibble %>%
+    filter(field != field2) %>%
+    group_by(field) %>%
+    summarise(
+      avg_abs_correlation = mean(abs(correlation), na.rm = TRUE),
+      max_abs_correlation = max(abs(correlation), na.rm = TRUE),
+      min_correlation = min(correlation, na.rm = TRUE),
+      max_correlation = max(correlation, na.rm = TRUE),
+      high_correlations = sum(abs(correlation) > 0.8, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(avg_abs_correlation))
+
+  gt(correlation_summary) %>%
+    tab_header(title = "Field Correlation Summary (Averaged Across Datasets)") %>%
+    fmt_number(columns = c(avg_abs_correlation, max_abs_correlation,
+                          min_correlation, max_correlation), decimals = 3)
+
+  # Export correlation rankings
+  write_csv(correlation_summary, "outputs/correlation_rankings.csv")
+  cat("Exported: averaged correlation matrix and rankings\n")
+
+  # Identify highly correlated pairs
+  high_corr_pairs <- avg_corr_tibble %>%
+    filter(field != field2, abs(correlation) > 0.8) %>%
+    arrange(desc(abs(correlation)))
+
+  if (nrow(high_corr_pairs) > 0) {
+    gt(high_corr_pairs) %>%
+      tab_header(title = "Highly Correlated Field Pairs (|r| > 0.8)") %>%
+      fmt_number(columns = correlation, decimals = 3)
+
+    write_csv(high_corr_pairs, "outputs/high_correlation_pairs.csv")
+  }
+}
+```
+
+# 4. Feature Importance & Variance Analysis
+
+## 4.1 Variance and Information Content Analysis
+
+```{r variance_analysis}
+# Function to calculate variance metrics for each dataset
+calc_variance_metrics <- function(df, dataset_name) {
+  numeric_cols <- intersect(names(df), numeric_fields)
+
+  map_dfr(numeric_cols, function(col) {
+    values <- df[[col]][!is.na(df[[col]])]
+
+    if (length(values) < 2) {
+      return(tibble(
+        dataset = dataset_name,
+        field = col,
+        variance = NA,
+        coefficient_of_variation = NA,
+        range_normalized = NA,
+        unique_values = length(unique(values)),
+        information_content = NA
+      ))
+    }
+
+    # Calculate various variance metrics
+    var_val <- var(values)
+    mean_val <- mean(values)
+    cv <- if (mean_val != 0) sd(values) / abs(mean_val) else NA
+    range_norm <- (max(values) - min(values)) / (abs(max(values)) + abs(min(values)) + 1e-10)
+    unique_vals <- length(unique(values))
+
+    # Information content (entropy-like measure)
+    if (unique_vals > 1) {
+      value_counts <- table(cut(values, breaks = min(unique_vals, 20)))
+      proportions <- value_counts / sum(value_counts)
+      proportions <- proportions[proportions > 0]
+      info_content <- -sum(proportions * log2(proportions))
+    } else {
+      info_content <- 0
+    }
+
+    tibble(
+      dataset = dataset_name,
+      field = col,
+      variance = var_val,
+      coefficient_of_variation = cv,
+      range_normalized = range_norm,
+      unique_values = unique_vals,
+      information_content = info_content
+    )
+  })
+}
+
+# Calculate variance metrics for all datasets
+variance_results <- map2_dfr(datasets, names(datasets), calc_variance_metrics)
+
+# Summarize variance by field
+variance_summary <- variance_results %>%
+  group_by(field) %>%
+  summarise(
+    datasets_analyzed = n(),
+    avg_variance = mean(variance, na.rm = TRUE),
+    avg_cv = mean(coefficient_of_variation, na.rm = TRUE),
+    avg_range_norm = mean(range_normalized, na.rm = TRUE),
+    avg_unique_values = mean(unique_values, na.rm = TRUE),
+    avg_information_content = mean(information_content, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(avg_information_content))
+
+gt(variance_summary) %>%
+  tab_header(title = "Feature Variance and Information Content Summary") %>%
+  fmt_number(columns = c(avg_variance, avg_cv, avg_range_norm,
+                        avg_unique_values, avg_information_content), decimals = 3)
+
+# Export results
+write_csv(variance_results, "outputs/variance_analysis_results.csv")
+write_csv(variance_summary, "outputs/feature_importance_rankings.csv")
+cat("Exported: variance analysis and feature importance rankings\n")
+```
+
+
+# 5. Principal Component Analysis
+
+## 5.1 Combined Dataset PCA
+
+```{r pca_analysis}
+# Combine all datasets for PCA
+combined_data <- map_dfr(datasets, function(df) {
+  numeric_cols <- intersect(names(df), numeric_fields)
+  df %>% select(all_of(numeric_cols))
+}, .id = "dataset")
+
+# Remove rows with any missing values for PCA
+pca_data <- combined_data %>%
+  select(-dataset) %>%
+  drop_na()
+
+cat("PCA dataset shape:", nrow(pca_data), "rows,", ncol(pca_data), "columns\n")
+
+if (nrow(pca_data) > 0 && ncol(pca_data) > 1) {
+  # Standardize the data
+  pca_scaled <- scale(pca_data)
+
+  # Perform PCA
+  pca_result <- prcomp(pca_scaled, center = FALSE, scale. = FALSE)
+
+  # Calculate variance explained
+  variance_explained <- summary(pca_result)$importance[2, ]
+  cumulative_variance <- summary(pca_result)$importance[3, ]
+
+  # Find number of components for 95% variance
+  components_95 <- which(cumulative_variance >= 0.95)[1]
+
+  # Create PCA summary
+  pca_summary <- tibble(
+    component = paste0("PC", 1:length(variance_explained)),
+    variance_explained = variance_explained,
+    cumulative_variance = cumulative_variance,
+    eigenvalue = pca_result$sdev^2
+  )
+
+  gt(pca_summary %>% head(10)) %>%
+    tab_header(title = "Principal Component Analysis Summary (Top 10)") %>%
+    fmt_number(columns = c(variance_explained, cumulative_variance, eigenvalue), decimals = 4)
+
+  # Create loadings matrix
+  loadings_matrix <- pca_result$rotation
+
+  # Convert loadings to long format
+  pca_loadings <- as_tibble(loadings_matrix, rownames = "field") %>%
+    pivot_longer(-field, names_to = "component", values_to = "loading") %>%
+    group_by(field) %>%
+    summarise(
+      pc1_loading = loading[component == "PC1"],
+      pc2_loading = loading[component == "PC2"],
+      pc3_loading = loading[component == "PC3"],
+      max_abs_loading = max(abs(loading)),
+      primary_component = component[which.max(abs(loading))],
+      .groups = "drop"
+    ) %>%
+    arrange(desc(max_abs_loading))
+
+  gt(pca_loadings) %>%
+    tab_header(title = "PCA Field Loadings Summary") %>%
+    fmt_number(columns = c(pc1_loading, pc2_loading, pc3_loading, max_abs_loading),
+               decimals = 3)
+
+  # Export PCA results
+  write_csv(pca_summary, "outputs/pca_analysis_results.csv")
+  write_csv(pca_loadings, "outputs/pca_field_loadings.csv")
+
+  cat("PCA completed. Components needed for 95% variance:", components_95, "\n")
+  cat("Exported: PCA analysis results and field loadings\n")
+}
+```
+
+# 6. Field Importance Weighting
+
+## 6.1 Field Scoring and Recommendations
+
+```{r field_scoring}
+# Combine all analysis results for scoring
+field_scores <- field_quality_summary %>%
+  select(field, field_type, avg_missing_rate, avg_cv, avg_information_content) %>%
+  # Add correlation metrics
+  left_join(
+    correlation_summary %>%
+      select(field, avg_abs_correlation, high_correlations),
+    by = "field"
+  ) %>%
+  # Add variance metrics
+  left_join(
+    variance_summary %>%
+      select(field, avg_information_content = avg_information_content),
+    by = "field", suffix = c("", "_var")
+  ) %>%
+  # Add PCA metrics
+  left_join(
+    pca_loadings %>%
+      select(field, max_abs_loading),
+    by = "field"
+  ) %>%
+  # Add quality issue counts
+  left_join(
+    issue_summary_by_field %>%
+      select(field, avg_issues_per_dataset),
+    by = "field"
+  ) %>%
+  # Replace NAs with appropriate values
+  mutate(
+    across(c(avg_missing_rate, avg_cv, avg_information_content,
+            avg_abs_correlation, high_correlations, max_abs_loading,
+            avg_issues_per_dataset), ~ coalesce(.x, 0))
+  )
+
+# Normalize scores to 0-1 scale
+normalize_score <- function(x) {
+  if (all(is.na(x)) || max(x, na.rm = TRUE) == min(x, na.rm = TRUE)) return(rep(0, length(x)))
+  (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+}
+
+field_scores <- field_scores %>%
+  mutate(
+    # Data Quality Scores (higher is better)
+    completeness_score = normalize_score(1 - avg_missing_rate),
+    variance_score = normalize_score(avg_cv),
+    information_score = normalize_score(avg_information_content),
+
+    # Correlation (lower correlation is better)
+    uniqueness_score = normalize_score(-avg_abs_correlation),
+
+    # Quality Issues (fewer issues is better)
+    issue_penalty = normalize_score(-avg_issues_per_dataset),
+
+    # PCA Importance
+    pca_importance = normalize_score(max_abs_loading),
+
+    # Simple composite score
+    composite_score = (
+      0.30 * completeness_score +      # Data completeness is crucial
+      0.20 * information_score +       # Information content matters
+      0.20 * variance_score +          # Variance indicates signal
+      0.15 * uniqueness_score +        # Avoid redundant features
+      0.10 * issue_penalty +           # Penalize problematic fields
+      0.05 * pca_importance            # PCA loadings indicate importance
+    )
+  ) %>%
+  arrange(desc(composite_score))
+
+# Create recommendation categories
+field_scores <- field_scores %>%
+  mutate(
+    recommendation = case_when(
+      composite_score >= 0.7 ~ "High Priority - Include",
+      composite_score >= 0.5 ~ "Medium Priority - Consider",
+      composite_score >= 0.3 ~ "Low Priority - Evaluate",
+      TRUE ~ "Consider Exclusion"
+    )
+  )
+
+# Display scoring results
+gt(field_scores %>% head(20) %>%
+   select(field, field_type, composite_score, recommendation,
+          completeness_score, information_score, variance_score)) %>%
+  tab_header(title = "Field Importance Rankings (Top 20)") %>%
+  fmt_number(columns = c(composite_score, completeness_score, information_score, variance_score),
+             decimals = 3)
+
+# Summary by recommendation category
+recommendation_summary <- field_scores %>%
+  count(recommendation, name = "field_count") %>%
+  arrange(desc(field_count))
+
+gt(recommendation_summary) %>%
+  tab_header(title = "Field Recommendation Summary")
+
+# Export scoring results
+write_csv(field_scores, "outputs/field_importance_scores.csv")
+write_csv(recommendation_summary, "outputs/field_recommendation_summary.csv")
+cat("Exported: field importance scores and recommendations\n")
+```
+
+# 7. Dataset Quality Comparison
+
+## 7.1 Basic Dataset Rankings
+
+```{r dataset_comparison}
+# Calculate basic dataset quality metrics
+dataset_quality <- map_dfr(names(datasets), function(dataset_name) {
+  df <- datasets[[dataset_name]]
+
+  tibble(
+    dataset = dataset_name,
+    total_fields = ncol(df),
+    total_rows = nrow(df),
+    missing_rate = sum(is.na(df)) / (nrow(df) * ncol(df)),
+    quality_score = (1 - missing_rate) * log10(total_rows) / 6  # Simple quality metric
+  )
+}) %>%
+  arrange(desc(quality_score))
+
+gt(dataset_quality) %>%
+  tab_header(title = "Dataset Quality Rankings") %>%
+  fmt_number(columns = c(missing_rate, quality_score), decimals = 3)
+
+# Export dataset quality rankings
+write_csv(dataset_quality, "outputs/dataset_quality_rankings.csv")
+cat("Exported: dataset quality rankings\n")
+```
+
+# 8. Summary and Recommendations
+
+## 8.1 Key Findings Summary
+
+```{r summary}
+cat("=== TASK 2: DATA QUALITY VERIFICATION SUMMARY ===\n\n")
+
+cat("DATASETS ANALYZED:", length(datasets), "\n")
+cat("TOTAL UNIQUE FIELDS:", nrow(field_quality_summary), "\n")
+cat("COMMON FIELDS ACROSS ALL DATASETS:", length(common_fields), "\n\n")
+
+cat("FIELD RECOMMENDATIONS:\n")
+if (exists("field_scores")) {
+  rec_counts <- field_scores %>% count(recommendation)
+  for (i in 1:nrow(rec_counts)) {
+    cat("-", rec_counts$recommendation[i], ":", rec_counts$n[i], "fields\n")
+  }
+}
+
+cat("\nTOP 5 RECOMMENDED FIELDS FOR MODELING:\n")
+if (exists("field_scores")) {
+  top_fields <- field_scores %>% head(5)
+  for (i in 1:nrow(top_fields)) {
+    cat(i, ".", top_fields$field[i],
+        "(Score:", round(top_fields$composite_score[i], 3),
+        "- Type:", top_fields$field_type[i], ")\n")
+  }
+}
+
+cat("\nTOP 3 DATASETS FOR QUALITY:\n")
+if (exists("dataset_quality")) {
+  top_datasets <- dataset_quality %>% head(3)
+  for (i in 1:nrow(top_datasets)) {
+    cat(i, ".", top_datasets$dataset[i],
+        "(Quality Score:", round(top_datasets$quality_score[i], 3), ")\n")
+  }
+}
+
+cat("\nDATA QUALITY ISSUES SUMMARY:\n")
+if (exists("issue_summary_by_field")) {
+  total_issues <- sum(issue_summary_by_field$high_missing_datasets > 0)
+  cat("- Fields with missing data issues:", total_issues, "\n")
+
+  outlier_issues <- sum(issue_summary_by_field$excessive_outliers_datasets > 0)
+  cat("- Fields with outlier issues:", outlier_issues, "\n")
+
+  low_var_issues <- sum(issue_summary_by_field$low_variance_datasets > 0)
+  cat("- Fields with low variance issues:", low_var_issues, "\n")
+}
+
+cat("\nEXPORTED ANALYSIS FILES:\n")
+output_files <- list.files("outputs", pattern = "\\.csv$", full.names = FALSE)
+for (file in output_files) {
+  cat("- outputs/", file, "\n")
+}
+```
+
+## 8.2 Data Quality Verification Results
+
+*This section will be completed after running the analysis and reviewing the actual results.*
+
+### Field Selection Recommendations
+*To be filled based on field_importance_scores.csv results*
+
+### Correlation Analysis Findings
+*To be filled based on averaged_correlation_matrix.csv results*
+
+### Principal Component Analysis Results
+*To be filled based on pca_analysis_results.csv results*
+
+### Dataset Quality Rankings
+*To be filled based on dataset_quality_rankings.csv results*
+
+## 8.3 Implementation Guidance
+
+**For Task 3 (Data Cleaning):**
+- Address fields identified with quality issues
+- Focus on high-priority fields for inclusion
+- Apply correlation-based feature selection
+
+**For Task 4 (Data Preparation for Modeling):**
+- Use field importance scores for feature selection
+- Consider PCA results for dimensionality reduction
+- Apply dataset quality rankings for data source prioritization
+
+*Detailed findings and recommendations will be added after executing the analysis and reviewing the exported CSV files.*
+
+```{r session_info}
+sessionInfo()
+```
