@@ -3,14 +3,15 @@
     "_id": "68b806f3881f36d185098de8",
     "id": 1,
     "compositeId": "2-1",
-    "title": "Data Relevance Assessment and Selection Criteria",
-    "description": "Evaluate datasets for relevance to data mining goals. Establish clear criteria for data inclusion/exclusion based on quality, technical constraints, and analytical requirements.",
+    "title": "Select Data",
+    "description": "Decide on the data to be used for analysis. Establish criteria for relevance to data mining goals, quality, and technical constraints such as limits on data volume or data types. Document rationale for inclusion or exclusion of datasets and attributes.",
     "category": "Data Preparation",
     "complexity": "medium",
     "milestoneId": 2,
     "prerequisites": [],
     "deliverables": [
       "Data Selection Criteria",
+      "Inclusion/Exclusion Documentation",
       "Data Preparation Report Section"
     ]
   },
@@ -18,25 +19,28 @@
     "_id": "68b806f3881f36d185098de9",
     "id": 2,
     "compositeId": "2-2",
-    "title": "Dataset Inclusion/Exclusion Documentation",
-    "description": "Document rationale for including or excluding specific datasets and attributes. Create comprehensive justification based on established selection criteria.",
+    "title": "Verify Data Quality",
+    "description": "Perform significance and correlation tests to decide if fields should be included. Reconsider data selection criteria based on data quality and exploration experiences. Determine attribute importance and weight attributes accordingly. Select relevant data subsets using advanced data reduction techniques such as Principal Component Analysis if needed.",
     "category": "Data Preparation",
-    "complexity": "low",
+    "complexity": "high",
     "milestoneId": 2,
     "prerequisites": [
       "2-1"
     ],
     "deliverables": [
-      "Inclusion/Exclusion Documentation",
-      "Data Preparation Report Section"
+      "Statistical Analysis Results",
+      "Correlation Analysis Results",
+      "Feature Importance Rankings",
+      "Data Reduction Analysis",
+      "R/R Markdown Code"
     ]
   },
   {
     "_id": "68b806f3881f36d185098dea",
     "id": 3,
     "compositeId": "2-3",
-    "title": "Significance Testing and Statistical Analysis",
-    "description": "Perform significance and correlation tests to determine which fields should be included in the analysis. Apply statistical methods to validate attribute importance.",
+    "title": "Clean Data",
+    "description": "Raise data quality to the level required by selected analysis techniques. Clean and preprocess data to address quality issues including imputing missing values, removing duplicates, handling outliers, addressing data noise, and dealing with special values and their meanings.",
     "category": "Data Preparation",
     "complexity": "high",
     "milestoneId": 2,
@@ -44,17 +48,22 @@
       "2-2"
     ],
     "deliverables": [
-      "Statistical Analysis Results",
+      "Missing Values Analysis",
+      "Imputation Strategy Documentation",
+      "Outlier Detection Results",
+      "Treatment Strategy Documentation",
+      "Noise Analysis Report",
+      "Special Values Documentation",
       "R/R Markdown Code",
-      "Data Preparation Report Section"
+      "Power BI Visualizations"
     ]
   },
   {
     "_id": "68b806f3881f36d185098deb",
     "id": 4,
     "compositeId": "2-4",
-    "title": "Correlation Analysis and Feature Importance",
-    "description": "Conduct correlation analysis between variables. Determine feature importance and weight attributes based on their relevance to modeling requirements.",
+    "title": "Prepare Data for Modelling",
+    "description": "Transform and encode categorical variables as needed. Discretize or scale numerical variables if necessary. Implement sampling techniques for splitting test and training datasets. Split the data into training and testing sets in preparation for the modelling phase.",
     "category": "Data Preparation",
     "complexity": "high",
     "milestoneId": 2,
@@ -62,119 +71,42 @@
       "2-3"
     ],
     "deliverables": [
-      "Correlation Analysis Results",
-      "Feature Importance Rankings",
-      "R/R Markdown Code"
+      "Variable Transformation Documentation",
+      "Encoding Strategy Report",
+      "Sampling Strategy Documentation",
+      "Train/Test Split Analysis",
+      "R/R Markdown Code",
+      "Power BI Transformations"
     ]
   },
   {
     "_id": "68b806f3881f36d185098dec",
     "id": 5,
     "compositeId": "2-5",
-    "title": "Data Selection Criteria Refinement",
-    "description": "Refine data selection criteria based on data quality assessment and exploration findings. Apply advanced data reduction techniques like PCA if appropriate.",
-    "category": "Data Preparation",
+    "title": "Documentation and Final Report",
+    "description": "Compile comprehensive Data Preparation Report documenting all decisions, actions, and results from the data preparation phase. Ensure all deliverables are complete and properly documented.",
+    "category": "Documentation",
     "complexity": "medium",
     "milestoneId": 2,
     "prerequisites": [
+      "2-1",
+      "2-2",
+      "2-3",
       "2-4"
     ],
     "deliverables": [
-      "Refined Selection Criteria",
-      "Data Reduction Analysis",
-      "Data Preparation Report Section"
-    ]
-  },
-  {
-    "_id": "68b806f3881f36d185098ded",
-    "id": 6,
-    "compositeId": "2-6",
-    "title": "Missing Values Analysis and Imputation",
-    "description": "Analyze patterns of missing data and implement appropriate imputation strategies. Document the impact of missing values and chosen treatment methods.",
-    "category": "Data Preparation",
-    "complexity": "high",
-    "milestoneId": 2,
-    "prerequisites": [
-      "2-5"
-    ],
-    "deliverables": [
-      "Missing Values Analysis",
-      "Imputation Strategy Documentation",
-      "R/R Markdown Code",
-      "Power BI Visualizations"
-    ]
-  },
-  {
-    "_id": "68b806f3881f36d185098dee",
-    "id": 7,
-    "compositeId": "2-7",
-    "title": "Outlier Detection and Treatment",
-    "description": "Identify outliers using statistical methods and domain knowledge. Implement appropriate treatment strategies (removal, transformation, or retention with justification).",
-    "category": "Data Preparation",
-    "complexity": "high",
-    "milestoneId": 2,
-    "prerequisites": [
-      "2-6"
-    ],
-    "deliverables": [
-      "Outlier Detection Results",
-      "Treatment Strategy Documentation",
-      "R/R Markdown Code"
-    ]
-  },
-  {
-    "_id": "68b806f3881f36d185098def",
-    "id": 8,
-    "compositeId": "2-8",
-    "title": "Data Noise and Special Values Handling",
-    "description": "Identify and address various types of data noise. Handle special values and their meanings. Document decisions for correcting, removing, or ignoring noise.",
-    "category": "Data Preparation",
-    "complexity": "medium",
-    "milestoneId": 2,
-    "prerequisites": [
-      "2-7"
-    ],
-    "deliverables": [
-      "Noise Analysis Report",
-      "Special Values Documentation",
-      "Data Cleaning Code"
-    ]
-  },
-  {
-    "_id": "68b806f3881f36d185098df0",
-    "id": 9,
-    "compositeId": "2-9",
-    "title": "Categorical Variable Transformation and Encoding",
-    "description": "Transform and encode categorical variables for modeling. Implement appropriate encoding techniques (one-hot, label, ordinal) and discretize or scale numerical variables as needed.",
-    "category": "Data Preparation",
-    "complexity": "high",
-    "milestoneId": 2,
-    "prerequisites": [
-      "2-8"
-    ],
-    "deliverables": [
-      "Variable Transformation Documentation",
-      "Encoding Strategy Report",
-      "R/R Markdown Code",
-      "Power BI Transformations"
-    ]
-  },
-  {
-    "_id": "68b806f3881f36d185098df1",
-    "id": 10,
-    "compositeId": "2-10",
-    "title": "Data Splitting and Sampling Strategy",
-    "description": "Implement data sampling techniques and split datasets into training and testing sets. Document sampling methodology and ensure representative splits for modeling phase.",
-    "category": "Data Preparation",
-    "complexity": "medium",
-    "milestoneId": 2,
-    "prerequisites": [
-      "2-9"
-    ],
-    "deliverables": [
-      "Sampling Strategy Documentation",
-      "Train/Test Split Analysis",
-      "R/R Markdown Code"
+      "Data Description section completed",
+      "Data Selection criteria and rationale documented",
+      "Data Cleaning process thoroughly explained",
+      "Attribute/Feature Selection methodology described",
+      "Data Transformations and Aggregation documented",
+      "All R/R Markdown code is well-commented and executable",
+      "Power BI visualizations are properly labeled and explained",
+      "Outstanding data quality issues and potential effects identified",
+      "All deliverables from previous tasks are included",
+      "Report follows academic formatting standards",
+      "References and citations are properly formatted",
+      "Executive summary provides clear overview of work completed"
     ]
   }
 ]
