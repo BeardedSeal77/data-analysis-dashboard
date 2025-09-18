@@ -1,0 +1,566 @@
+====  indicator_order vs iso3  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1      1     0.6   0.001  0.972
+Residuals                25  10985   439.4                
+
+====  indicator_order vs data_id  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26  10985   422.5 
+
+====  indicator_order vs indicator  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7  10985    1569 2.746e+31 <2e-16 ***
+Residuals                19      0       0                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  indicator_order vs value  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26  10985   422.5 
+
+====  indicator_order vs precision  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   1385   692.6   1.731  0.198
+Residuals                24   9600   400.0                
+
+====  indicator_order vs country_name  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1      1     0.6   0.001  0.972
+Residuals                25  10985   439.4                
+
+====  indicator_order vs survey_year  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2     19     9.3    0.02   0.98
+Residuals                24  10967   456.9                
+
+====  indicator_order vs survey_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2     19     9.3    0.02   0.98
+Residuals                24  10967   456.9                
+
+====  indicator_order vs indicator_id  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7  10985    1569 1.708e+31 <2e-16 ***
+Residuals                19      0       0                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  indicator_order vs indicator_type  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   1694   847.1   2.188  0.134
+Residuals                24   9291   387.1                
+
+====  indicator_order vs by_variable_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      1     0.3   0.001  0.999
+Residuals                24  10985   457.7                
+
+====  indicator_order vs by_variable_label  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      1     0.3   0.001  0.999
+Residuals                24  10985   457.7                
+
+====  indicator_order vs sdrid  ====
+                         Df Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  6  10265    1711   47.52 8.54e-11 ***
+Residuals                20    720      36                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs iso3  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  1 5.377e-24 5.377e-24     Inf <2e-16 ***
+Residuals                25 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs data_id  ====
+                         Df    Sum Sq   Mean Sq
+as.factor(df[[cat_col]]) 26 5.377e-24 2.068e-25 
+
+====  characteristic_id vs indicator  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7 5.377e-24 7.681e-25 4.758e+29 <2e-16 ***
+Residuals                19 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs value  ====
+                         Df    Sum Sq   Mean Sq
+as.factor(df[[cat_col]]) 26 5.377e-24 2.068e-25 
+
+====  characteristic_id vs precision  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.377e-24 2.688e-24 1.341e+31 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs country_name  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  1 5.377e-24 5.377e-24     Inf <2e-16 ***
+Residuals                25 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs survey_year  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.377e-24 2.688e-24 1.749e+30 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs survey_id  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.377e-24 2.688e-24 1.749e+30 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs indicator_id  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7 5.377e-24 7.681e-25 2.406e+30 <2e-16 ***
+Residuals                19 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs indicator_type  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2 3.010e-25 1.504e-25   0.711  0.501
+Residuals                24 5.076e-24 2.115e-25                
+
+====  characteristic_id vs by_variable_id  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.377e-24 2.688e-24     Inf <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs by_variable_label  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.377e-24 2.688e-24 8.437e+31 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  characteristic_id vs sdrid  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  6 9.100e-25 1.517e-25   0.679  0.668
+Residuals                20 4.467e-24 2.233e-25                
+
+====  characteristic_order vs iso3  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1      0       0     NaN    NaN
+Residuals                25      0       0                
+
+====  characteristic_order vs data_id  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26      0       0 
+
+====  characteristic_order vs indicator  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7      0       0     NaN    NaN
+Residuals                19      0       0                
+
+====  characteristic_order vs value  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26      0       0 
+
+====  characteristic_order vs precision  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs country_name  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1      0       0     NaN    NaN
+Residuals                25      0       0                
+
+====  characteristic_order vs survey_year  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs survey_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs indicator_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7      0       0     NaN    NaN
+Residuals                19      0       0                
+
+====  characteristic_order vs indicator_type  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs by_variable_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs by_variable_label  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2      0       0     NaN    NaN
+Residuals                24      0       0                
+
+====  characteristic_order vs sdrid  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  6      0       0     NaN    NaN
+Residuals                20      0       0                
+
+====  is_total vs iso3  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  1 5.128e-30 5.128e-30     Inf <2e-16 ***
+Residuals                25 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs data_id  ====
+                         Df    Sum Sq   Mean Sq
+as.factor(df[[cat_col]]) 26 5.128e-30 1.972e-31 
+
+====  is_total vs indicator  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7 5.128e-30 7.325e-31 4.758e+29 <2e-16 ***
+Residuals                19 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs value  ====
+                         Df    Sum Sq   Mean Sq
+as.factor(df[[cat_col]]) 26 5.128e-30 1.972e-31 
+
+====  is_total vs precision  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.128e-30 2.564e-30 1.341e+31 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs country_name  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  1 5.128e-30 5.128e-30     Inf <2e-16 ***
+Residuals                25 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs survey_year  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.128e-30 2.564e-30 1.749e+30 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs survey_id  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.128e-30 2.564e-30 1.749e+30 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs indicator_id  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  7 5.128e-30 7.325e-31 2.406e+30 <2e-16 ***
+Residuals                19 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs indicator_type  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2 2.870e-31 1.434e-31   0.711  0.501
+Residuals                24 4.841e-30 2.017e-31                
+
+====  is_total vs by_variable_id  ====
+                         Df    Sum Sq   Mean Sq F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.128e-30 2.564e-30     Inf <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs by_variable_label  ====
+                         Df    Sum Sq   Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2 5.128e-30 2.564e-30 8.437e+31 <2e-16 ***
+Residuals                24 0.000e+00 0.000e+00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_total vs sdrid  ====
+                         Df   Sum Sq   Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  6 8.68e-31 1.446e-31   0.679  0.668
+Residuals                20 4.26e-30 2.130e-31                
+
+====  is_preferred vs iso3  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1    0.0    0.00       0      1
+Residuals                25    6.5    0.26                
+
+====  is_preferred vs data_id  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26    6.5    0.25 
+
+====  is_preferred vs indicator  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7    0.0  0.0000       0      1
+Residuals                19    6.5  0.3421                
+
+====  is_preferred vs value  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26    6.5    0.25 
+
+====  is_preferred vs precision  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2    0.0  0.0000       0      1
+Residuals                24    6.5  0.2708                
+
+====  is_preferred vs country_name  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1    0.0    0.00       0      1
+Residuals                25    6.5    0.26                
+
+====  is_preferred vs survey_year  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2    0.0  0.0000       0      1
+Residuals                24    6.5  0.2708                
+
+====  is_preferred vs survey_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2    0.0  0.0000       0      1
+Residuals                24    6.5  0.2708                
+
+====  is_preferred vs indicator_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7    0.0  0.0000       0      1
+Residuals                19    6.5  0.3421                
+
+====  is_preferred vs indicator_type  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2    0.0  0.0000       0      1
+Residuals                24    6.5  0.2708                
+
+====  is_preferred vs by_variable_id  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2    6.5    3.25 7.075e+31 <2e-16 ***
+Residuals                24    0.0    0.00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_preferred vs by_variable_label  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2    6.5    3.25 1.267e+31 <2e-16 ***
+Residuals                24    0.0    0.00                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  is_preferred vs sdrid  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  6    0.0   0.000       0      1
+Residuals                20    6.5   0.325                
+
+====  survey_year_label vs iso3  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   66.5   66.46   0.794  0.381
+Residuals                25 2093.5   83.74                
+
+====  survey_year_label vs data_id  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26   2160   83.08 
+
+====  survey_year_label vs indicator  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7    216   30.86   0.302  0.944
+Residuals                19   1944  102.32                
+
+====  survey_year_label vs value  ====
+                         Df Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26   2160   83.08 
+
+====  survey_year_label vs precision  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   86.4    43.2     0.5  0.613
+Residuals                24 2073.6    86.4                
+
+====  survey_year_label vs country_name  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   66.5   66.46   0.794  0.381
+Residuals                25 2093.5   83.74                
+
+====  survey_year_label vs survey_year  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2   2160    1080 4.538e+31 <2e-16 ***
+Residuals                24      0       0                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  survey_year_label vs survey_id  ====
+                         Df Sum Sq Mean Sq   F value Pr(>F)    
+as.factor(df[[cat_col]])  2   2160    1080 4.538e+31 <2e-16 ***
+Residuals                24      0       0                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  survey_year_label vs indicator_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  7    216   30.86   0.302  0.944
+Residuals                19   1944  102.32                
+
+====  survey_year_label vs indicator_type  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   39.3   19.64   0.222  0.802
+Residuals                24 2120.7   88.36                
+
+====  survey_year_label vs by_variable_id  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   66.5   33.23   0.381  0.687
+Residuals                24 2093.5   87.23                
+
+====  survey_year_label vs by_variable_label  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   66.5   33.23   0.381  0.687
+Residuals                24 2093.5   87.23                
+
+====  survey_year_label vs sdrid  ====
+                         Df Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  6  151.2    25.2   0.251  0.953
+Residuals                20 2008.8   100.4                
+
+====  denominator_weighted vs iso3  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   257045  257045   0.129  0.723
+Residuals                25 49871994 1994880                
+
+====  denominator_weighted vs data_id  ====
+                         Df   Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26 50129039 1928040 
+
+====  denominator_weighted vs indicator  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  7 41367379 5909626   12.81 5.27e-06 ***
+Residuals                19  8761659  461140                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  denominator_weighted vs value  ====
+                         Df   Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26 50129039 1928040 
+
+====  denominator_weighted vs precision  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   342332  171166   0.083  0.921
+Residuals                24 49786707 2074446                
+
+====  denominator_weighted vs country_name  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   257045  257045   0.129  0.723
+Residuals                25 49871994 1994880                
+
+====  denominator_weighted vs survey_year  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  3973112 1986556   1.033  0.371
+Residuals                24 46155927 1923164                
+
+====  denominator_weighted vs survey_id  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  3973112 1986556   1.033  0.371
+Residuals                24 46155927 1923164                
+
+====  denominator_weighted vs indicator_id  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  7 41367379 5909626   12.81 5.27e-06 ***
+Residuals                19  8761659  461140                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  denominator_weighted vs indicator_type  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  3581953 1790976   0.923  0.411
+Residuals                24 46547086 1939462                
+
+====  denominator_weighted vs by_variable_id  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  2230451 1115226   0.559  0.579
+Residuals                24 47898587 1995774                
+
+====  denominator_weighted vs by_variable_label  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  2230451 1115226   0.559  0.579
+Residuals                24 47898587 1995774                
+
+====  denominator_weighted vs sdrid  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  6 36884281 6147380   9.283 6.32e-05 ***
+Residuals                20 13244758  662238                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  denominator_unweighted vs iso3  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   290035  290035   0.141  0.711
+Residuals                25 51482888 2059316                
+
+====  denominator_unweighted vs data_id  ====
+                         Df   Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26 51772923 1991266 
+
+====  denominator_unweighted vs indicator  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  7 42852514 6121788   13.04 4.63e-06 ***
+Residuals                19  8920408  469495                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  denominator_unweighted vs value  ====
+                         Df   Sum Sq Mean Sq
+as.factor(df[[cat_col]]) 26 51772923 1991266 
+
+====  denominator_unweighted vs precision  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2   410478  205239   0.096  0.909
+Residuals                24 51362445 2140102                
+
+====  denominator_unweighted vs country_name  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  1   290035  290035   0.141  0.711
+Residuals                25 51482888 2059316                
+
+====  denominator_unweighted vs survey_year  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  4107115 2053558   1.034  0.371
+Residuals                24 47665808 1986075                
+
+====  denominator_unweighted vs survey_id  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  4107115 2053558   1.034  0.371
+Residuals                24 47665808 1986075                
+
+====  denominator_unweighted vs indicator_id  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  7 42852514 6121788   13.04 4.63e-06 ***
+Residuals                19  8920409  469495                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+====  denominator_unweighted vs indicator_type  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  3964425 1982213   0.995  0.384
+Residuals                24 47808498 1992021                
+
+====  denominator_unweighted vs by_variable_id  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  2210900 1105450   0.535  0.592
+Residuals                24 49562023 2065084                
+
+====  denominator_unweighted vs by_variable_label  ====
+                         Df   Sum Sq Mean Sq F value Pr(>F)
+as.factor(df[[cat_col]])  2  2210900 1105450   0.535  0.592
+Residuals                24 49562023 2065084                
+
+====  denominator_unweighted vs sdrid  ====
+                         Df   Sum Sq Mean Sq F value   Pr(>F)    
+as.factor(df[[cat_col]])  6 38103288 6350548   9.291 6.28e-05 ***
+Residuals                20 13669634  683482                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
