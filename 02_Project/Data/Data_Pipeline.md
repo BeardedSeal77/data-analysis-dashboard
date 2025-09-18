@@ -1,6 +1,6 @@
 # Data Pipeline Documentation
 
-This folder contains the data processing pipeline for the BIN381 health datasets analysis project. Data flows through four distinct stages, each serving a specific purpose in the analysis workflow.
+This folder contains the data processing pipeline for the BIN381 health datasets analysis project. Data flows through three distinct stages, each serving a specific purpose in the analysis workflow.
 
 ## Folder Structure
 
@@ -23,17 +23,7 @@ This folder contains the data processing pipeline for the BIN381 health datasets
 
 **Output**: Clean datasets ready for analysis, maintaining original scales and units
 
-### 03_Processed
-**Purpose**: Analysis-ready datasets with derived features
-- Feature engineering (calculated fields, ratios, indices)
-- Data filtering for specific research questions
-- Aggregations and summaries as needed
-- Business logic applied (age groups, risk categories, etc.)
-- Data joined/merged across different sources if required
-
-**Output**: Datasets tailored for specific analytical objectives
-
-### 04_Scaled
+### 03_Scaled
 **Purpose**: Model-ready data with statistical transformations
 - Numerical scaling (standardization, normalization)
 - Categorical encoding (one-hot, label encoding)
@@ -46,12 +36,11 @@ This folder contains the data processing pipeline for the BIN381 health datasets
 
 1. **Never modify 01_Raw** - Always preserve original data
 2. **Document transformations** - Keep track of all changes made at each stage
-3. **Stage-appropriate analysis** - Use 02_Cleaned for Power BI, 04_Scaled for ML models
+3. **Stage-appropriate analysis** - Use 02_Cleaned for Power BI, 03_Scaled for ML models
 4. **Maintain traceability** - Each file should be traceable back to its raw source
 
 ## Tools by Stage
 
 - **01_Raw → 02_Cleaned**: R data cleaning scripts
-- **02_Cleaned → 03_Processed**: R feature engineering
-- **03_Processed → Power BI**: Direct import for dashboards
-- **03_Processed → 04_Scaled**: R preprocessing for modeling
+- **02_Cleaned → 03_Scaled**: R preprocessing for modeling
+- **02_Cleaned → Power BI**: Direct import for dashboards
