@@ -1,0 +1,234 @@
+---
+title: "Task 3: Clean Data — HDPSA BIN381"
+author: "Llewellyn Fourie"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  word_document:
+    toc: true
+    number_sections: true
+  pdf_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
+                      out.width = "100%", fig.pos = "H")
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readr)
+  library(janitor)
+  library(naniar)
+  library(ggplot2)
+  library(mice)
+  library(imputeTS)
+  library(MissMech)
+  library(knitr)
+})
+theme_set(theme_minimal())
+```
+
+# 1. Introduction
+
+Task 3 of the CRISP-DM process focuses on **Data Cleaning**, where the primary goal is to raise the quality of the data to the level required for meaningful modeling. While Task 2 (Verify Data Quality) helped identify problematic fields, redundancies, and missingness patterns, Task 3 acts on these findings through cleaning, outlier handling, and imputation.
+
+For robustness and demonstration, the pipeline runs across **all 13 national HDPSA datasets**. However, in this knitted PDF we will only **showcase one dataset** — *access-to-health-care_national_zaf.csv* — to illustrate the outputs (cleaned tables, imputed results, and visuals). The full pipeline nevertheless executes for all datasets and saves results into structured output folders.
+
+---
+
+# 2. Setup
+
+## 2.1 Paths & Directories
+
+```{r paths}
+get_base_path <- function() {
+  cand_dirs <- c(
+    file.path(getwd(), "Data/01_Raw"),
+    file.path(getwd(), "../Data/01_Raw"),
+    file.path(getwd(), "../../Data/01_Raw"),
+    file.path(getwd(), "02_Project/Data/01_Raw"),
+    file.path(getwd(), "../02_Project/Data/01_Raw")
+  )
+  existing <- cand_dirs[dir.exists(cand_dirs)]
+  if (length(existing) == 0) stop("Could not locate Data/01_Raw folder")
+  normalizePath(existing[1])
+}
+
+base_path <- get_base_path()
+outputs_path <- file.path("E:/data-analysis-dashboard/02_Project/Milestone_2/Task_03/outputs")
+if (!dir.exists(outputs_path)) dir.create(outputs_path, recursive = TRUE)
+
+subdirs <- c("cleaned", "imputed", "visuals", "logs")
+for (sd in subdirs) dir.create(file.path(outputs_path, sd), showWarnings = FALSE, recursive = TRUE)
+
+cat("Base path:", base_path, "\n")
+cat("Outputs:", outputs_path, "\n")
+```
+
+## 2.2 Import Datasets
+
+```{r load}
+csv_files <- list.files(base_path, pattern = "\\.csv$", full.names = TRUE)
+datasets <- map(csv_files, ~ read_csv(.x, show_col_types = FALSE) %>% clean_names())
+names(datasets) <- tools::file_path_sans_ext(basename(csv_files))
+
+cat("Loaded", length(datasets), "datasets\n")
+```
+
+---
+
+# 3. Cleaning Rules from Task 2
+
+The following rules are applied based on insights from Task 2:
+
+- **Exclusion of problematic fields** such as `region_id`, `level_rank`, `ci_low`, `ci_high`, `by_variable_label`, and `survey_year_label`.
+- **Outlier handling** using capping at the 1st and 99th percentile to reduce the influence of extreme values.
+- **Low-variance filtering** where numeric fields with CV < 0.01 are dropped as they provide negligible information.
+- **Missing data imputation:**
+  - Categorical variables → imputed with **mode**.
+  - Numeric variables → imputed with **MICE PMM** (fallback to median if MICE fails).
+
+```{r exclusions}
+exclusion_fields <- c("region_id", "level_rank", "ci_low", "ci_high",
+                      "by_variable_label", "survey_year_label")
+```
+
+---
+
+# 4. Cleaning & Imputation Pipeline with Logs
+
+```{r cleaning_functions}
+Mode <- function(x) {
+  ux <- unique(x[!is.na(x)])
+  if (length(ux) == 0) return(NA)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+cap_outliers <- function(x, lower = 0.01, upper = 0.99) {
+  if (is.numeric(x)) {
+    q <- quantile(x, probs = c(lower, upper), na.rm = TRUE)
+    x <- pmin(pmax(x, q[1]), q[2])
+  }
+  x
+}
+
+low_variance_threshold <- 0.01
+drop_low_variance <- function(df) {
+  keep <- names(df)[!sapply(df, function(col) {
+    if (is.numeric(col)) {
+      cv <- sd(col, na.rm = TRUE) / abs(mean(col, na.rm = TRUE))
+      return(!is.na(cv) && cv < low_variance_threshold)
+    }
+    FALSE
+  })]
+  df %>% select(all_of(keep))
+}
+
+clean_dataset <- function(df, dataset_name) {
+  log_entries <- list()
+
+  dropped <- intersect(names(df), exclusion_fields)
+  df <- df %>% select(-any_of(exclusion_fields))
+  log_entries[["dropped_fields"]] <- dropped
+
+  before_outliers <- df
+  df <- df %>% mutate(across(where(is.numeric), cap_outliers))
+  outlier_changes <- colSums(before_outliers != df, na.rm = TRUE)
+  log_entries[["outliers_capped"]] <- outlier_changes[outlier_changes > 0]
+
+  low_var <- names(df)[sapply(df, function(x) {
+    if (is.numeric(x)) {
+      cv <- sd(x, na.rm = TRUE) / abs(mean(x, na.rm = TRUE))
+      !is.na(cv) && cv < low_variance_threshold
+    } else FALSE
+  })]
+  df <- drop_low_variance(df)
+  log_entries[["low_variance_dropped"]] <- low_var
+
+  cleaned_path <- file.path(outputs_path, "cleaned", paste0(dataset_name, "_cleaned.csv"))
+  write_csv(df, cleaned_path)
+
+  df <- df %>% mutate(across(where(is.character), ~ifelse(is.na(.x), Mode(.x), .x)))
+
+  numeric_cols <- names(df)[sapply(df, is.numeric)]
+  needs_mice <- any(sapply(df[numeric_cols], function(x) any(is.na(x))))
+
+  if (needs_mice) {
+    mice_df <- df[numeric_cols]
+    set.seed(381)
+    imp <- tryCatch(mice(mice_df, m=3, method="pmm", maxit=10, printFlag=FALSE), error=function(e) NULL)
+    if (!is.null(imp)) {
+      df[numeric_cols] <- complete(imp)
+    } else {
+      df <- df %>% mutate(across(all_of(numeric_cols), ~ifelse(is.na(.x), median(.x, na.rm=TRUE), .x)))
+    }
+  }
+
+  imputed_path <- file.path(outputs_path, "imputed", paste0(dataset_name, "_imputed.csv"))
+  write_csv(df, imputed_path)
+
+  log_df <- enframe(log_entries, name = "action", value = "details")
+  log_path <- file.path(outputs_path, "logs", paste0(dataset_name, "_log.csv"))
+  write_csv(log_df, log_path)
+
+  return(df)
+}
+```
+
+---
+
+# 5. Apply Pipeline
+
+```{r run_pipeline}
+cleaned_datasets <- map2(datasets, names(datasets), clean_dataset)
+names(cleaned_datasets) <- names(datasets)
+cat("Finished cleaning", length(cleaned_datasets), "datasets\n")
+```
+
+---
+
+# 6. Demonstration Results: Access to Health Care Dataset
+
+Although all datasets were processed, here we display only the *access-to-health-care_national_zaf* dataset for clarity.
+
+## 6.1 Cleaned Data (Pre-Imputation)
+
+```{r cleaned_table, results='asis'}
+access_cleaned <- read_csv(file.path(outputs_path, "cleaned", "access-to-health-care_national_zaf_cleaned.csv"), show_col_types = FALSE)
+knitr::kable(head(access_cleaned, 15), caption = "First 15 rows of cleaned data (pre-imputation)")
+```
+
+## 6.2 Imputed Data (Post-Cleaning)
+
+```{r imputed_table, results='asis'}
+access_imputed <- read_csv(file.path(outputs_path, "imputed", "access-to-health-care_national_zaf_imputed.csv"), show_col_types = FALSE)
+knitr::kable(head(access_imputed, 15), caption = "First 15 rows of imputed data (post-cleaning)")
+```
+
+## 6.3 Visual Diagnostics
+
+```{r visuals, fig.width=8, fig.height=5, out.width="100%"}
+p1 <- gg_miss_var(access_cleaned) + labs(title = "Missingness by Variable — Access to Health Care")
+p2 <- ggplot(access_cleaned, aes(x = value)) + geom_histogram(bins = 30, fill="steelblue", color="white") + labs(title = "Distribution of 'value' Before Imputation")
+p3 <- ggplot(access_imputed, aes(x = value)) + geom_histogram(bins = 30, fill="darkgreen", color="white") + labs(title = "Distribution of 'value' After Imputation")
+
+print(p1)
+print(p2)
+print(p3)
+```
+
+---
+
+# 7. Summary & Recommendations
+
+- **Execution:** Cleaning and imputation successfully executed for all 13 datasets. Results are stored in the `outputs/` subfolders.
+- **Demonstration:** Here we showcased the access-to-health-care dataset to illustrate pre- and post-cleaning transformations, and visual checks of missingness and value distributions.
+- **Decisions applied:**
+  - Removed problematic fields identified in Task 2.
+  - Outliers capped to reduce skewness.
+  - Low-variance fields removed for efficiency.
+  - Imputation strategy balanced between categorical (mode) and numeric (MICE PMM or median).
+- **Impact:** Data is now in a consistent, high-quality format suitable for Task 4 (Data Preparation for Modeling).
+
+**Note:** Logs for all datasets can be found in the `logs/` folder, enabling a complete audit trail of changes applied.
+
+---
