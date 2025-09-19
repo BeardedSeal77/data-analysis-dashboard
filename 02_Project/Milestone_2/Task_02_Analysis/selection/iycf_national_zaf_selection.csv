@@ -1,9 +1,0 @@
-variable,missing_pct,unique_vals,recommended
-indicator,0,14,keep
-value,0,22,keep
-survey_year,0,2,keep
-characteristic_category,0,2,keep
-characteristic_label,0,2,keep
-is_preferred,0,1,keep
-denominator_weighted,0.09090909090909091,9,keep
-denominator_unweighted,0.09090909090909091,10,keep

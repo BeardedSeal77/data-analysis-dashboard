@@ -1,8 +1,0 @@
-variable,missing_pct,unique_vals,recommended
-indicator,0,20,keep
-value,0,17,keep
-survey_year,0,1,keep
-indicator_type,0,4,keep
-is_preferred,0,1,keep
-denominator_weighted,0.1,3,keep
-denominator_unweighted,0.1,3,keep
