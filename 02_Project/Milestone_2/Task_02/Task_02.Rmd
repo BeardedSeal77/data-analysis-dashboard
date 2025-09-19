@@ -746,118 +746,103 @@ for (file in output_files) {
 }
 ```
 
-## 7.2 Data Quality Verification Results
+## 7.2 Final Dataset and Field Selection Decisions
 
-Based on comprehensive analysis of 13 South African health datasets containing 31 unique fields across 907 total records, this section presents field selection recommendations and data quality findings to guide subsequent data preparation tasks.
+Based on comprehensive analysis results, the following specific datasets and fields will be retained for modeling:
 
-### Field Selection Recommendations
+### DATASETS TO KEEP (7 datasets - 609 total records)
 
-**High Priority Fields (2 fields - Include Immediately):**
-- **`value`** (Score: 0.785): The primary measurement field containing actual health indicator values. Shows perfect completeness (0% missing), high variance, and strong information content.
-- **`data_id`** (Score: 0.747): Critical unique identifier field with perfect completeness and maximum information content, essential for data lineage and record tracking.
+**Tier 1 - Primary Datasets (3 datasets - 509 records):**
+1. **`access-to-health-care_national_zaf`** - 275 records (Quality Score: 0.346)
+2. **`immunization_national_zaf`** - 116 records (Quality Score: 0.289)
+3. **`hiv-behavior_national_zaf`** - 118 records (Quality Score: 0.278)
 
-**Medium Priority Fields (20 fields - Evaluate for Specific Use Cases):**
-- **`by_variable_id`** (Score: 0.634): Important grouping variable with good information content
-- **`precision`** (Score: 0.591): Indicates measurement precision, moderate correlation with other fields
-- **`characteristic_order`** (Score: 0.579): Demographic ordering field with reasonable quality metrics
-- **Core descriptive fields**: Including `indicator`, `country_name`, `characteristic_category`, `characteristic_label` - essential for interpretation but lower analytical value
-- **Sample size indicators**: `denominator_weighted`, `denominator_unweighted` - important for weighting but highly redundant (r=0.998)
+**Tier 2 - Secondary Datasets (4 datasets - 238 records):**
+4. **`water_national_zaf`** - 100 records (Quality Score: 0.275)
+5. **`dhs-quickstats_national_zaf`** - 52 records (Quality Score: 0.239)
+6. **`toilet-facilities_national_zaf`** - 46 records (Quality Score: 0.228)
+7. **`child-mortality-rates_national_zaf`** - 40 records (Quality Score: 0.223)
 
-**Low Priority Fields (6 fields - Consider for Specific Research Questions):**
-- Fields with moderate completeness but limited analytical utility
-- Secondary identifier and ordering fields
+### DATASETS TO DROP (6 datasets - 298 total records)
 
-**Exclude Fields (7 fields - Remove in Task 3):**
-- **`region_id`**, **`level_rank`**: 100% missing data across all datasets
-- **`ci_low`**, **`ci_high`**: 100% missing in 10/13 datasets, limited availability
-- **`by_variable_label`**: 74% missing data, poor quality
-- **Redundant temporal fields**: Consider removing either `survey_year` or `survey_year_label` (perfect correlation r=1.0)
+**Rationale: Quality Score <0.20 or insufficient sample size:**
+1. **`maternal-mortality_national_zaf`** - 21 records (Quality Score: 0.172) - Poorest quality, 21.8% missing rate
+2. **`anthropometry_national_zaf`** - 37 records (Quality Score: 0.214) - Small sample, 18.0% missing rate
+3. **`covid-19-prevention_national_zaf`** - 34 records (Quality Score: 0.210) - Small sample
+4. **`symptoms-of-acute-respiratory-infection-ari_national_zaf`** - 26 records (Quality Score: 0.198) - Very small sample
+5. **`iycf_national_zaf`** - 22 records (Quality Score: 0.184) - Very small sample
+6. **`literacy_national_zaf`** - 20 records (Quality Score: 0.178) - Very small sample
 
-### Correlation Analysis Findings
+### FIELDS TO KEEP (11 fields)
 
-**Critical Redundancies Identified:**
-1. **Perfect Duplicates (r=1.0):**
-   - `survey_year` ↔ `survey_year_label`: Identical information in different formats
-   - `characteristic_id` ↔ `characteristic_order`: Perfect correlation in multiple datasets
+**Essential Fields (2 fields):**
+- **`value`** (Score: 0.785) - Primary measurement values
+- **`data_id`** (Score: 0.747) - Unique record identifier
 
-2. **Near-Perfect Correlations (r>0.99):**
-   - `denominator_weighted` ↔ `denominator_unweighted` (r=0.998): Sample size measures are essentially identical
-   - `value` ↔ `ci_high` (r=0.999): Confidence bounds mirror main values
-   - `value` ↔ `ci_low` (r=0.997): High predictability from main measurement
+**Core Analytical Fields (4 fields):**
+- **`by_variable_id`** (Score: 0.634) - Important grouping variable
+- **`precision`** (Score: 0.591) - Measurement precision indicator
+- **`characteristic_order`** (Score: 0.579) - Demographic ordering
+- **`indicator_order`** (Score: 0.573) - Indicator hierarchy
 
-3. **High Correlation Patterns:**
-   - **176 field pairs** show correlations |r|>0.8, indicating substantial redundancy
-   - **Temporal correlations**: Survey year shows strong relationships with denominators (-0.42) suggesting systematic changes over time
-   - **Measurement correlations**: Core value fields show expected relationships with confidence intervals
+**Descriptive Fields (3 fields):**
+- **`indicator`** (Score: 0.55) - Health indicator description
+- **`indicator_type`** (Score: 0.55) - Indicator categorization
+- **`characteristic_category`** (Score: 0.55) - Demographic categories
 
-**Field Interaction Insights:**
-- `denominator_weighted` shows highest average correlation strength (0.452), indicating it's central to many relationships
-- `value` field correlates moderately with denominators (r=0.32) but strongly with confidence bounds
-- Categorical identifiers show systematic relationships with ordering fields
+**Sample Size Field (1 field):**
+- **`denominator_weighted`** (Score: 0.522) - Weighted sample sizes
 
-### Dataset Quality Rankings
+**Quality Flag (1 field):**
+- **`is_preferred`** (Score: 0.509) - Preferred estimate indicator
 
-**Tier 1 - Highest Quality (Quality Score >0.27):**
-1. **`access-to-health-care_national_zaf`** (Score: 0.346): 275 records, 14.8% missing rate - largest dataset with best completeness
-2. **`immunization_national_zaf`** (Score: 0.289): 116 records, 15.9% missing rate - good size and quality balance
-3. **`hiv-behavior_national_zaf`** (Score: 0.278): 118 records, 19.5% missing rate - substantial records despite higher missingness
+### FIELDS TO DROP (24 fields)
 
-**Tier 2 - Moderate Quality (Quality Score 0.20-0.27):**
-- `water_national_zaf`, `dhs-quickstats_national_zaf`, `toilet-facilities_national_zaf`: 46-100 records each
-- Reasonable data quality but smaller sample sizes limit statistical power
+**Complete Exclusion (7 fields - Fatal quality issues):**
+- **`region_id`** - 100% missing across all datasets
+- **`level_rank`** - 100% missing across all datasets
+- **`ci_low`** (categorical) - 100% missing in 10/13 datasets
+- **`ci_high`** (categorical) - 100% missing in 10/13 datasets
+- **`by_variable_label`** - 74% missing data
+- **`ci_low`** (numeric) - 61% missing, limited availability
+- **`ci_high`** (numeric) - 61% missing, limited availability
 
-**Tier 3 - Lower Quality (Quality Score <0.20):**
-- `maternal-mortality_national_zaf` (Score: 0.172): Poorest quality with 21.8% missing rate
-- Several datasets with <30 records: `literacy`, `iycf`, `anthropometry`
-- Consider prioritizing higher-tier datasets for primary analyses
+**Redundancy Removal (6 fields):**
+- **`survey_year_label`** - Perfect duplicate of `survey_year` (r=1.0)
+- **`denominator_unweighted`** - Near-perfect correlation with `denominator_weighted` (r=0.998)
+- **`characteristic_id`** - High correlation with `characteristic_order`
+- **`characteristic_label`** - Redundant with `characteristic_category`
+- **`country_name`** - Constant value (South Africa)
+- **`iso3`** - Constant value (ZAF)
 
-### Data Selection Criteria Applied
+**Low Priority Exclusion (11 fields):**
+- **`survey_year`** - Low variance (same values across datasets)
+- **`is_total`** - Low variance, minimal analytical value
+- **`dhs_country_code`**, **`sdrid`**, **`survey_id`**, **`survey_type`** - Administrative fields
+- **`indicator_id`** - Redundant with `indicator`
 
-**Completeness Threshold (35% weight in scoring):**
-- Fields with >50% missing data flagged for exclusion
-- Perfect completeness strongly rewarded in scoring algorithm
+### Summary Statistics
 
-**Information Content Assessment (25% weight):**
-- Variance analysis identified fields contributing meaningful signal
-- High-entropy fields prioritized for modeling applications
+**Final Dataset Composition:**
+- **Total Records**: 609 (67% of original 907 records)
+- **Total Fields**: 11 (35% of original 31 fields)
+- **Average Missing Rate**: 16.8% (improvement from 18.1% overall)
+- **Data Quality Score**: Weighted average of 0.271 (vs 0.229 for all datasets)
 
-**Redundancy Control (15% weight):**
-- Correlation analysis revealed systematic redundancies requiring consolidation
-- Lower uniqueness scores penalized highly correlated field pairs
+**Quality Improvements:**
+- Eliminated 100% missing fields (4 fields)
+- Removed high-missing datasets (6 datasets with <40 records or >20% missing)
+- Eliminated perfect redundancies (6 field pairs)
+- Retained high-information content fields (Score >0.5)
 
-**Quality Issue Penalties (5% weight):**
-- 13 fields flagged for excessive outliers
-- 9 fields identified with low variance issues
-- 9 fields problematic missing data patterns
+### Implementation for Task 3
 
-### Statistical Significance Assessment
-
-**Data Quality Issues Summary:**
-- **Missing Data**: 9/31 fields show problematic missing patterns requiring imputation strategies
-- **Outlier Detection**: 13/31 fields contain excessive outliers (>5% threshold) requiring robust handling
-- **Low Variance**: 9/31 fields demonstrate insufficient variation for analytical utility
-- **Redundancy**: Multiple perfect correlations indicate opportunities for dimensionality reduction
-
-**Field Weighting Recommendations:**
-Based on composite scoring methodology:
-- **Tier 1 Weight (1.0)**: `value`, `data_id` - essential fields for all analyses
-- **Tier 2 Weight (0.7)**: Core demographic and identifier fields with good quality
-- **Tier 3 Weight (0.3)**: Secondary fields for specialized analyses only
-- **Exclusion Weight (0.0)**: Fields with fatal quality issues or perfect redundancy
-
-## 7.3 Implementation Guidance
-
-**For Task 3 (Data Cleaning):**
-- Address fields identified with quality issues
-- Focus on high-priority fields for inclusion
-- Apply correlation-based feature selection
-
-**For Task 4 (Data Preparation for Modeling):**
-- Use field importance scores for feature selection
-- Consider PCA results for dimensionality reduction
-- Apply dataset quality rankings for data source prioritization
-
-*Detailed findings and recommendations will be added after executing the analysis and reviewing the exported CSV files.*
+**Data Cleaning Priorities:**
+1. Load only the 7 selected datasets
+2. Select only the 11 specified fields
+3. Address outliers in `precision`, `value`, and `indicator_order` fields
+4. Handle remaining missing data in `denominator_weighted`
+5. Validate data types and ranges for all retained fields
 
 ```{r session_info}
 sessionInfo()
