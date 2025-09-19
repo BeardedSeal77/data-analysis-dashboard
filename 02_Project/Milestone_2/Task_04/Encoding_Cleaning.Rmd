@@ -24,62 +24,28 @@ cleaned_files <- list.files(clean_dir, pattern = "\\.csv$", full.names = TRUE)
 cleaned_files
 ```
 
-
-
-
-# Display column names and data types for all cleaned datasets
-```{r inspect, message=FALSE, warning=FALSE}
-for (file_path in cleaned_files) {
-  dataset_name <- tools::file_path_sans_ext(basename(file_path))
-  cat("Dataset:", dataset_name, "\n")
-  
-  # Load data-set
+# Combine the 7 Data-Sets into 1 Data-Set and Add dataset_source column
+```{r combine_datasets, message=FALSE, warning=FALSE}
+# Load all data-sets into a list and add data_set_source column
+datasets <- lapply(cleaned_files, function(file_path) {
   df <- read_csv(file_path, show_col_types = FALSE)
   
-  # Create table of column names and data types
-  col_info <- data.frame(
-    Column = names(df),
-    DataType = sapply(df, class),
-    stringsAsFactors = FALSE
-  )
+  # Add data-set_source column (use file-name without extension)
+  df$dataset_source <- tools::file_path_sans_ext(basename(file_path))
   
-  print(col_info)
-  cat("\n----------------------------------------\n\n")
-}
+  return(df)
+})
+
+# Combine all data-sets row-wise
+combined_df <- bind_rows(datasets)
+
+# Preview combined data-set
+cat("Combined all datasets with dataset_source. Dimensions:", dim(combined_df), "\n")
+glimpse(combined_df)
 ```
 
-# Transform and Encode All Categorical Variables with One-Hot Encoding
+# Transform and Encode All Categorical Variables
 ```{r encode_categorical, message=FALSE, warning=FALSE}
-# Initialize list to store the encoded data-sets
-encoded_datasets <- list()
 
-for (file_path in cleaned_files) {
-  
-  # Load dataset
-  df <- read_csv(file_path, show_col_types = FALSE)
-  dataset_name <- tools::file_path_sans_ext(basename(file_path))
-  
-  # Identify categorical columns
-  cat_cols <- df %>% select(where(~ is.character(.x) | is.factor(.x))) %>% names()
-  
-  if (length(cat_cols) > 0) {
-    for(col in cat_cols){
-      
-      # One-hot encoding
-      dummy_df <- model.matrix(~ . - 1, data = df[col]) %>% as.data.frame()
-      
-      # Clean column names
-      colnames(dummy_df) <- make.names(colnames(dummy_df))
-      
-      # Bind dummy columns and remove original column
-      df <- bind_cols(df, dummy_df)
-      df[[col]] <- NULL
-    }
-  }
-  
-  # Store processed data-set
-  encoded_datasets[[dataset_name]] <- df
-  
-  cat("One-hot encoded all categorical variables for dataset:", dataset_name, "\n")
-}
+
 ```
