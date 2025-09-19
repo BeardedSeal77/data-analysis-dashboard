@@ -1,0 +1,51 @@
+---
+title: "Task_4_Encoding_Scaling"
+author: "Juan Oosthuizen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Initial Setup
+```{r setup, message=FALSE, warning=FALSE}
+suppressPackageStartupMessages({
+  library(readr)     # read_csv, write_csv
+  library(dplyr)     # select, mutate, across, etc.
+  library(rsample)   # initial_split, training, testing
+  library(recipes)   # pre-processing pipeline
+  library(knitr)     # pretty tables in report
+})
+
+# Directories
+clean_dir <- "../../Data/02_Cleaned"
+output_dir <- "../../Data/03_Scaled"
+
+# List cleaned data-sets
+cleaned_files <- list.files(clean_dir, pattern = "\\.csv$", full.names = TRUE)
+cleaned_files
+```
+
+# Combine the 7 Data-Sets into 1 Data-Set and Add dataset_source column
+```{r combine_datasets, message=FALSE, warning=FALSE}
+# Load all data-sets into a list and add data_set_source column
+datasets <- lapply(cleaned_files, function(file_path) {
+  df <- read_csv(file_path, show_col_types = FALSE)
+  
+  # Add data-set_source column (use file-name without extension)
+  df$dataset_source <- tools::file_path_sans_ext(basename(file_path))
+  
+  return(df)
+})
+
+# Combine all data-sets row-wise
+combined_df <- bind_rows(datasets)
+
+# Preview combined data-set
+cat("Combined all datasets with dataset_source. Dimensions:", dim(combined_df), "\n")
+glimpse(combined_df)
+```
+
+# Transform and Encode All Categorical Variables
+```{r encode_categorical, message=FALSE, warning=FALSE}
+
+
+```

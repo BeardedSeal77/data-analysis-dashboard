@@ -791,7 +791,7 @@ Based on comprehensive analysis results, the following specific datasets and fie
 - **`characteristic_category`** (Score: 0.55) - Demographic categories
 
 **Sample Size Field (1 field):**
-- **`denominator_weighted`** (Score: 0.522) - Weighted sample sizes
+- **`denominator_unweighted`** (Score: 0.531) - Unweighted sample sizes (categorical pattern)
 
 **Quality Flag (1 field):**
 - **`is_preferred`** (Score: 0.509) - Preferred estimate indicator
@@ -809,7 +809,7 @@ Based on comprehensive analysis results, the following specific datasets and fie
 
 **Redundancy Removal (6 fields):**
 - **`survey_year_label`** - Perfect duplicate of `survey_year` (r=1.0)
-- **`denominator_unweighted`** - Near-perfect correlation with `denominator_weighted` (r=0.998)
+- **`denominator_weighted`** - Near-perfect correlation with `denominator_unweighted` (r=0.998)
 - **`characteristic_id`** - High correlation with `characteristic_order`
 - **`characteristic_label`** - Redundant with `characteristic_category`
 - **`country_name`** - Constant value (South Africa)
