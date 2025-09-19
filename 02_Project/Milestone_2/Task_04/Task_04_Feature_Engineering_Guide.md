@@ -61,12 +61,13 @@
 - **Action**: Keep as ordinal numeric
 - **Feature Engineering**: Create indicator importance tiers (1-3=High, 4-6=Medium, 7+=Low)
 
-### 10. **`denominator_weighted`** (Sample Size)
-- **Action**: Log transform (sample sizes vary widely)
+### 10. **`denominator_unweighted`** (Sample Size - Categorical Pattern)
+- **Action**: Treat as categorical due to highly repetitive values
+- **Pattern Analysis**: Shows clear groupings (e.g., 971/951, 2903/4148/2041, 11083/37925)
 - **Feature Engineering**:
-  - Create `log_sample_size` = log(denominator_weighted + 1)
-  - Create sample size categories: Small (<50), Medium (50-200), Large (200+)
-  - Create reliability weight for modeling
+  - One-hot encode or label encode the distinct values
+  - Create sample size tiers: Small (<1000), Medium (1000-10000), Large (10000+)
+  - Use as survey cohort identifier (values represent specific survey groups)
 
 ### 11. **`is_preferred`** (Quality Flag)
 - **Action**: Keep as binary (0/1)
@@ -75,9 +76,8 @@
 
 ## Final Feature Set Structure
 
-**Numeric Features (6):**
+**Numeric Features (5):**
 - `value` (target/predictor)
-- `log_sample_size`
 - `characteristic_order`
 - `indicator_order`
 - `precision`
@@ -87,12 +87,13 @@
 - `is_preferred`
 - `high_precision`
 
-**Categorical Features (6):**
+**Categorical Features (7):**
 - `dataset_source` (7 categories)
 - `by_variable_id` (10-15 categories)
 - `indicator_domain` (5-8 categories)
 - `indicator_type` (5-10 categories)
 - `characteristic_category` (varies by dataset)
+- `denominator_unweighted` (6-10 unique survey cohorts)
 - `sample_size_tier` (3 categories)
 
 **Total Estimated Features After Encoding: 35-50 features**
@@ -109,5 +110,5 @@
 
 - **Regression Target**: `value` (health indicator measurements)
 - **Classification Target**: `value_category` (Low/Medium/High health outcomes)
-- **Sample Weights**: Use `denominator_weighted` and `is_preferred` for weighted modeling
+- **Sample Weights**: Use `denominator_unweighted` cohorts and `is_preferred` for weighted modeling
 - **Cross-validation**: Stratify by `dataset_source` to ensure balanced representation
