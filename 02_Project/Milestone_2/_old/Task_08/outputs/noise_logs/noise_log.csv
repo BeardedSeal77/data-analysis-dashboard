@@ -1,2 +1,0 @@
-dataset,variable,issue,action,rationale
-dhs-quickstats_national_zaf_clean.csv,ci_low,Values >100%,Clamp to 100,Logical maximum

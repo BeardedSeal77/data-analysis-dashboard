@@ -1,7 +1,0 @@
-"Indicator1","Indicator2","Correlation","Strength","Abs_Correlation"
-"Number of children born in the last five (or three) years (unweighted)","Number of children born in the last five (or three) years",1,"Positive",1
-"Number of children born in the last five (or three) years","Number of children born in the last five (or three) years (unweighted)",1,"Positive",1
-"Number of men (unweighted)","Number of men",0.997270671975184,"Positive",0.997270671975184
-"Number of men","Number of men (unweighted)",0.997270671975184,"Positive",0.997270671975184
-"Number of women (unweighted)","Number of women",0.974878962801588,"Positive",0.974878962801588
-"Number of women","Number of women (unweighted)",0.974878962801588,"Positive",0.974878962801588

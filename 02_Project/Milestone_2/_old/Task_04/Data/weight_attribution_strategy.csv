@@ -1,9 +1,0 @@
-"Feature","Final_Rank","Combined_Score","Weight_Category","Suggested_Weight"
-"Number of women (unweighted)",1,1,"High Weight (3x)",3
-"Number of women",2,0.373477854341831,"High Weight (3x)",3
-"Number of children born in the last five (or three) years (unweighted)",3,0.0267633182072963,"High Weight (3x)",3
-"Number of children born in the last five (or three) years",4,0.026543686585392,"High Weight (3x)",3
-"Number of men",5,0.0138315702582023,"High Weight (3x)",3
-"Number of men (unweighted)",6,0.0136762832640888,"Medium Weight (2x)",2
-"Women with secondary or higher education",7,5.81838075725798e-05,"Medium Weight (2x)",2
-"Fully vaccinated (8 basic antigens)",8,0,"Medium Weight (2x)",2
