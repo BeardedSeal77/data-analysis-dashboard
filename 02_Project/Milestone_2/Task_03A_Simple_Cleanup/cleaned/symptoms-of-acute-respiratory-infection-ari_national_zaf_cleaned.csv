@@ -1,28 +1,27 @@
-iso3,data_id,indicator,value,precision,dhs_country_code,country_name,survey_year,survey_id,indicator_id,indicator_order,indicator_type,characteristic_id,characteristic_order,characteristic_category,characteristic_label,by_variable_id,by_variable_label,is_total,is_preferred,sdrid,survey_year_label,survey_type,denominator_weighted,denominator_unweighted
-#country+code,#meta+id,#indicator+name,#indicator+value+num,#indicator+precision,ZA,#country+name,#date+year,#survey+id,#indicator+code,93966040,I,1000,0,Total,Total,#indicator+label+code,#indicator+label,1,0.5,CHARISCARI,2016,DHS,913,862
-ZAF,598577,Children with symptoms of ARI,21.9,1,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_ARI,93966010,I,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCARI,1998,DHS,2912,2958
-ZAF,397915,Children with symptoms of ARI,19.3,1,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_ARI,93966010,I,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCARI,1998,DHS,4740,4797
-ZAF,598578,Number of children born in the last five (or three) years,2912,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_NUM,93966020,D,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCNUM,1998,DHS,913,2958
-ZAF,384931,Number of children born in the last five (or three) years,4740,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_NUM,93966020,D,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCNUM,1998,DHS,913,4797
-ZAF,139860,Number of children born in the last five (or three) years (unweighted),2958,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_UNW,93966030,U,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCUNW,1998,DHS,2912,862
-ZAF,26068,Number of children born in the last five (or three) years (unweighted),4797,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_UNW,93966030,U,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCUNW,1998,DHS,4740,862
-ZAF,450750,Children with ARI for whom advice or treatment was sought,81.9,1,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_ADV,93966040,I,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCADV,1998,DHS,637,607
-ZAF,665172,Children with ARI for whom advice or treatment was sought,78.2,1,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_ADV,93966040,I,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCADV,1998,DHS,913,862
-ZAF,457030,Number of children with symptoms of ARI born in the last five (or three) years,637,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_NM2,93966060,D,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCNM2,1998,DHS,913,607
-ZAF,658945,Number of children with symptoms of ARI born in the last five (or three) years,913,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_NM2,93966060,D,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCNM2,1998,DHS,913,862
-ZAF,320333,Number of children with symptoms of ARI born in the last five (or three) years (unweighted),607,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_UN2,93966070,U,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCUN2,1998,DHS,637,862
-ZAF,32724,Number of children with symptoms of ARI born in the last five (or three) years (unweighted),862,0,ZA,South Africa,1998,ZA1998DHS,CH_ARIS_C_UN2,93966070,U,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCUN2,1998,DHS,913,862
-ZAF,550039,Children with symptoms of ARI,3.4,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ARI,93966010,I,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCARI,2016,DHS,2025,2026
-ZAF,520801,Children with symptoms of ARI,3.1,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ARI,93966010,I,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCARI,2016,DHS,3444,3413
-ZAF,550040,Number of children born in the last five (or three) years,2025,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_NUM,93966020,D,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCNUM,2016,DHS,913,2026
-ZAF,528550,Number of children born in the last five (or three) years,3444,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_NUM,93966020,D,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCNUM,2016,DHS,913,3413
-ZAF,149150,Number of children born in the last five (or three) years (unweighted),2026,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_UNW,93966030,U,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCUNW,2016,DHS,2025,862
-ZAF,439924,Number of children born in the last five (or three) years (unweighted),3413,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_UNW,93966030,U,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCUNW,2016,DHS,3444,862
-ZAF,628408,Children with ARI for whom advice or treatment was sought,96.9,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ADV,93966040,I,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCADV,2016,DHS,68,59
-ZAF,701545,Children with ARI for whom advice or treatment was sought,87.6,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ADV,93966040,I,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCADV,2016,DHS,107,94
-ZAF,628407,Children with symptoms of ARI who received antibiotics,46.7,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ABI,93966050,I,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCABI,2016,DHS,68,59
-ZAF,701543,Children with symptoms of ARI who received antibiotics,42,1,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_ABI,93966050,I,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCABI,2016,DHS,107,94
-ZAF,630188,Number of children with symptoms of ARI born in the last five (or three) years,68,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_NM2,93966060,D,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCNM2,2016,DHS,913,59
-ZAF,701544,Number of children with symptoms of ARI born in the last five (or three) years,107,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_NM2,93966060,D,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCNM2,2016,DHS,913,94
-ZAF,300159,Number of children with symptoms of ARI born in the last five (or three) years (unweighted),59,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_UN2,93966070,U,1000,0,Total,Total,14000,Three years preceding the survey,1,0,CHARISCUN2,2016,DHS,68,862
-ZAF,149151,Number of children with symptoms of ARI born in the last five (or three) years (unweighted),94,0,ZA,South Africa,2016,ZA2016DHS,CH_ARIS_C_UN2,93966070,U,1000,0,Total,Total,14001,Five years preceding the survey,1,1,CHARISCUN2,2016,DHS,107,862
+indicator,value,survey_year,indicator_type,by_variable_label,is_preferred,denominator_weighted,denominator_unweighted
+Children with symptoms of ARI,21.9,1998,I,Three years preceding the survey,0,2912,2958
+Children with symptoms of ARI,19.3,1998,I,Five years preceding the survey,1,4740,4797
+Number of children born in the last five (or three) years,2912,1998,D,Three years preceding the survey,0,NA,2958
+Number of children born in the last five (or three) years,4740,1998,D,Five years preceding the survey,1,NA,4797
+Number of children born in the last five (or three) years (unweighted),2958,1998,U,Three years preceding the survey,0,2912,NA
+Number of children born in the last five (or three) years (unweighted),4782.75,1998,U,Five years preceding the survey,1,4740,NA
+Children with ARI for whom advice or treatment was sought,81.9,1998,I,Three years preceding the survey,0,637,607
+Children with ARI for whom advice or treatment was sought,78.2,1998,I,Five years preceding the survey,1,913,862
+Number of children with symptoms of ARI born in the last five (or three) years,637,1998,D,Three years preceding the survey,0,NA,607
+Number of children with symptoms of ARI born in the last five (or three) years,913,1998,D,Five years preceding the survey,1,NA,862
+Number of children with symptoms of ARI born in the last five (or three) years (unweighted),607,1998,U,Three years preceding the survey,0,637,NA
+Number of children with symptoms of ARI born in the last five (or three) years (unweighted),862,1998,U,Five years preceding the survey,1,913,NA
+Children with symptoms of ARI,3.4,2016,I,Three years preceding the survey,0,2025,2026
+Children with symptoms of ARI,3.1750000000000003,2016,I,Five years preceding the survey,1,3444,3413
+Number of children born in the last five (or three) years,2025,2016,D,Three years preceding the survey,0,NA,2026
+Number of children born in the last five (or three) years,3444,2016,D,Five years preceding the survey,1,NA,3413
+Number of children born in the last five (or three) years (unweighted),2026,2016,U,Three years preceding the survey,0,2025,NA
+Number of children born in the last five (or three) years (unweighted),3413,2016,U,Five years preceding the survey,1,3444,NA
+Children with ARI for whom advice or treatment was sought,96.9,2016,I,Three years preceding the survey,0,68,59
+Children with ARI for whom advice or treatment was sought,87.6,2016,I,Five years preceding the survey,1,107,94
+Children with symptoms of ARI who received antibiotics,46.7,2016,I,Three years preceding the survey,0,68,59
+Children with symptoms of ARI who received antibiotics,42,2016,I,Five years preceding the survey,1,107,94
+Number of children with symptoms of ARI born in the last five (or three) years,68,2016,D,Three years preceding the survey,0,NA,59
+Number of children with symptoms of ARI born in the last five (or three) years,107,2016,D,Five years preceding the survey,1,NA,94
+Number of children with symptoms of ARI born in the last five (or three) years (unweighted),59,2016,U,Three years preceding the survey,0,68,NA
+Number of children with symptoms of ARI born in the last five (or three) years (unweighted),94,2016,U,Five years preceding the survey,1,107,NA
