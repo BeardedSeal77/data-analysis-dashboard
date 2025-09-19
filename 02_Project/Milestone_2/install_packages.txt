@@ -6,7 +6,7 @@ To install all required packages for Tasks 4 and 5:
 1. Open R terminal/console
 2. Copy and paste the following command:
 
-install.packages(c('moments', 'tidyverse', 'corrplot', 'pheatmap', 'VIM', 'mice', 'zoo', 'corrr', 'plotly', 'DT', 'kableExtra', 'FactoMineR', 'factoextra', 'psych', 'infotheo', 'igraph', 'networkD3'))
+install.packages(c('rsample', 'moments', 'tidyverse', 'corrplot', 'pheatmap', 'VIM', 'mice', 'zoo', 'corrr', 'plotly', 'DT', 'kableExtra', 'FactoMineR', 'factoextra', 'psych', 'infotheo', 'igraph', 'networkD3'))
 
 3. Press Enter and wait for installation to complete
 

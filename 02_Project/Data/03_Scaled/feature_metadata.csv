@@ -1,0 +1,33 @@
+feature_name,feature_type,description
+data_id,identifier,Unique record identifier
+value,target,Original target variable (health indicator value)
+value_log,target,Log-transformed target variable
+value_category,target_categorical,Categorical target (Low/Medium/High)
+value_log_scaled,numeric_scaled,Feature engineered from original data
+precision_scaled,numeric_scaled,Feature engineered from original data
+characteristic_order_scaled,numeric_scaled,Feature engineered from original data
+indicator_order_scaled,numeric_scaled,Feature engineered from original data
+data_quality_score_scaled,numeric_scaled,Feature engineered from original data
+is_preferred,binary,Binary: preferred estimate flag
+high_precision,binary,Binary: high precision measurement (<=1 decimal)
+indicator_encoded,label_encoded,Label encoded: health indicator type
+survey_cohort,label_encoded,Label encoded: survey cohort identifier
+dataset_source_encoded,label_encoded,Label encoded: source dataset
+precision_quality,categorical_engineered,Feature engineered from original data
+char_order_quintile,categorical_engineered,Feature engineered from original data
+indicator_importance,categorical_engineered,Feature engineered from original data
+sample_size_tier,categorical_engineered,Feature engineered from original data
+by_var_0,one_hot_encoded,Feature engineered from original data
+by_var_14000,one_hot_encoded,Feature engineered from original data
+by_var_14001,one_hot_encoded,Feature engineered from original data
+by_var_14002,one_hot_encoded,Feature engineered from original data
+by_var_Other,one_hot_encoded,Feature engineered from original data
+type_D,one_hot_encoded,Feature engineered from original data
+type_I,one_hot_encoded,Feature engineered from original data
+type_S,one_hot_encoded,Feature engineered from original data
+type_T,one_hot_encoded,Feature engineered from original data
+type_U,one_hot_encoded,Feature engineered from original data
+char_Five year periods,one_hot_encoded,Feature engineered from original data
+char_Source of vaccination information,one_hot_encoded,Feature engineered from original data
+char_Total,one_hot_encoded,Feature engineered from original data
+char_Total 15-49,one_hot_encoded,Feature engineered from original data

@@ -1,0 +1,160 @@
+---
+title: "Task 4: Feature Engineering & Data Preparation"
+author: "Juan Oosthuizen"
+date: "`r Sys.Date()`"
+output:
+  word_document:
+    toc: true
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+suppressPackageStartupMessages({
+  library(readr); library(dplyr); library(tidyr); library(moments)
+})
+
+# Auto-detect paths
+current_dir <- basename(getwd())
+if (current_dir == "Task_04") {
+  cleaned_data_path <- "../../Data/02_Cleaned"
+  outputs_path <- "../../Data/03_Scaled"
+} else {
+  cleaned_data_path <- "02_Project/Data/02_Cleaned"
+  outputs_path <- "02_Project/Data/03_Scaled"
+}
+if (!dir.exists(outputs_path)) dir.create(outputs_path, recursive = TRUE)
+
+# Parameters
+RARE_CATEGORY_THRESHOLD <- 0.05
+SAMPLE_SIZE_SMALL <- 1000
+SAMPLE_SIZE_LARGE <- 10000
+```
+
+# Load and Combine Datasets
+```{r load_data}
+# Load the 7 selected cleaned datasets
+selected_datasets <- c(
+  "access-to-health-care_national_zaf", "immunization_national_zaf", "hiv-behavior_national_zaf",
+  "water_national_zaf", "dhs-quickstats_national_zaf", "toilet-facilities_national_zaf", "child-mortality-rates_national_zaf"
+)
+
+cleaned_csv_files <- paste0(file.path(cleaned_data_path, selected_datasets), "_final.csv")
+if (length(cleaned_csv_files[file.exists(cleaned_csv_files)]) == 0) {
+  cleaned_csv_files <- paste0(file.path(cleaned_data_path, selected_datasets), ".csv")
+}
+
+# Load and combine datasets
+datasets <- lapply(cleaned_csv_files[file.exists(cleaned_csv_files)], function(file_path) {
+  df <- read_csv(file_path, show_col_types = FALSE)
+  df$dataset_source <- tools::file_path_sans_ext(basename(file_path))
+  return(df)
+})
+
+combined_df <- bind_rows(datasets)
+cat("Combined", length(datasets), "datasets:", nrow(combined_df), "records,", ncol(combined_df), "fields\n")
+```
+
+# Feature Engineering
+```{r feature_engineering}
+df_features <- combined_df
+
+# Categorical encoding
+df_features$indicator_encoded <- as.numeric(as.factor(df_features$indicator))
+df_features$survey_cohort <- as.numeric(as.factor(df_features$denominator_unweighted))
+df_features$dataset_source_encoded <- as.numeric(as.factor(df_features$dataset_source))
+
+# Group rare categories in by_variable_id
+by_var_counts <- table(df_features$by_variable_id)
+rare_threshold <- RARE_CATEGORY_THRESHOLD * nrow(df_features)
+rare_categories <- names(by_var_counts[by_var_counts < rare_threshold])
+df_features$by_variable_id_grouped <- ifelse(
+  df_features$by_variable_id %in% rare_categories, "Other", df_features$by_variable_id
+)
+
+# Create dummy variables
+by_var_dummies <- model.matrix(~ by_variable_id_grouped - 1, data = df_features)
+type_dummies <- model.matrix(~ indicator_type - 1, data = df_features)
+char_dummies <- model.matrix(~ characteristic_category - 1, data = df_features)
+colnames(by_var_dummies) <- paste0("by_var_", gsub("by_variable_id_grouped", "", colnames(by_var_dummies)))
+colnames(type_dummies) <- paste0("type_", gsub("indicator_type", "", colnames(type_dummies)))
+colnames(char_dummies) <- paste0("char_", gsub("characteristic_category", "", colnames(char_dummies)))
+
+cat("Encoded categorical variables:", ncol(by_var_dummies) + ncol(type_dummies) + ncol(char_dummies), "dummy variables created\n")
+```
+
+# Numeric Feature Engineering and Scaling
+```{r numeric_processing}
+# Create engineered numeric features
+df_features$high_precision <- as.numeric(df_features$precision <= 1)
+df_features$char_order_quintile <- if(max(df_features$characteristic_order, na.rm = TRUE) > 10) {
+  ntile(df_features$characteristic_order, 5)
+} else {
+  df_features$characteristic_order
+}
+
+df_features$indicator_importance <- case_when(
+  df_features$indicator_order <= 3 ~ "High",
+  df_features$indicator_order <= 6 ~ "Medium",
+  TRUE ~ "Low"
+)
+
+# Target variable processing
+value_skewness <- skewness(df_features$value, na.rm = TRUE)
+df_features$value_log <- if(abs(value_skewness) > 2) log1p(abs(df_features$value)) else df_features$value
+df_features$value_category <- cut(df_features$value, breaks = quantile(df_features$value, c(0, 0.33, 0.67, 1), na.rm = TRUE),
+                                  labels = c("Low", "Medium", "High"), include.lowest = TRUE)
+
+# Additional engineered features
+df_features$sample_size_tier <- case_when(
+  df_features$denominator_unweighted < SAMPLE_SIZE_SMALL ~ "Small",
+  df_features$denominator_unweighted < SAMPLE_SIZE_LARGE ~ "Medium",
+  TRUE ~ "Large"
+)
+df_features$data_quality_score <- (df_features$high_precision * 0.6) + (df_features$is_preferred * 0.4)
+
+# Scale numeric variables
+numeric_vars <- c("value_log", "precision", "characteristic_order", "indicator_order", "data_quality_score")
+scaled_data <- df_features[numeric_vars] %>% mutate(across(everything(), ~ as.numeric(scale(.))))
+names(scaled_data) <- paste0(names(scaled_data), "_scaled")
+
+cat("Created", ncol(scaled_data), "scaled numeric features\n")
+cat("Target variable skewness:", round(value_skewness, 3),
+    if(abs(value_skewness) > 2) " (log transformed)" else " (no transform)", "\n")
+```
+
+# Create Final Dataset
+```{r final_dataset}
+# Combine all features into final dataset
+all_dummies <- cbind(by_var_dummies, type_dummies, char_dummies)
+
+final_features <- bind_cols(
+  df_features %>% select(data_id, value, value_log, value_category),
+  scaled_data,
+  df_features %>% select(is_preferred, high_precision, indicator_encoded, survey_cohort, dataset_source_encoded),
+  df_features %>% select(char_order_quintile, indicator_importance, sample_size_tier),
+  as.data.frame(all_dummies)
+)
+
+# Create modeling-ready dataset (features only)
+modeling_features <- final_features %>% select(-data_id, -value, -value_category)
+
+# Export datasets
+write_csv(final_features, file.path(outputs_path, "final_features_comprehensive.csv"))
+write_csv(modeling_features, file.path(outputs_path, "modeling_features.csv"))
+
+# Summary
+cat("Final dataset:", nrow(final_features), "records,", ncol(modeling_features), "features\n")
+cat("- Scaled numeric:", ncol(scaled_data), "\n")
+cat("- Categorical encoded:", ncol(all_dummies) + 6, "\n")
+cat("- Exported: modeling_features.csv (ready for ML)\n")
+```
+
+# Dataset Preview
+```{r preview}
+cat("Final training file: modeling_features.csv\n")
+cat("Records:", nrow(modeling_features), "| Features:", ncol(modeling_features), "\n\n")
+
+cat("Sample data (first 5 rows, first 8 columns):\n")
+head(modeling_features[1:8], 5)
+```
