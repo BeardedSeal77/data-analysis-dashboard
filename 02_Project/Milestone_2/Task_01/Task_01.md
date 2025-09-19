@@ -48,7 +48,7 @@ Checking for Missing Values
 
 # Checking for Duplicates
 
-Duplicates can skew results and inflate sample sizes artificially.
+Duplicates can skew results and inflate sample sizes artificially..
 
 
 # Checking Numeric Correlations
