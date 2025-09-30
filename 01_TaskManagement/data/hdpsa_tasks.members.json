@@ -23,7 +23,7 @@
     "email": null,
     "role": "Data Scientist",
     "joinedDate": "2025-01-15T00:00:00Z",
-    "isActive": true,
+    "isActive": false,
     "githubId": null,
     "memberColor": "purple"
   },

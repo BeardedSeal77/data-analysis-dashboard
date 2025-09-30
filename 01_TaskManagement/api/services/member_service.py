@@ -17,8 +17,8 @@ class MemberService:
         self.db = db_manager
     
     def get_all_members(self) -> List[Member]:
-        """Retrieve all members"""
-        return self.db.get_all_members()
+        """Retrieve all active members (default behavior for web UI)"""
+        return self.db.get_active_members()
     
     def get_member_by_id(self, member_id: int) -> Optional[Member]:
         """Get a specific member by ID"""

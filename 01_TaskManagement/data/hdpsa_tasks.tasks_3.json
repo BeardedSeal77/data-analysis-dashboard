@@ -1,0 +1,84 @@
+[
+  {
+    "_id": "68b806f3881f36d185098ded",
+    "id": 1,
+    "compositeId": "3-1",
+    "title": "Select Modelling Technique",
+    "description": "Select the modelling technique (e.g., logistic regression, decision tree with C4.5, random forest, etc.). Justify the choice of algorithm(s) based on the data characteristics. Document the actual modelling techniques that are used. Describe the assumptions. Some techniques are based on specific assumptions such as the quality, format, and distribution of data. Make sure that these assumptions hold and go back to the Data Preparation Phase if necessary.",
+    "category": "Data Modelling",
+    "complexity": "medium",
+    "milestoneId": 3,
+    "prerequisites": [],
+    "deliverables": [
+      "Modelling Technique Selection Documentation",
+      "Algorithm Justification Report",
+      "Assumptions Analysis",
+      "Data Characteristics Assessment"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098dee",
+    "id": 2,
+    "compositeId": "3-2",
+    "title": "Generate Test Design",
+    "description": "Describe the procedures for training, testing, and evaluating the models. For supervised data mining tasks such as classification, generally use error rates as quality measures for data mining models. Specify how the dataset should be separated into training data, test data, and validation sets. The model is built on the training set and its quality estimated on the test set.",
+    "category": "Data Modelling",
+    "complexity": "medium",
+    "milestoneId": 3,
+    "prerequisites": [
+      "3-1"
+    ],
+    "deliverables": [
+      "Training Procedures Documentation",
+      "Testing Procedures Documentation",
+      "Model Evaluation Framework",
+      "Data Split Strategy Documentation",
+      "Quality Measures Definition"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098def",
+    "id": 3,
+    "compositeId": "3-3",
+    "title": "Build Model",
+    "description": "Develop the model(s) using the R programming language. Run the selected technique using the prepared dataset to create one or more models. Document the model parameters. With any modelling tool, there are often several parameters that can be adjusted. Describe the parameters and their chosen values, along with the rationale for the choice. Describe the model's behaviour and interpretation in terms of accuracy, robustness, possible shortcomings, etc.",
+    "category": "Data Modelling",
+    "complexity": "high",
+    "milestoneId": 3,
+    "prerequisites": [
+      "3-2"
+    ],
+    "deliverables": [
+      "R/R Markdown Model Code",
+      "Model Parameter Documentation",
+      "Parameter Selection Rationale",
+      "Model Behavior Analysis",
+      "Accuracy Assessment",
+      "Robustness Analysis",
+      "Model Limitations Documentation"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df0",
+    "id": 4,
+    "compositeId": "3-4",
+    "title": "Assess the Model",
+    "description": "Summarise the results of generated model(s). Assess the model performance metrics in terms of graphs, confusion matrices and other statistical measures. Interpret the model based on domain knowledge, predefined success criteria, and test design.",
+    "category": "Data Modelling",
+    "complexity": "high",
+    "milestoneId": 3,
+    "prerequisites": [
+      "3-3"
+    ],
+    "deliverables": [
+      "Model Results Summary",
+      "Performance Metrics Analysis",
+      "Confusion Matrices",
+      "Statistical Measures Report",
+      "Domain Knowledge Interpretation",
+      "Success Criteria Assessment",
+      "Model Performance Graphs",
+      "Final Model Assessment Report"
+    ]
+  }
+]
