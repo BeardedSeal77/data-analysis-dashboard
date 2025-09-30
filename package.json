@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run next-dev\" \"npm run flask-task\" \"npm run flask-project\"",
+    "dev": "concurrently \"npm run next-dev\" \"npm run flask-task\"",
     "next-dev": "next dev",
     "flask-task": "cd \"01_TaskManagement/api\" && set PYTHONIOENCODING=utf-8 && python app.py",
     "flask-project": "cd \"02_Project/api\" && set PYTHONIOENCODING=utf-8 && python app.py",
