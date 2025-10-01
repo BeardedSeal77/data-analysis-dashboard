@@ -80,7 +80,6 @@
 ### Deliverable:
 - Complete R implementation
 - Parameter tuning documentation
-- Model performance summary
 
 ---
 

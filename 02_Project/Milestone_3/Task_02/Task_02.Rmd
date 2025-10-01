@@ -1,0 +1,278 @@
+---
+title: "Task 2: Random Forest Test Design"
+author: "[Member Name]"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+# Overview
+
+This document implements Task 2 from Milestone 3: Random Forest Test Design - Data Splitting Strategy.
+
+**Assigned to:** [Member Name]
+
+**Objective:** Implement data splitting procedure for Random Forest model evaluation.
+
+---
+
+# 1. Setup and Data Loading
+
+```{r load_libraries}
+# Load required libraries
+library(tidyverse)
+
+cat("Libraries loaded successfully\n")
+```
+
+```{r global_variables}
+# Auto-detect environment and set paths
+current_dir <- basename(getwd())
+if (current_dir == "Task_02") {
+  # Running in RStudio (current directory is Task_02)
+  data_path <- "../../Data/03_Scaled/modeling_features.csv"
+  output_path <- "../../Data/04_Split"
+  cat("Environment: RStudio\n")
+} else {
+  # Running in VS Code (from project root)
+  data_path <- "02_Project/Data/03_Scaled/modeling_features.csv"
+  output_path <- "02_Project/Data/04_Split"
+  cat("Environment: VS Code\n")
+}
+
+# Create output directory
+if (!dir.exists(output_path)) {
+  dir.create(output_path, recursive = TRUE)
+  cat("Created output directory:", output_path, "\n")
+}
+
+cat("Global variables set successfully\n")
+cat("Data path:", data_path, "\n")
+cat("Output path:", output_path, "\n")
+```
+
+```{r load_data}
+# Load modeling features
+data <- read.csv(data_path)
+
+# Display data structure
+cat("Dataset dimensions:", nrow(data), "rows x", ncol(data), "columns\n")
+cat("\nTarget variable summary (value_log_scaled):\n")
+summary(data$value_log_scaled)
+
+# Check for missing values
+cat("\nMissing values:\n")
+colSums(is.na(data))
+```
+
+---
+
+# 2. Data Splitting Strategy
+
+## 2.1 Split Ratios
+
+```{r split_strategy}
+cat("Data Split Strategy:\n")
+cat("- Training set: 75% (426 records)\n")
+cat("- Test set: 20% (122 records)\n")
+cat("- Validation set: 5% (30 records)\n\n")
+
+cat("Purpose of each set:\n")
+cat("- Training: Model parameter learning\n")
+cat("- Test: Unbiased performance evaluation\n")
+cat("- Validation: Final model verification\n")
+```
+
+## 2.2 Perform Data Split
+
+```{r data_split}
+# Set seed for reproducibility
+set.seed(42)
+
+# Calculate split sizes
+n <- nrow(data)
+train_size <- floor(0.75 * n)
+test_size <- floor(0.20 * n)
+val_size <- n - train_size - test_size
+
+# Create random indices
+indices <- sample(1:n)
+train_idx <- indices[1:train_size]
+test_idx <- indices[(train_size + 1):(train_size + test_size)]
+val_idx <- indices[(train_size + test_size + 1):n]
+
+# Split data
+train_data <- data[train_idx, ]
+test_data <- data[test_idx, ]
+val_data <- data[val_idx, ]
+
+cat("\nData split complete:\n")
+cat("Training set:", nrow(train_data), "records\n")
+cat("Test set:", nrow(test_data), "records\n")
+cat("Validation set:", nrow(val_data), "records\n")
+cat("Total:", nrow(train_data) + nrow(test_data) + nrow(val_data), "records\n")
+```
+
+## 2.3 Verify Split Distribution
+
+```{r verify_split}
+# Compare target variable distributions
+cat("\nTarget variable distribution across splits:\n\n")
+
+cat("Training set:\n")
+print(summary(train_data$value_log_scaled))
+
+cat("\nTest set:\n")
+print(summary(test_data$value_log_scaled))
+
+cat("\nValidation set:\n")
+print(summary(val_data$value_log_scaled))
+
+# Statistical comparison
+cat("\nMean comparison:\n")
+cat("Training mean:", mean(train_data$value_log_scaled), "\n")
+cat("Test mean:", mean(test_data$value_log_scaled), "\n")
+cat("Validation mean:", mean(val_data$value_log_scaled), "\n")
+
+cat("\nStandard deviation comparison:\n")
+cat("Training SD:", sd(train_data$value_log_scaled), "\n")
+cat("Test SD:", sd(test_data$value_log_scaled), "\n")
+cat("Validation SD:", sd(val_data$value_log_scaled), "\n")
+```
+
+---
+
+# 3. Save Split Data
+
+```{r save_splits}
+# Save training data
+train_file <- file.path(output_path, "train_data.csv")
+write.csv(train_data, train_file, row.names = FALSE)
+cat("Training data saved to:", train_file, "\n")
+
+# Save test data
+test_file <- file.path(output_path, "test_data.csv")
+write.csv(test_data, test_file, row.names = FALSE)
+cat("Test data saved to:", test_file, "\n")
+
+# Save validation data
+val_file <- file.path(output_path, "val_data.csv")
+write.csv(val_data, val_file, row.names = FALSE)
+cat("Validation data saved to:", val_file, "\n")
+
+cat("\nAll split files saved successfully!\n")
+```
+
+---
+
+# 4. Evaluation Metrics Documentation
+
+## 4.1 Primary Metrics
+
+```{r metrics_documentation}
+cat("Primary Evaluation Metrics:\n\n")
+
+cat("1. RMSE (Root Mean Square Error)\n")
+cat("   - Measures average prediction error magnitude\n")
+cat("   - Same units as target variable\n")
+cat("   - Formula: sqrt(mean((actual - predicted)^2))\n\n")
+
+cat("2. MAE (Mean Absolute Error)\n")
+cat("   - Average absolute prediction error\n")
+cat("   - Less sensitive to outliers than RMSE\n")
+cat("   - Formula: mean(abs(actual - predicted))\n\n")
+
+cat("3. R-squared (Coefficient of Determination)\n")
+cat("   - Proportion of variance explained by model\n")
+cat("   - Range: 0 to 1 (higher is better)\n")
+cat("   - Formula: cor(actual, predicted)^2\n\n")
+```
+
+## 4.2 Random Forest Specific Metrics
+
+```{r rf_metrics}
+cat("Random Forest Specific Metrics:\n\n")
+
+cat("1. Out-of-Bag (OOB) Error\n")
+cat("   - Internal validation using bootstrap samples\n")
+cat("   - Unbiased estimate of test error\n")
+cat("   - Available without separate validation set\n\n")
+
+cat("2. Variable Importance Scores\n")
+cat("   - %IncMSE: Increase in MSE when variable permuted\n")
+cat("   - IncNodePurity: Total decrease in node impurity\n")
+cat("   - Identifies most influential features\n\n")
+```
+
+## 4.3 Validation Strategy
+
+```{r validation_strategy}
+cat("Validation Strategy:\n\n")
+
+cat("1. Training Phase:\n")
+cat("   - Use training set (75%) for model fitting\n")
+cat("   - Monitor OOB error for internal validation\n")
+cat("   - Optimize hyperparameters\n\n")
+
+cat("2. Testing Phase:\n")
+cat("   - Evaluate on test set (20%) for unbiased performance\n")
+cat("   - Calculate RMSE, MAE, R-squared\n")
+cat("   - Assess prediction vs actual patterns\n\n")
+
+cat("3. Final Validation:\n")
+cat("   - Use validation set (5%) for final verification\n")
+cat("   - Confirm model generalization\n")
+cat("   - Ensure no overfitting\n\n")
+```
+
+---
+
+# 5. Summary
+
+```{r summary}
+cat("\n=== TASK 2 SUMMARY ===\n\n")
+
+cat("Data Split Procedure:\n")
+cat("- Original dataset:", n, "records\n")
+cat("- Training:", nrow(train_data), "records (75%)\n")
+cat("- Test:", nrow(test_data), "records (20%)\n")
+cat("- Validation:", nrow(val_data), "records (5%)\n")
+cat("- Random seed: 42\n\n")
+
+cat("Output Files:\n")
+cat("- train_data.csv\n")
+cat("- test_data.csv\n")
+cat("- val_data.csv\n")
+cat("- Location:", output_path, "\n\n")
+
+cat("Evaluation Metrics Defined:\n")
+cat("- Primary: RMSE, MAE, R-squared\n")
+cat("- RF-specific: OOB error, Variable importance\n\n")
+
+cat("Validation Strategy:\n")
+cat("- Training phase: Model fitting with OOB monitoring\n")
+cat("- Testing phase: Unbiased performance evaluation\n")
+cat("- Final validation: Generalization verification\n\n")
+
+cat("Task 2 complete!\n")
+```
+
+---
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```

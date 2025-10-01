@@ -1,0 +1,11 @@
+# R Package Requirements for Milestone 3
+# Install all packages with: install.packages(c('randomForest', 'caret', 'tidyverse', 'ggplot2', 'gridExtra', 'rmarkdown', 'knitr'), repos='https://cran.rstudio.com/')
+
+# Core packages
+randomForest
+caret
+tidyverse
+ggplot2
+gridExtra
+rmarkdown
+knitr
