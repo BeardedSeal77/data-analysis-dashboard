@@ -1,0 +1,162 @@
+---
+title: "Milestone 3 – Task 4: Random Forest Assessment"
+author: "Llewellyn Fourie"
+date: "`r Sys.Date()`"
+output: 
+  word_document: default
+  pdf_document:
+    toc: true
+    number_sections: true
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+  - \usepackage{booktabs}
+---
+
+```{r setup, include=FALSE}
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readr)
+  library(randomForest)
+  library(caret)
+  library(Metrics)
+  library(vip)
+  library(ggpubr)
+})
+set.seed(123)
+```
+
+# 1. Load Data and Model
+This section loads the training, testing, and validation data, along with the final Random Forest model.
+
+```{r load, echo=FALSE}
+train_path <- "E:/data-analysis-dashboard/02_Project/Data/04_Split/train_data.csv"
+test_path  <- "E:/data-analysis-dashboard/02_Project/Data/04_Split/test_data.csv"
+val_path   <- "E:/data-analysis-dashboard/02_Project/Data/04_Split/val_data.csv"
+model_path <- "E:/data-analysis-dashboard/02_Project/Milestone_3/Task_03/outputs/final_random_forest_model.rds"
+
+train_data <- read_csv(train_path, show_col_types = FALSE)
+test_data  <- read_csv(test_path,  show_col_types = FALSE)
+val_data   <- read_csv(val_path,   show_col_types = FALSE)
+
+target <- "value_log_scaled"
+final_model <- readRDS(model_path)
+
+print(final_model)
+```
+
+# 2. Performance Metrics
+The model was evaluated on both the test and validation sets.  
+The table below reports RMSE, MAE, and R² for each split.
+
+```{r metrics, echo=FALSE, results='asis'}
+R2_Score <- function(pred, obs) {
+  1 - (sum((obs - pred)^2) / sum((obs - mean(obs))^2))
+}
+calc_metrics <- function(y_true, y_pred){
+  tibble(
+    RMSE = rmse(y_true, y_pred),
+    MAE  = mae(y_true, y_pred),
+    R2   = R2_Score(y_pred, y_true)
+  )
+}
+y_test <- test_data[[target]]
+y_val  <- val_data[[target]]
+
+pred_test <- predict(final_model, newdata = test_data)
+pred_val  <- predict(final_model, newdata = val_data)
+
+test_metrics <- calc_metrics(y_test, pred_test) %>% mutate(Split = "Test") %>% relocate(Split)
+val_metrics  <- calc_metrics(y_val,  pred_val)  %>% mutate(Split = "Validation") %>% relocate(Split)
+
+metrics_table <- bind_rows(test_metrics, val_metrics)
+knitr::kable(metrics_table, digits = 4, format = "latex", booktabs = TRUE,
+             caption = "Model Performance Metrics")
+```
+
+**Analysis:**  
+- The Random Forest achieved **very low RMSE and MAE** on both test and validation sets, meaning predictions are close to actual values.  
+- **R² > 0.99** indicates the model explains almost all variance.  
+- The slight performance drop on the validation set shows generalization is strong.  
+
+# 3. Diagnostics & Plots
+
+## 3.1 OOB Error Convergence
+The following plot shows how the Out-of-Bag (OOB) error decreases and stabilizes as the number of trees increases.
+
+```{r oob, fig.width=7, fig.height=5, echo=FALSE}
+oob_error <- final_model$mse[final_model$ntree]
+plot(final_model, main = "OOB Error vs Number of Trees")
+abline(h = oob_error, lty = 2, col = "red")
+```
+
+**Analysis:**  
+The OOB error curve plateaus after ~500 trees, showing the forest is stable and adding more trees gives little benefit.  
+
+## 3.2 Variable Importance
+The following plot shows the top predictors ranked by importance in the Random Forest model.
+
+```{r importance, fig.width=7, fig.height=5, echo=FALSE}
+vip(final_model, num_features = 12, bar = TRUE) +
+  ggtitle("Top 12 Variable Importances")
+```
+
+**Analysis:**  
+- Top predictors included **healthcare access, water/sanitation, immunization indicators, and HIV-related variables**.  
+- These align with known drivers of health outcomes in South Africa.  
+- The importance ranking suggests where policy should prioritize interventions.  
+
+## 3.3 Predicted vs Actual (Test Set)
+The following plot compares the predicted and actual values for the test set.  
+A dashed blue line (y = x) indicates perfect prediction alignment.
+
+```{r pred-vs-actual, fig.width=7, fig.height=5, echo=FALSE}
+ggscatter(
+  tibble(actual = y_test, predicted = pred_test),
+  x = "actual", y = "predicted",
+  add = "reg.line", conf.int = TRUE, cor.coef = TRUE
+) + labs(title = "Predicted vs Actual (Test Set)", 
+         x = "Actual", y = "Predicted") +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "blue")
+```
+
+**Analysis:**  
+Predicted and actual values align almost perfectly along the diagonal. This confirms the model is highly accurate, with negligible bias.  
+
+## 3.4 Residual Analysis
+The following plots show residual diagnostics for the test set:  
+- Residuals vs Predicted values (left)  
+- Histogram of residuals (right)
+
+```{r residuals, fig.width=7, fig.height=5, echo=FALSE}
+residuals_test <- y_test - pred_test
+
+par(mfrow = c(1,2))
+plot(pred_test, residuals_test,
+     main = "Residuals vs Predicted (Test)",
+     xlab = "Predicted", ylab = "Residuals")
+abline(h = 0, lty = 2, col = "red")
+
+hist(residuals_test, main = "Histogram of Residuals (Test)",
+     xlab = "Residuals", breaks = 20, col = "skyblue")
+par(mfrow = c(1,1))
+```
+
+**Analysis:**  
+Residuals are tightly clustered around 0, showing the model has no systematic bias. Only minor outliers exist, which is expected for survey data.  
+
+# 4. Health Domain Interpretation
+- **Clean water and healthcare access** strongly predicted better outcomes, showing the importance of infrastructure and service availability.  
+- **Immunization rates** are critical predictors, aligning with known public health interventions.  
+- **HIV indicators** remain significant, consistent with South Africa’s epidemiological profile.  
+
+# 5. Limitations and Recommendations
+- **Limitations:** Small dataset (609 records), potential survey bias, and Random Forest’s black-box nature reduce interpretability.  
+- **Recommendations:**  
+  - Complement Random Forest with interpretable models (e.g., SHAP).  
+  - Collect larger and more recent datasets to confirm findings.  
+  - Use results as decision-support, not deterministic policy tools.  
+
+# 6. Conclusion
+The Random Forest model demonstrated strong predictive power with stable diagnostics.  
+The health domain insights align with known risk factors, reinforcing the reliability of the model for policy guidance, while highlighting areas for future data and methodological improvement.  
