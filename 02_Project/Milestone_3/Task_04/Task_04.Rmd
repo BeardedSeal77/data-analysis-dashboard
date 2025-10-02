@@ -27,7 +27,8 @@ set.seed(123)
 ```
 
 # 1. Load Data and Model
-This section loads the training, testing, and validation data, along with the final Random Forest model.
+We worked with the cleaned dataset of **609 records**, stratified into a 75% training set, 20% test set, and 5% validation set.  
+The final Random Forest model was trained using tuned parameters (`ntree`, `mtry`, `nodesize`) and saved as an `.rds` file.
 
 ```{r load, echo=FALSE}
 train_path <- "E:/data-analysis-dashboard/02_Project/Data/04_Split/train_data.csv"
@@ -45,14 +46,16 @@ final_model <- readRDS(model_path)
 print(final_model)
 ```
 
+---
+
 # 2. Performance Metrics
-The model was evaluated on both the test and validation sets.  
-The table below reports RMSE, MAE, and R² for each split.
+The model was tested on the hold-out sets. The table reports error values (RMSE, MAE) and variance explained (R²).
 
 ```{r metrics, echo=FALSE, results='asis'}
 R2_Score <- function(pred, obs) {
   1 - (sum((obs - pred)^2) / sum((obs - mean(obs))^2))
 }
+
 calc_metrics <- function(y_true, y_pred){
   tibble(
     RMSE = rmse(y_true, y_pred),
@@ -60,6 +63,7 @@ calc_metrics <- function(y_true, y_pred){
     R2   = R2_Score(y_pred, y_true)
   )
 }
+
 y_test <- test_data[[target]]
 y_val  <- val_data[[target]]
 
@@ -70,47 +74,48 @@ test_metrics <- calc_metrics(y_test, pred_test) %>% mutate(Split = "Test") %>% r
 val_metrics  <- calc_metrics(y_val,  pred_val)  %>% mutate(Split = "Validation") %>% relocate(Split)
 
 metrics_table <- bind_rows(test_metrics, val_metrics)
-knitr::kable(metrics_table, digits = 4, format = "latex", booktabs = TRUE,
-             caption = "Model Performance Metrics")
+
+knitr::kable(metrics_table, digits = 4, caption = "Model Performance Metrics")
 ```
 
-**Analysis:**  
-- The Random Forest achieved **very low RMSE and MAE** on both test and validation sets, meaning predictions are close to actual values.  
-- **R² > 0.99** indicates the model explains almost all variance.  
-- The slight performance drop on the validation set shows generalization is strong.  
+**Interpretation:**  
+- Errors on the test set were small (RMSE ≈ 0.056, MAE ≈ 0.038), and the validation set only slightly higher (RMSE ≈ 0.075, MAE ≈ 0.045).  
+- The R² values (0.9967 test, 0.9933 validation) suggest the model explains almost all variance in the log-scaled target.  
+- However, such values can be misleading: the dataset is small, and log-scaling compresses variance, inflating performance. A cautious reader should see this as *model consistency within this dataset*, not a universal guarantee.  
+
+---
 
 # 3. Diagnostics & Plots
 
 ## 3.1 OOB Error Convergence
-The following plot shows how the Out-of-Bag (OOB) error decreases and stabilizes as the number of trees increases.
-
-```{r oob, fig.width=7, fig.height=5, echo=FALSE}
+```{r oob, echo=FALSE, fig.align='center', fig.width=7, fig.height=5}
 oob_error <- final_model$mse[final_model$ntree]
 plot(final_model, main = "OOB Error vs Number of Trees")
 abline(h = oob_error, lty = 2, col = "red")
 ```
 
-**Analysis:**  
-The OOB error curve plateaus after ~500 trees, showing the forest is stable and adding more trees gives little benefit.  
+**Interpretation:**  
+The OOB error decreased sharply in the first 100 trees and stabilised after ~500.  
+This justifies the choice of 750 trees: the forest had stabilised, and additional trees only increased compute time.  
+
+---
 
 ## 3.2 Variable Importance
-The following plot shows the top predictors ranked by importance in the Random Forest model.
-
-```{r importance, fig.width=7, fig.height=5, echo=FALSE}
+```{r importance, echo=FALSE, fig.align='center', fig.width=7, fig.height=5}
 vip(final_model, num_features = 12, bar = TRUE) +
   ggtitle("Top 12 Variable Importances")
 ```
 
-**Analysis:**  
-- Top predictors included **healthcare access, water/sanitation, immunization indicators, and HIV-related variables**.  
-- These align with known drivers of health outcomes in South Africa.  
-- The importance ranking suggests where policy should prioritize interventions.  
+**Interpretation:**  
+- `type_U` and `indicator_encoded` rank highest, reflecting the role of survey coding in shaping predictions.  
+- `sample_size_tier` shows that smaller samples introduce more noise, which influenced the model.  
+- True health indicators — water/sanitation, healthcare access, immunisation, and HIV-related indicators — also feature prominently.  
+- A strict reading is that the model learned from both **real health drivers** and **technical artefacts** of survey design. This duality highlights the need to interpret importance plots with care.  
+
+---
 
 ## 3.3 Predicted vs Actual (Test Set)
-The following plot compares the predicted and actual values for the test set.  
-A dashed blue line (y = x) indicates perfect prediction alignment.
-
-```{r pred-vs-actual, fig.width=7, fig.height=5, echo=FALSE}
+```{r pred-vs-actual, echo=FALSE, fig.align='center', fig.width=7, fig.height=5}
 ggscatter(
   tibble(actual = y_test, predicted = pred_test),
   x = "actual", y = "predicted",
@@ -120,15 +125,14 @@ ggscatter(
     geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "blue")
 ```
 
-**Analysis:**  
-Predicted and actual values align almost perfectly along the diagonal. This confirms the model is highly accurate, with negligible bias.  
+**Interpretation:**  
+Predicted values align almost perfectly with actual values.  
+This confirms the model memorised relationships present in the dataset. But this is a **red flag in practice**: near-perfect alignment in a small dataset often means the test set was too similar to the training set. While impressive, this is not evidence of future predictive reliability — only consistency within the available data.  
+
+---
 
 ## 3.4 Residual Analysis
-The following plots show residual diagnostics for the test set:  
-- Residuals vs Predicted values (left)  
-- Histogram of residuals (right)
-
-```{r residuals, fig.width=7, fig.height=5, echo=FALSE}
+```{r residuals, echo=FALSE, fig.align='center', fig.width=7, fig.height=5}
 residuals_test <- y_test - pred_test
 
 par(mfrow = c(1,2))
@@ -142,21 +146,42 @@ hist(residuals_test, main = "Histogram of Residuals (Test)",
 par(mfrow = c(1,1))
 ```
 
-**Analysis:**  
-Residuals are tightly clustered around 0, showing the model has no systematic bias. Only minor outliers exist, which is expected for survey data.  
+**Interpretation:**  
+Residuals are tightly centred around zero, but with a skewed tail.  
+The scatterplot shows no major heteroskedasticity — errors are similar across prediction ranges.  
+The skew suggests a few survey entries (possibly under-represented provinces or unusual health indicators) were harder to predict. This is realistic: health surveys often contain “edge cases” that deviate from national averages.  
+
+---
 
 # 4. Health Domain Interpretation
-- **Clean water and healthcare access** strongly predicted better outcomes, showing the importance of infrastructure and service availability.  
-- **Immunization rates** are critical predictors, aligning with known public health interventions.  
-- **HIV indicators** remain significant, consistent with South Africa’s epidemiological profile.  
+The model confirms known determinants of health outcomes in South Africa, while also exposing survey artefacts:  
+- **Water and sanitation** strongly predicted outcomes, highlighting infrastructure’s role in reducing disease burden.  
+- **Healthcare access** appeared consistently important, echoing provincial disparities in service delivery.  
+- **Immunisation indicators** explained a large share of variation, consistent with child mortality prevention strategies.  
+- **HIV behaviour and prevalence** remained relevant, aligning with the country’s ongoing epidemic profile.  
+- **Survey structure variables** (like `sample_size_tier`) influenced results. This shows why careful survey design matters — a poorly designed survey can distort perceived “drivers” of health.  
+
+---
 
 # 5. Limitations and Recommendations
-- **Limitations:** Small dataset (609 records), potential survey bias, and Random Forest’s black-box nature reduce interpretability.  
-- **Recommendations:**  
-  - Complement Random Forest with interpretable models (e.g., SHAP).  
-  - Collect larger and more recent datasets to confirm findings.  
-  - Use results as decision-support, not deterministic policy tools.  
+- The dataset is **small (609 records)**, which inflates R² and makes metrics overly optimistic.  
+- The **log-scaling** of the target compresses variance, making predictions appear easier.  
+- Importance plots mix **true health drivers** with **survey artefacts**, complicating interpretation.  
+
+**Recommendations:**  
+- Future work should use larger, more representative datasets.  
+- Incorporate explainable ML (e.g., SHAP values) to distinguish genuine health signals from survey noise.  
+- For policy, focus on variables that consistently emerge across different datasets: water, healthcare, and immunisation.  
+- Avoid overconfidence in near-perfect metrics; treat them as signals for learning, not policy guarantees.  
+
+---
 
 # 6. Conclusion
-The Random Forest model demonstrated strong predictive power with stable diagnostics.  
-The health domain insights align with known risk factors, reinforcing the reliability of the model for policy guidance, while highlighting areas for future data and methodological improvement.  
+Within CRISP-DM, this task completes the **Assessment phase**.  
+The Random Forest achieved excellent internal performance, but that is not the same as real-world predictive power.  
+The most important insights are:  
+1. Survey structure shapes results nearly as much as health factors.  
+2. Core health drivers — water, sanitation, healthcare access, immunisation, and HIV — remain essential targets.  
+3. High scores here reflect dataset limitations as much as modelling success.  
+
+**Final Reflection:** The assessment highlights not just what the model learned, but also the boundaries of what it *can* learn from limited data. For future work, improving **data quality** is as important as improving **modelling technique**.  
