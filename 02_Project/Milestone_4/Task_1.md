@@ -7,7 +7,7 @@
 | **BG1:** Predict national and provincial health outcomes to support policy intervention | Model accuracy ≥ 70 % or R² > 0.75 | R² = 0.997 (99.7 % variance explained) | +32.9 % above target | Achieved |
 | **BG2:** Maintain low prediction error for continuous health indicators (Value variable) | RMSE ≤ 0.10 and MAE ≤ 0.05 (on log-scaled health index) | RMSE = 0.0554, MAE = 0.0381 | Both below threshold | Achieved |
 | **BG3:** Provide interpretable outputs for stakeholders (Gov / NGOs / DoH) | Top predictors must align with key health determinants | Feature importance: (1) Water Access, (2) Sanitation, (3) Literacy, (4) Healthcare Access | 4 / 4 policy-relevant drivers identified | Achieved |
-| **BG4:** Ensure robustness and ethical reliability on limited data (609 records) | Minimal overfitting (OOB MSE ≈ Test MSE) and stable residuals | OOB MSE = 0.0049 ≈ Test MSE (0.0031); Δ = 0.0018 (< 0.01) | Stable and generalises well | Achieved |
+| **BG4:** Ensure robustness and ethical reliability on limited data (609 records) | Minimal overfitting (OOB MSE ≈ Test MSE) and stable residuals | OOB MSE = 0.0049 ≈ Test MSE (0.0031)  Δ = 0.0018 (< 0.01) | Stable and generalises well | Achieved |
 
 ---
 
@@ -45,6 +45,6 @@ Ethically, the dataset contains no personal identifiers, ensuring compliance wit
 ### Recommendation
 
 The Random Forest regression model meets and exceeds all predefined business success criteria.  
-Its exceptional accuracy (R² = 0.997), low error rates (RMSE = 0.055; MAE = 0.038) and policy-aligned feature interpretability demonstrate strong predictive validity and operational value.  
+Its exceptional accuracy (R² = 0.997), low error rates (RMSE = 0.055  MAE = 0.038) and policy-aligned feature interpretability demonstrate strong predictive validity and operational value.  
 Given its robustness, reliability and transparency, the model is recommended for adoption in national and provincial health policy planning.  
 Continuous monitoring and future retraining with expanded datasets are advised to maintain fairness and adaptability over time.

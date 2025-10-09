@@ -186,7 +186,7 @@ This review evaluates the execution of Phases 1 through 4 of the CRISP-DM method
 **Concern 5: Potential Data Leakage (Critical)**
 - If scaling was performed before train-test split, test set mean/variance influenced training data normalization
 - This violates the independence assumption and leads to optimistically biased metrics
-- Recommendation: Verify scaling order; re-run if leakage detected
+- Recommendation: Verify scaling order  re-run if leakage detected
 
 **Concern 6: Small Validation Set (30 records)**
 - 5% validation set (30 records) may be too small for reliable final model assessment
@@ -377,7 +377,7 @@ This review evaluates the execution of Phases 1 through 4 of the CRISP-DM method
 
 1. **Data leakage prevention protocols** - Need stricter separation between train/test/validation throughout pipeline
 2. **Baseline comparisons** - Always compare complex models against simple baselines to demonstrate value
-3. **Test set discipline** - Reserve test set exclusively for final evaluation; use CV for all tuning
+3. **Test set discipline** - Reserve test set exclusively for final evaluation  use CV for all tuning
 4. **Stakeholder engagement** - Involve stakeholders earlier to validate success criteria and interpretability needs
 5. **Audit trails for data transformations** - Document exactly which transformations were applied when and why
 6. **Sanity checks at every phase** - Implement automated checks (e.g., target variable not in features, scaling order correct)
