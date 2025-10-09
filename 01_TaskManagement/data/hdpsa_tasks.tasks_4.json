@@ -1,0 +1,60 @@
+[
+  {
+    "_id": "68b806f3881f36d185098df1",
+    "id": 1,
+    "compositeId": "4-1",
+    "title": "Evaluate Results",
+    "description": "Assess the Random Forest model results in relation to business goals and determine if it meets success criteria. Review business goals from Milestone 1. Evaluate model metrics (RMSE, MAE, R-squared) against success thresholds. Determine if model accuracy is sufficient for health policy decisions. Provide clear recommendation (approve/reject) with justification.",
+    "category": "Evaluation",
+    "complexity": "high",
+    "milestoneId": 4,
+    "prerequisites": [],
+    "deliverables": [
+      "Results Assessment Report",
+      "Business Success Criteria Evaluation",
+      "Model Approval Recommendation",
+      "Justification Documentation"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df2",
+    "id": 2,
+    "compositeId": "4-2",
+    "title": "Review the Process",
+    "description": "Review the entire CRISP-DM process from Phase 1 through Phase 4 to identify any gaps or issues. Evaluate Phase 1 (Business Understanding), Phase 2 (Data Understanding), Phase 3 (Data Preparation), and Phase 4 (Modeling). Identify steps executed properly and report issues that were missed or overlooked. Highlight quality assurance concerns and document corrective actions needed.",
+    "category": "Evaluation",
+    "complexity": "high",
+    "milestoneId": 4,
+    "prerequisites": [
+      "4-1"
+    ],
+    "deliverables": [
+      "Process Review Report",
+      "Issues and Gaps Identified",
+      "Quality Assurance Summary",
+      "Lessons Learned Documentation",
+      "Improvement Recommendations"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df3",
+    "id": 3,
+    "compositeId": "4-3",
+    "title": "Determine Next Steps",
+    "description": "Decide on the project path forward based on evaluation results. Consider possible actions: Deploy (move model to production), Further Iterate (additional modeling cycles), or Abandon/Restart (project does not meet requirements). For each action, document reasons for, reasons against, requirements, and timeline. Provide final recommendation with clear decision, justification, and action plan.",
+    "category": "Evaluation",
+    "complexity": "medium",
+    "milestoneId": 4,
+    "prerequisites": [
+      "4-1",
+      "4-2"
+    ],
+    "deliverables": [
+      "Possible Actions List",
+      "Pros and Cons Analysis",
+      "Final Decision Documentation",
+      "Justification Report",
+      "Action Plan for Chosen Path"
+    ]
+  }
+]
