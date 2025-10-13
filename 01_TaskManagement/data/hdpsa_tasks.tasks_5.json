@@ -1,0 +1,81 @@
+[
+  {
+    "_id": "68b806f3881f36d185098df4",
+    "id": 1,
+    "compositeId": "5-1",
+    "title": "Plan Deployment (Business Strategy)",
+    "description": "Document business strategy for deploying the Random Forest model. Define stakeholders, objectives, and expected business value. Summarize deployable results from Milestone 4 (model type, performance, key features, limitations). Research and compare 3 deployment tools (Next.js + Flask + R, R Shiny, Streamlit). Justify Next.js + Flask selection based on existing infrastructure, scalability, and team familiarity. Define knowledge propagation plan (access method, documentation, support channels). Establish benefits measurement KPIs (usage metrics, business impact, review cadence).",
+    "category": "Deployment",
+    "complexity": "medium",
+    "milestoneId": 5,
+    "prerequisites": [],
+    "deliverables": [
+      "Stakeholders and Objectives Documentation",
+      "Deployable Results Summary",
+      "Deployment Tools Research and Comparison",
+      "Tool Selection Justification",
+      "Knowledge Propagation Plan",
+      "Benefits Measurement KPIs"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df5",
+    "id": 2,
+    "compositeId": "5-2",
+    "title": "Deploy Model (Technical Implementation)",
+    "description": "Build and deploy the model using Next.js + Flask + R architecture. Create R model service script that loads the .rds model, applies preprocessing, and returns JSON predictions. Add Flask API endpoint (/api/predict) that receives input, calls R script, and returns results. Build Next.js prediction page with form for 4-6 key features and result display. Ensure preprocessing parity with training pipeline (scaling, encoding, feature order). Create comprehensive README with prerequisites, installation steps, running instructions, example usage, and known limitations.",
+    "category": "Deployment",
+    "complexity": "high",
+    "milestoneId": 5,
+    "prerequisites": [
+      "5-1"
+    ],
+    "deliverables": [
+      "R Model Service Script (model_service.R)",
+      "Flask API Endpoint (/api/predict)",
+      "Next.js Prediction Page/Component",
+      "Deployment README Documentation",
+      "Working End-to-End Demo"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df6",
+    "id": 3,
+    "compositeId": "5-3",
+    "title": "Plan Monitoring",
+    "description": "Define post-deployment monitoring strategy for model performance and data drift. Establish performance monitoring approach (metrics: RMSE, MAE, R-squared; baseline from test_data.csv; alert thresholds; weekly then monthly cadence; prediction logging). Define drift detection for input distributions (statistical tests, KS test, PSI) and output patterns (prediction mean/variance tracking). Identify dynamic aspects in data environment (new sources, indicator changes, methodology updates) and business environment (stakeholder shifts, regulatory changes, success criteria updates). Assign monitoring owners and establish quarterly review schedule.",
+    "category": "Deployment",
+    "complexity": "medium",
+    "milestoneId": 5,
+    "prerequisites": [
+      "5-2"
+    ],
+    "deliverables": [
+      "Performance Monitoring Plan",
+      "Drift Detection Strategy",
+      "Dynamic Aspects Identification",
+      "Monitoring Owners and Schedule",
+      "Alert Thresholds Documentation"
+    ]
+  },
+  {
+    "_id": "68b806f3881f36d185098df7",
+    "id": 4,
+    "compositeId": "5-4",
+    "title": "Plan Maintenance",
+    "description": "Define model maintenance procedures including retraining, versioning, and retirement. Establish retraining triggers (performance degradation, drift detection, new data availability, business objective changes) and process (collect data, re-run M2/M3/M4 pipelines, deploy if improved). Define model versioning strategy (v1.0.0 naming, log training dates and hyperparameters, archive last 3 versions). Document sunset criteria for model retirement (performance thresholds, fundamental changes, bias evidence, ethical concerns) and retirement process. Plan for business objectives evolution with quarterly reviews and documentation updates.",
+    "category": "Deployment",
+    "complexity": "medium",
+    "milestoneId": 5,
+    "prerequisites": [
+      "5-3"
+    ],
+    "deliverables": [
+      "Retraining Triggers and Process",
+      "Model Versioning Strategy",
+      "Sunset Criteria Documentation",
+      "Model Retirement Process",
+      "Business Objectives Evolution Plan"
+    ]
+  }
+]
