@@ -1,0 +1,15 @@
+{
+  "training_date": "2025-10-14T18:57:08.730919",
+  "model_type": "RandomForestRegressor",
+  "n_estimators": 750,
+  "max_features": "sqrt",
+  "min_samples_leaf": 5,
+  "random_state": 123,
+  "n_features": 27,
+  "n_samples": 560,
+  "metrics": {
+    "rmse": 0.1881831396350806,
+    "mae": 0.13926349623490283,
+    "r2": 0.9653503791362739
+  }
+}

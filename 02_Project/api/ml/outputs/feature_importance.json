@@ -1,0 +1,110 @@
+[
+  {
+    "feature": "value_log",
+    "importance": 0.39765319320834686
+  },
+  {
+    "feature": "precision_scaled",
+    "importance": 0.14733000063310459
+  },
+  {
+    "feature": "type_I",
+    "importance": 0.1253060271076744
+  },
+  {
+    "feature": "type_U",
+    "importance": 0.06424071893980081
+  },
+  {
+    "feature": "type_D",
+    "importance": 0.06349619820529452
+  },
+  {
+    "feature": "indicator_encoded",
+    "importance": 0.059822411093442
+  },
+  {
+    "feature": "indicator_order_scaled",
+    "importance": 0.038916548184013855
+  },
+  {
+    "feature": "survey_cohort",
+    "importance": 0.025878029525877352
+  },
+  {
+    "feature": "dataset_source_encoded",
+    "importance": 0.023467910040614277
+  },
+  {
+    "feature": "sample_size_tier",
+    "importance": 0.014210077168211262
+  },
+  {
+    "feature": "type_S",
+    "importance": 0.014018403719031118
+  },
+  {
+    "feature": "char_order_quintile",
+    "importance": 0.00650446725454221
+  },
+  {
+    "feature": "type_T",
+    "importance": 0.006301072783423136
+  },
+  {
+    "feature": "char_Total.15.49",
+    "importance": 0.002439444777392503
+  },
+  {
+    "feature": "characteristic_order_scaled",
+    "importance": 0.0018667938038423432
+  },
+  {
+    "feature": "by_var_0",
+    "importance": 0.0018154630424757664
+  },
+  {
+    "feature": "char_Total",
+    "importance": 0.0014935073921522703
+  },
+  {
+    "feature": "by_var_Other",
+    "importance": 0.0009622995749401624
+  },
+  {
+    "feature": "char_Source.of.vaccination.information",
+    "importance": 0.0008843596666516035
+  },
+  {
+    "feature": "is_preferred",
+    "importance": 0.0008155938142128959
+  },
+  {
+    "feature": "by_var_14001",
+    "importance": 0.0007925697680315892
+  },
+  {
+    "feature": "data_quality_score_scaled",
+    "importance": 0.0007115556028066473
+  },
+  {
+    "feature": "by_var_14000",
+    "importance": 0.0004969612703780849
+  },
+  {
+    "feature": "by_var_14002",
+    "importance": 0.0004157833516538342
+  },
+  {
+    "feature": "char_Five.year.periods",
+    "importance": 0.0001606100720859575
+  },
+  {
+    "feature": "high_precision",
+    "importance": 0.0
+  },
+  {
+    "feature": "indicator_importance",
+    "importance": 0.0
+  }
+]

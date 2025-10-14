@@ -29,8 +29,9 @@ export default function Navbar() {
   const [selectedUser, setSelectedUser] = useState<Member | null>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [milestoneStatuses, setMilestoneStatuses] = useState<{[key: number]: {status: string, progress: number}}>({})
-  
+
   const isTaskManagement = pathname.startsWith('/task-management')
+  const isProject = pathname.startsWith('/project')
   
   const milestones = [
     { id: 1, name: 'Business & Data Understanding', path: '/task-management/milestone/1' },
@@ -175,7 +176,8 @@ export default function Navbar() {
       const milestoneNum = pathname.split('/')[3]
       return `milestone${milestoneNum}`
     }
-    if (pathname === '/project') return 'project'
+    if (pathname === '/project') return 'project-dashboard'
+    if (pathname === '/project/predict') return 'project-predict'
     return 'home'
   }
 
@@ -194,6 +196,84 @@ export default function Navbar() {
   }
 
   const currentPage = getCurrentPage()
+
+  // Project navbar
+  if (isProject) {
+    return (
+      <nav style={{ backgroundColor: 'var(--color-surface)', boxShadow: 'var(--shadow-sm)', borderBottom: '1px solid var(--color-highlight-med)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-8">
+              <Link
+                href="/"
+                className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{ color: 'var(--color-text)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-overlay)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }}
+                title="Back to Main App"
+              >
+                <i className="fas fa-arrow-left mr-2"></i>
+                <span className="hidden sm:inline">Main App</span>
+              </Link>
+
+              <div className="flex items-center space-x-3">
+                <i className="fas fa-chart-bar" style={{ color: 'var(--color-success)', fontSize: '1.5rem' }}></i>
+                <h1 className="text-xl font-bold" style={{ color: 'var(--color-text)' }}>Survey Analytics Tool</h1>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  href="/project"
+                  className="nav-link flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={currentPage === 'project-dashboard' ?
+                    { backgroundColor: 'var(--color-success)', color: 'var(--color-base)' } :
+                    { color: 'var(--color-text)' }
+                  }
+                  onMouseEnter={(e) => {
+                    if (currentPage !== 'project-dashboard') {
+                      e.currentTarget.style.backgroundColor = 'var(--color-overlay)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== 'project-dashboard') {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }
+                  }}
+                >
+                  <i className="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </Link>
+
+                <Link
+                  href="/project/predict"
+                  className="nav-link flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={currentPage === 'project-predict' ?
+                    { backgroundColor: 'var(--color-success)', color: 'var(--color-base)' } :
+                    { color: 'var(--color-text)' }
+                  }
+                  onMouseEnter={(e) => {
+                    if (currentPage !== 'project-predict') {
+                      e.currentTarget.style.backgroundColor = 'var(--color-overlay)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== 'project-predict') {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }
+                  }}
+                >
+                  <i className="fas fa-chart-line mr-2"></i>Predictions
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    )
+  }
 
   // Basic navbar for main app
   if (!isTaskManagement) {

@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run next-dev\" \"npm run flask-task\"",
+    "dev": "concurrently --names \"NEXT,TASK-API,ML-API\" --prefix-colors \"cyan,magenta,yellow\" \"npm run next-dev\" \"npm run flask-task\" \"npm run flask-project\"",
     "next-dev": "next dev",
-    "flask-task": "cd \"01_TaskManagement/api\" && set PYTHONIOENCODING=utf-8 && python app.py",
-    "flask-project": "cd \"02_Project/api\" && set PYTHONIOENCODING=utf-8 && python app.py",
+    "flask-task": "cd \"01_TaskManagement/api\" && set PYTHONIOENCODING=utf-8 && venv\\Scripts\\python.exe app.py",
+    "flask-project": "cd \"02_Project/api\" && set PYTHONIOENCODING=utf-8 && venv\\Scripts\\python.exe app.py",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

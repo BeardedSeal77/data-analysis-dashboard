@@ -392,3 +392,5 @@ config.txt
 .env
 *.env
 credentials.txt
+/02_Project/api/venv
+/01_TaskManagement/api/venv

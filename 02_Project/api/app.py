@@ -1,49 +1,24 @@
-from flask import Flask, request, jsonify
+"""
+Health Survey ML API
+Train models and make predictions on survey data
+"""
+
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import psycopg2
-import psycopg2.extras
 import os
 from datetime import datetime
 import pandas as pd
 import numpy as np
 import json
+from ml_service import MLService
+import io
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
-# PostgreSQL connection configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'bin_project',
-    'user': 'postgres',
-    'password': 'postgres',
-    'port': 5432
-}
-
-# Initialize PostgreSQL connection
-def get_db_connection():
-    try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        return conn
-    except Exception as e:
-        print(f"[ERROR] PostgreSQL connection error: {e}")
-        return None
-
-def test_db_connection():
-    conn = get_db_connection()
-    if conn:
-        try:
-            cur = conn.cursor()
-            cur.execute('SELECT version()')
-            version = cur.fetchone()
-            cur.close()
-            conn.close()
-            print("[SUCCESS] Connected to PostgreSQL!")
-            return True
-        except Exception as e:
-            print(f"[ERROR] PostgreSQL test error: {e}")
-            return False
-    return False
+# Initialize ML Service
+ML_MODEL_DIR = os.path.join(os.path.dirname(__file__), 'ml', 'outputs')
+ml_service = MLService(ML_MODEL_DIR)
 
 # Custom JSON encoder for numpy types
 class NumpyJSONEncoder(json.JSONEncoder):
@@ -62,259 +37,308 @@ class NumpyJSONEncoder(json.JSONEncoder):
 
 app.json_encoder = NumpyJSONEncoder
 
-# Health check endpoint
+
+# ============================================================
+# HEALTH CHECK
+# ============================================================
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
+    """API health check"""
+    return jsonify({
+        "status": "OK",
+        "message": "Survey Analytics ML API",
+        "model_loaded": ml_service.is_loaded,
+        "port": 5001,
+        "timestamp": datetime.now().isoformat()
+    })
+
+
+# ============================================================
+# MODEL MANAGEMENT
+# ============================================================
+
+@app.route('/api/ml/model-info', methods=['GET'])
+def ml_model_info():
+    """Get model metadata and metrics"""
     try:
-        conn = get_db_connection()
-        if conn:
-            cur = conn.cursor()
-            cur.execute('SELECT version()')
-            version = cur.fetchone()[0]
-            cur.close()
-            conn.close()
-            
+        if not ml_service.is_loaded:
             return jsonify({
-                "status": "OK", 
-                "message": "Data Analysis Project API - PostgreSQL",
-                "database": DB_CONFIG['database'],
-                "port": 5001,
-                "postgres_version": version,
-                "timestamp": datetime.now().isoformat()
+                "status": "NOT_LOADED",
+                "message": "No model loaded. Train or load a model first."
+            }), 404
+
+        info = ml_service.get_model_info()
+        return jsonify(info)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/ml/feature-importance', methods=['GET'])
+def ml_feature_importance():
+    """Get feature importance rankings"""
+    try:
+        if not ml_service.is_loaded:
+            return jsonify({"error": "No model loaded"}), 404
+
+        top_n = request.args.get('top_n', 10, type=int)
+        importance = ml_service.get_feature_importance(top_n=top_n)
+        return jsonify({
+            "top_features": importance,
+            "count": len(importance)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/ml/reload', methods=['POST'])
+def ml_reload():
+    """Reload model from disk (after training via script)"""
+    try:
+        if ml_service.load_model():
+            return jsonify({
+                "success": True,
+                "message": "Model reloaded successfully",
+                "model_info": ml_service.get_model_info()
             })
         else:
             return jsonify({
-                "status": "ERROR",
-                "message": "Database connection failed"
-            }), 500
+                "success": False,
+                "message": "No model found to reload"
+            }), 404
     except Exception as e:
-        return jsonify({
-            "status": "ERROR",
-            "message": f"Database connection failed: {str(e)}"
-        }), 500
+        return jsonify({"error": str(e)}), 500
 
-# Get dataset information
-@app.route('/api/datasets', methods=['GET'])
-def get_datasets():
-    try:
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({"error": "Database connection failed"}), 500
-            
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        
-        # Get all tables in the database
-        cur.execute("""
-            SELECT table_name, table_type 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public'
-            ORDER BY table_name
-        """)
-        
-        tables = cur.fetchall()
-        datasets = []
-        
-        for table in tables:
-            table_name = table['table_name']
-            
-            # Get row count
-            cur.execute(f'SELECT COUNT(*) as count FROM "{table_name}"')
-            row_count = cur.fetchone()['count']
-            
-            # Get column information
-            cur.execute(f"""
-                SELECT column_name, data_type, is_nullable
-                FROM information_schema.columns 
-                WHERE table_name = %s
-                ORDER BY ordinal_position
-            """, (table_name,))
-            
-            columns = cur.fetchall()
-            
-            datasets.append({
-                "name": table_name,
-                "type": table['table_type'],
-                "row_count": row_count,
-                "column_count": len(columns),
-                "columns": [dict(col) for col in columns]
-            })
-        
-        cur.close()
-        conn.close()
-        
-        return jsonify(datasets)
-        
-    except Exception as e:
-        return jsonify({"error": f"Failed to fetch datasets: {str(e)}"}), 500
 
-# Get data from a specific table
-@app.route('/api/datasets/<table_name>/data', methods=['GET'])
-def get_table_data(table_name):
+# ============================================================
+# TRAINING
+# ============================================================
+
+@app.route('/api/ml/train', methods=['POST'])
+def ml_train():
+    """
+    Train model using local training data
+    Uses 02_Project/Data/04_Split/train_data.csv
+    """
     try:
-        limit = request.args.get('limit', 100, type=int)
-        offset = request.args.get('offset', 0, type=int)
-        
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({"error": "Database connection failed"}), 500
-        
-        # Use pandas to read data (handles data types better)
-        query = f'SELECT * FROM "{table_name}" LIMIT %s OFFSET %s'
-        df = pd.read_sql_query(query, conn, params=(limit, offset))
-        
-        # Convert to JSON-serializable format
-        data = df.to_dict('records')
-        
-        conn.close()
-        
+        # Path to local training data
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        train_path = os.path.join(base_dir, 'Data', '04_Split', 'train_data.csv')
+
+        if not os.path.exists(train_path):
+            return jsonify({"error": f"Training data not found at {train_path}"}), 404
+
+        # Read training data
+        df_train = pd.read_csv(train_path)
+
+        # Train model
+        result = ml_service.train_model(df_train)
+
         return jsonify({
-            "table_name": table_name,
-            "data": data,
-            "limit": limit,
-            "offset": offset,
-            "count": len(data)
+            "success": True,
+            "message": "Model trained successfully",
+            "metrics": result['metrics'],
+            "n_features": result['n_features'],
+            "n_samples": result['n_samples'],
+            "timestamp": datetime.now().isoformat()
         })
-        
-    except Exception as e:
-        return jsonify({"error": f"Failed to fetch data from {table_name}: {str(e)}"}), 500
 
-# Get basic statistics for a table
-@app.route('/api/datasets/<table_name>/stats', methods=['GET'])
-def get_table_stats(table_name):
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/ml/evaluate', methods=['POST'])
+def ml_evaluate():
+    """
+    Evaluate model on test/validation data
+    Expects test_data.csv or val_data.csv in the request
+    """
     try:
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({"error": "Database connection failed"}), 500
-        
-        # Read data into pandas for analysis
-        df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', conn)
-        
-        # Get basic statistics
-        stats = {
-            "table_name": table_name,
-            "total_rows": len(df),
-            "total_columns": len(df.columns),
-            "numeric_columns": [],
-            "categorical_columns": [],
-            "missing_values": {},
-            "data_types": {}
-        }
-        
-        for column in df.columns:
-            # Data type info
-            stats["data_types"][column] = str(df[column].dtype)
-            
-            # Missing values
-            missing_count = df[column].isna().sum()
-            stats["missing_values"][column] = int(missing_count)
-            
-            # Categorize columns
-            if df[column].dtype in ['int64', 'float64', 'int32', 'float32']:
-                column_stats = {
-                    "column": column,
-                    "mean": float(df[column].mean()) if not df[column].isna().all() else None,
-                    "median": float(df[column].median()) if not df[column].isna().all() else None,
-                    "std": float(df[column].std()) if not df[column].isna().all() else None,
-                    "min": float(df[column].min()) if not df[column].isna().all() else None,
-                    "max": float(df[column].max()) if not df[column].isna().all() else None,
-                    "missing_count": int(missing_count)
-                }
-                stats["numeric_columns"].append(column_stats)
-            else:
-                column_stats = {
-                    "column": column,
-                    "unique_count": int(df[column].nunique()),
-                    "most_frequent": df[column].mode().iloc[0] if len(df[column].mode()) > 0 else None,
-                    "missing_count": int(missing_count)
-                }
-                stats["categorical_columns"].append(column_stats)
-        
-        conn.close()
-        
-        return jsonify(stats)
-        
-    except Exception as e:
-        return jsonify({"error": f"Failed to get statistics for {table_name}: {str(e)}"}), 500
+        if not ml_service.is_loaded:
+            return jsonify({"error": "No model loaded. Train a model first."}), 404
 
-# Upload CSV data to PostgreSQL
-@app.route('/api/datasets/upload', methods=['POST'])
-def upload_dataset():
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files['file']
+        dataset_name = request.form.get('dataset_name', 'Test')
+
+        # Read test data
+        df_test = pd.read_csv(file)
+
+        # Evaluate
+        result = ml_service.evaluate_model(df_test, dataset_name)
+
+        return jsonify({
+            "success": True,
+            "dataset": dataset_name,
+            "metrics": result['metrics'],
+            "n_samples": result['n_samples']
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================
+# PREDICTION
+# ============================================================
+
+@app.route('/api/ml/predict-csv', methods=['POST'])
+def ml_predict_csv():
+    """
+    Upload survey CSV and get predictions for all entries
+    Handles preprocessing automatically
+    """
+    try:
+        if not ml_service.is_loaded:
+            return jsonify({"error": "No model loaded. Train a model first."}), 404
+
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No file selected"}), 400
+
+        # Get return format preference
+        return_format = request.form.get('format', 'json')  # 'json' or 'csv'
+
+        # Read CSV
+        df = pd.read_csv(file)
+        original_df = df.copy()
+
+        # Predict (ml_service handles preprocessing internally)
+        predictions_scaled = ml_service.predict_from_dataframe(df)
+
+        # Inverse transform to get original values
+        predictions_original = ml_service.inverse_transform_predictions(predictions_scaled)
+
+        # Add both predictions to original dataframe
+        original_df['predicted_value_log_scaled'] = predictions_scaled
+        original_df['predicted_value'] = predictions_original
+
+        # Return in requested format
+        if return_format == 'csv':
+            # Convert to CSV and return as file
+            output = io.StringIO()
+            original_df.to_csv(output, index=False)
+            output.seek(0)
+
+            return send_file(
+                io.BytesIO(output.getvalue().encode()),
+                mimetype='text/csv',
+                as_attachment=True,
+                download_name='predictions.csv'
+            )
+        else:
+            # Return as JSON
+            return jsonify({
+                "success": True,
+                "row_count": len(original_df),
+                "predictions": original_df.to_dict('records'),
+                "timestamp": datetime.now().isoformat()
+            })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/ml/predict-sample', methods=['POST'])
+def ml_predict_sample():
+    """
+    Get sample predictions (first 10 rows)
+    For quick preview without downloading full CSV
+    """
+    try:
+        if not ml_service.is_loaded:
+            return jsonify({"error": "No model loaded"}), 404
+
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files['file']
+        df = pd.read_csv(file)
+
+        # Predict on first 10 rows
+        sample_df = df.head(10)
+        predictions_scaled = ml_service.predict_from_dataframe(sample_df)
+
+        # Inverse transform to get original values
+        predictions_original = ml_service.inverse_transform_predictions(predictions_scaled)
+
+        sample_df['predicted_value_log_scaled'] = predictions_scaled
+        sample_df['predicted_value'] = predictions_original
+
+        return jsonify({
+            "success": True,
+            "sample_size": len(sample_df),
+            "total_rows": len(df),
+            "sample": sample_df.to_dict('records')
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ============================================================
+# DATA INFO
+# ============================================================
+
+@app.route('/api/ml/data-info', methods=['POST'])
+def ml_data_info():
+    """
+    Upload CSV to get data summary without predictions
+    Useful for checking data before prediction
+    """
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file provided"}), 400
-        
-        file = request.files['file']
-        table_name = request.form.get('table_name', file.filename.split('.')[0])
-        
-        if file.filename == '':
-            return jsonify({"error": "No file selected"}), 400
-        
-        # Read CSV with pandas
-        df = pd.read_csv(file)
-        
-        # Connect to database and upload
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({"error": "Database connection failed"}), 500
-        
-        # Upload dataframe to PostgreSQL
-        df.to_sql(table_name, conn, if_exists='replace', index=False, method='multi')
-        
-        conn.close()
-        
-        return jsonify({
-            "message": f"Dataset uploaded successfully as '{table_name}'",
-            "rows": len(df),
-            "columns": len(df.columns),
-            "table_name": table_name
-        }), 201
-        
-    except Exception as e:
-        return jsonify({"error": f"Failed to upload dataset: {str(e)}"}), 500
 
-# Execute custom SQL query
-@app.route('/api/query', methods=['POST'])
-def execute_query():
-    try:
-        data = request.get_json()
-        if not data or 'query' not in data:
-            return jsonify({"error": "No query provided"}), 400
-        
-        query = data['query']
-        
-        # Basic security check - only allow SELECT statements
-        if not query.strip().upper().startswith('SELECT'):
-            return jsonify({"error": "Only SELECT queries are allowed"}), 400
-        
-        conn = get_db_connection()
-        if not conn:
-            return jsonify({"error": "Database connection failed"}), 500
-        
-        # Execute query with pandas
-        df = pd.read_sql_query(query, conn)
-        
-        # Convert to JSON
-        result = df.to_dict('records')
-        
-        conn.close()
-        
-        return jsonify({
-            "query": query,
-            "results": result,
-            "row_count": len(result),
-            "columns": list(df.columns)
-        })
-        
+        file = request.files['file']
+        df = pd.read_csv(file)
+
+        info = {
+            "row_count": len(df),
+            "column_count": len(df.columns),
+            "columns": df.columns.tolist(),
+            "dtypes": {col: str(df[col].dtype) for col in df.columns},
+            "missing_values": {col: int(df[col].isna().sum()) for col in df.columns},
+            "sample_rows": df.head(5).to_dict('records')
+        }
+
+        return jsonify(info)
+
     except Exception as e:
-        return jsonify({"error": f"Query execution failed: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
-    if test_db_connection():
-        print("Starting Data Analysis Project API server...")
-        print("API endpoints available at http://localhost:5001/api/")
-        print("[INFO] Health check: http://localhost:5001/api/health")
-        print("[INFO] Data Analysis System - PostgreSQL")
-        app.run(debug=True, host='0.0.0.0', port=5001)
+    print("\n" + "=" * 60)
+    print("Health Survey ML API")
+    print("=" * 60)
+
+    # Try to load existing model
+    print("\nChecking for existing model...")
+    if ml_service.load_model():
+        print("[SUCCESS] Model loaded from disk")
     else:
-        print("[ERROR] Failed to start Data Analysis server - PostgreSQL connection failed")
-        print("[INFO] Make sure PostgreSQL is running via Docker: docker-compose up -d")
+        print("[INFO] No model found - train a new model via /api/ml/train")
+
+    print("\nStarting Flask server...")
+    print("=" * 60)
+    print("API Endpoints:")
+    print("  Health:              GET  /api/health")
+    print("  Model Info:          GET  /api/ml/model-info")
+    print("  Feature Importance:  GET  /api/ml/feature-importance")
+    print("  Train Model:         POST /api/ml/train")
+    print("  Evaluate Model:      POST /api/ml/evaluate")
+    print("  Predict CSV:         POST /api/ml/predict-csv")
+    print("  Predict Sample:      POST /api/ml/predict-sample")
+    print("  Data Info:           POST /api/ml/data-info")
+    print("=" * 60)
+    print(f"\nServer running at: http://localhost:5001")
+    print("=" * 60)
+    print()
+
+    app.run(debug=True, host='0.0.0.0', port=5001)

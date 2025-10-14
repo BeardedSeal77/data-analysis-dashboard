@@ -1,0 +1,74 @@
+http://localhost:5001/api/health
+{
+  "message": "Survey Analytics ML API",
+  "model_loaded": true,
+  "port": 5001,
+  "status": "OK",
+  "timestamp": "2025-10-13T16:50:56.849930"
+}
+
+
+http://localhost:5001/api/ml/model-info
+{
+  "metrics": {
+    "mae": 0.13926349623490286,
+    "r2": 0.9653503791362739,
+    "rmse": 0.1881831396350806
+  },
+  "model_type": "RandomForestRegressor",
+  "n_estimators": 750,
+  "n_features": 27,
+  "n_samples": "unknown",
+  "status": "loaded",
+  "training_date": "2025-10-13T16:39:21.355039"
+}
+
+
+http://localhost:5001/api/ml/feature-importance
+{
+  "count": 10,
+  "top_features": [
+    {
+      "feature": "value_log",
+      "importance": 0.39765319320834686
+    },
+    {
+      "feature": "precision_scaled",
+      "importance": 0.14733000063310459
+    },
+    {
+      "feature": "type_I",
+      "importance": 0.1253060271076744
+    },
+    {
+      "feature": "type_U",
+      "importance": 0.06424071893980081
+    },
+    {
+      "feature": "type_D",
+      "importance": 0.06349619820529452
+    },
+    {
+      "feature": "indicator_encoded",
+      "importance": 0.059822411093442
+    },
+    {
+      "feature": "indicator_order_scaled",
+      "importance": 0.038916548184013855
+    },
+    {
+      "feature": "survey_cohort",
+      "importance": 0.025878029525877352
+    },
+    {
+      "feature": "dataset_source_encoded",
+      "importance": 0.023467910040614277
+    },
+    {
+      "feature": "sample_size_tier",
+      "importance": 0.014210077168211262
+    }
+  ]
+}
+
+

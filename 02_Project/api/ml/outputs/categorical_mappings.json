@@ -1,0 +1,10 @@
+{
+  "indicator_importance": {
+    "Low": 0
+  },
+  "sample_size_tier": {
+    "Large": 0,
+    "Medium": 1,
+    "Small": 2
+  }
+}
