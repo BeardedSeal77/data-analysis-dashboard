@@ -394,3 +394,4 @@ config.txt
 credentials.txt
 /02_Project/api/venv
 /01_TaskManagement/api/venv
+/02_Project/api/ml/outputs

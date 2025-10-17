@@ -16,6 +16,7 @@ interface Member {
 
 interface Task {
   id: string
+  compositeId: string
   milestoneId: number
 }
 
