@@ -271,9 +271,10 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
           <div className="p-4 space-y-3 min-h-32">
             {tasksByAssignment.backlog
               .sort((a, b) => {
-                // Sort by ID first, then by prerequisites (tasks with fewer prerequisites first)
-                if (a.id !== b.id) return a.id - b.id
-                return (a.prerequisites?.length || 0) - (b.prerequisites?.length || 0)
+              // Sort by numeric ID first (ensure IDs are treated as numbers)
+              const aId = Number(a.id) || 0
+              const bId = Number(b.id) || 0
+              return aId - bId
               })
               .map(task => (
               <TaskCard
@@ -289,7 +290,7 @@ export default function TaskBoard({ milestoneId }: TaskBoardProps) {
         </div>
 
         {/* Member Blocks */}
-        {members.sort((a, b) => a.name.localeCompare(b.name)).map(member => {
+        {members.sort((a, b) => a.displayName.localeCompare(b.displayName)).map(member => {
           const colorStyles = getMemberColorStyles(member.memberColor)
           const memberTasks = tasksByAssignment.members[member.id] || []
 
