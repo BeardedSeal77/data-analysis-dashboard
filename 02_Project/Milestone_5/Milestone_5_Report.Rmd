@@ -1148,10 +1148,4 @@ This Milestone 5 report documents successful deployment of the HDPSA Random Fore
 7. Automated hyperparameter tuning pipeline
 8. Multi-language support for broader accessibility
 
----
 
-**Document Version:** 1.0
-**Date:** `r format(Sys.Date(), '%d %B %Y')`
-**Status:** Submitted for Assessment
-
-**Total Pages:** Approximately 30-35 pages when rendered to Word
