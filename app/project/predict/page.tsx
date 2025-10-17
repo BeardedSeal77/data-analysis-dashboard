@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { getSamplePredictions, predictFromCSV } from '../lib/api'
 import type { SamplePredictionResponse, PredictionRow } from '../lib/types'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts'
 
 export default function PredictPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -210,6 +211,12 @@ export default function PredictPage() {
                       Predicted Value (%)
                     </th>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                      Actual Value (%)
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                      Difference
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                       Type
                     </th>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
@@ -218,24 +225,150 @@ export default function PredictPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {sampleResult.sample.map((row: PredictionRow, idx: number) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 text-sm text-gray-900">
-                        {idx + 1}
-                      </td>
-                      <td className="px-3 py-2 text-sm font-medium text-green-600">
-                        {row.predicted_value ? row.predicted_value.toFixed(2) + '%' : 'N/A'}
-                      </td>
-                      <td className="px-3 py-2 text-sm text-gray-600">
-                        {row.type_I === 1 ? 'I' : row.type_D === 1 ? 'D' : row.type_S === 1 ? 'S' : row.type_T === 1 ? 'T' : 'U'}
-                      </td>
-                      <td className="px-3 py-2 text-sm text-gray-600">
-                        {row.indicator_importance || 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
+                  {sampleResult.sample.map((row: PredictionRow, idx: number) => {
+                    const predictedValue = row.predicted_value || 0
+                    const actualValue = row.value_log ? Math.exp(row.value_log) : null
+                    const difference = actualValue !== null ? predictedValue - actualValue : null
+
+                    return (
+                      <tr key={idx} className="hover:bg-gray-50">
+                        <td className="px-3 py-2 text-sm text-gray-900">
+                          {idx + 1}
+                        </td>
+                        <td className="px-3 py-2 text-sm font-medium text-green-600">
+                          {predictedValue.toFixed(2)}%
+                        </td>
+                        <td className="px-3 py-2 text-sm font-medium text-blue-600">
+                          {actualValue !== null ? actualValue.toFixed(2) + '%' : 'N/A'}
+                        </td>
+                        <td className="px-3 py-2 text-sm font-medium">
+                          <span className={difference !== null ?
+                            (Math.abs(difference) < 5 ? 'text-green-600' :
+                             Math.abs(difference) < 10 ? 'text-yellow-600' :
+                             'text-red-600') : 'text-gray-400'}>
+                            {difference !== null ?
+                              (difference > 0 ? '+' : '') + difference.toFixed(2) + '%' :
+                              'N/A'}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-sm text-gray-600">
+                          {row.type_I === 1 ? 'I' : row.type_D === 1 ? 'D' : row.type_S === 1 ? 'S' : row.type_T === 1 ? 'T' : 'U'}
+                        </td>
+                        <td className="px-3 py-2 text-sm text-gray-600">
+                          {row.indicator_importance || 'N/A'}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Prediction Error Chart */}
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Prediction Error by Row
+              </h3>
+              <p className="text-sm text-gray-600 mb-3">
+                Positive values indicate over-prediction, negative values indicate under-prediction
+              </p>
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={sampleResult.sample.map((row: PredictionRow, idx: number) => {
+                      const predictedValue = row.predicted_value || 0
+                      const actualValue = row.value_log ? Math.exp(row.value_log) : 0
+                      const difference = predictedValue - actualValue
+
+                      return {
+                        row: `Row ${idx + 1}`,
+                        Difference: difference,
+                        fill: Math.abs(difference) < 5 ? '#10b981' :
+                              Math.abs(difference) < 10 ? '#f59e0b' :
+                              '#ef4444'
+                      }
+                    })}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis
+                      dataKey="row"
+                      tick={{ fill: '#666', fontSize: 12 }}
+                      axisLine={{ stroke: '#999' }}
+                    />
+                    <YAxis
+                      label={{ value: 'Difference (%)', angle: -90, position: 'insideLeft', style: { fill: '#666' } }}
+                      tick={{ fill: '#666', fontSize: 12 }}
+                      axisLine={{ stroke: '#999' }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        padding: '10px'
+                      }}
+                      formatter={(value: number) => [`${value > 0 ? '+' : ''}${value.toFixed(2)}%`, 'Difference']}
+                    />
+                    <ReferenceLine
+                      y={10}
+                      stroke="#dc2626"
+                      strokeDasharray="5 5"
+                      strokeWidth={2}
+                      label={{
+                        value: '+10% Threshold',
+                        position: 'right',
+                        fill: '#dc2626',
+                        fontSize: 12,
+                        fontWeight: 600
+                      }}
+                    />
+                    <ReferenceLine
+                      y={-10}
+                      stroke="#dc2626"
+                      strokeDasharray="5 5"
+                      strokeWidth={2}
+                      label={{
+                        value: '-10% Threshold',
+                        position: 'right',
+                        fill: '#dc2626',
+                        fontSize: 12,
+                        fontWeight: 600
+                      }}
+                    />
+                    <Bar
+                      dataKey="Difference"
+                      radius={[8, 8, 0, 0]}
+                      maxBarSize={60}
+                    >
+                      {sampleResult.sample.map((row: PredictionRow, idx: number) => {
+                        const predictedValue = row.predicted_value || 0
+                        const actualValue = row.value_log ? Math.exp(row.value_log) : 0
+                        const difference = predictedValue - actualValue
+                        const fill = Math.abs(difference) < 5 ? '#10b981' :
+                                    Math.abs(difference) < 10 ? '#f59e0b' :
+                                    '#ef4444'
+
+                        return <rect key={idx} fill={fill} />
+                      })}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <div className="mt-4 flex justify-center gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-green-500 rounded"></div>
+                    <span className="text-gray-700">Good (&lt; 5%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                    <span className="text-gray-700">Moderate (5-10%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 rounded"></div>
+                    <span className="text-gray-700">High (&gt; 10%)</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded">
