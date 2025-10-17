@@ -1,0 +1,43 @@
+Year,TimePeriod,Subcategory,Province,Value
+1998,2,Doctor,Gauteng,2.61
+1998,2,Doctor,Western Cape,7.83
+1998,2,Doctor,KwaZulu-Natal,2.39
+1998,2,Doctor,Eastern Cape,4.23
+1998,2,Doctor,Limpopo,2.1
+1998,2,Doctor,Mpumalanga,7.69
+1998,2,Doctor,North West,1.35
+1998,3,Doctor,Gauteng,0.27
+1998,3,Doctor,Western Cape,2.6
+1998,3,Doctor,KwaZulu-Natal,5.94
+1998,3,Doctor,Eastern Cape,5.34
+1998,3,Doctor,Limpopo,4.48
+1998,3,Doctor,Mpumalanga,5.33
+1998,3,Doctor,Northern Cape,5.34
+1998,5,Doctor,Gauteng,4.47
+1998,5,Doctor,Western Cape,2.72
+1998,5,Doctor,KwaZulu-Natal,6.65
+1998,5,Doctor,Eastern Cape,5.7
+1998,5,Doctor,Limpopo,3.22
+1998,5,Doctor,Mpumalanga,0.81
+1998,5,Doctor,Freestate,6.43
+1998,2,Nurse/midwife,Gauteng,5.59
+1998,2,Nurse/midwife,Western Cape,19.96
+1998,2,Nurse/midwife,KwaZulu-Natal,5.13
+1998,2,Nurse/midwife,Eastern Cape,2.62
+1998,2,Nurse/midwife,Limpopo,17.71
+1998,2,Nurse/midwife,Mpumalanga,3.27
+1998,2,Nurse/midwife,North West,3.82
+1998,3,Nurse/midwife,Gauteng,7.95
+1998,3,Nurse/midwife,Northern Cape,11.6
+1998,3,Nurse/midwife,KwaZulu-Natal,2.6
+1998,3,Nurse/midwife,Eastern Cape,4.11
+1998,3,Nurse/midwife,Freestate,10.31
+1998,3,Nurse/midwife,Freestate,12.89
+1998,3,Nurse/midwife,North West,6.64
+1998,5,Nurse/midwife,Gauteng,4.29
+1998,5,Nurse/midwife,Western Cape,0.42
+1998,5,Nurse/midwife,KwaZulu-Natal,6.85
+1998,5,Nurse/midwife,Eastern Cape,3.93
+1998,5,Nurse/midwife,Limpopo,20.2
+1998,5,Nurse/midwife,Mpumalanga,3.63
+1998,5,Nurse/midwife,North West,15.08
