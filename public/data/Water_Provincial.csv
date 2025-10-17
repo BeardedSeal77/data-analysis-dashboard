@@ -1,0 +1,100 @@
+ID,Province,Water Source,percentage
+1,Gauteng,improved water source,51.1
+2,Gauteng,water piped into dwelling,21.5
+3,Gauteng,public tap/standpipe,10.8
+4,Gauteng,tubewell/borehole,1.5
+5,Gauteng,rainwater,0.5
+6,Gauteng,tanker truck,0.6
+7,Gauteng,bottled water,0.2
+8,Gauteng,unimproved water source,6.5
+9,Gauteng,surface water,6.7
+10,Gauteng,other water source,0.4
+11,Gauteng,don't know or missing information on water source,0.2
+12,KwaZulu-Natal,improved water source,49.1
+13,KwaZulu-Natal,water piped into dwelling,23.3
+14,KwaZulu-Natal,public tap/standpipe,10.4
+15,KwaZulu-Natal,tubewell/borehole,1.7
+16,KwaZulu-Natal,rainwater,0.5
+17,KwaZulu-Natal,tanker truck,0.7
+18,KwaZulu-Natal,bottled water,0.1
+19,KwaZulu-Natal,unimproved water source,7.7
+20,KwaZulu-Natal,surface water,5.5
+21,KwaZulu-Natal,other water source,0.8
+22,KwaZulu-Natal,don't know or missing information on water source,0.2
+23,Western Cape,improved water source,49.6
+24,Western Cape,water piped into dwelling,22.6
+25,Western Cape,public tap/standpipe,12.3
+26,Western Cape,tubewell/borehole,1.4
+27,Western Cape,rainwater,0.3
+28,Western Cape,tanker truck,0.4
+29,Western Cape,bottled water,0.1
+30,Western Cape,unimproved water source,6.2
+31,Western Cape,surface water,5.8
+32,Western Cape,other water source,0.8
+33,Western Cape,don't know or missing information on water source,0.5
+34,Eastern Cape,improved water source,50.2
+35,Eastern Cape,water piped into dwelling,22.9
+36,Eastern Cape,public tap/standpipe,10.3
+37,Eastern Cape,tubewell/borehole,1.6
+38,Eastern Cape,rainwater,0.3
+39,Eastern Cape,tanker truck,0.4
+40,Eastern Cape,bottled water,0.1
+41,Eastern Cape,unimproved water source,6.7
+42,Eastern Cape,surface water,6.4
+43,Eastern Cape,other water source,1.1
+44,Eastern Cape,don't know or missing information on water source,0.1
+45,Limpopo,improved water source,49.6
+46,Limpopo,water piped into dwelling,21.6
+47,Limpopo,public tap/standpipe,11.2
+48,Limpopo,tubewell/borehole,2.0
+49,Limpopo,rainwater,0.3
+50,Limpopo,tanker truck,0.6
+51,Limpopo,bottled water,0.1
+52,Limpopo,unimproved water source,8.7
+53,Limpopo,surface water,5.3
+54,Limpopo,other water source,0.4
+55,Limpopo,don't know or missing information on water source,0.2
+56,Mpumalanga,improved water source,50.0
+57,Mpumalanga,water piped into dwelling,22.5
+58,Mpumalanga,public tap/standpipe,11.3
+59,Mpumalanga,tubewell/borehole,1.6
+60,Mpumalanga,rainwater,0.4
+61,Mpumalanga,tanker truck,0.5
+62,Mpumalanga,bottled water,0.1
+63,Mpumalanga,unimproved water source,7.5
+64,Mpumalanga,surface water,5.5
+65,Mpumalanga,other water source,0.4
+66,Mpumalanga,don't know or missing information on water source,0.2
+67,North West,improved water source,48.9
+68,North West,water piped into dwelling,21.0
+69,North West,public tap/standpipe,11.6
+70,North West,tubewell/borehole,1.5
+71,North West,rainwater,0.5
+72,North West,tanker truck,0.5
+73,North West,bottled water,0.1
+74,North West,unimproved water source,6.5
+75,North West,surface water,8.0
+76,North West,other water source,1.1
+77,North West,don't know or missing information on water source,0.1
+78,Free State,improved water source,48.9
+79,Free State,water piped into dwelling,22.4
+80,Free State,public tap/standpipe,10.2
+81,Free State,tubewell/borehole,2.0
+82,Free State,rainwater,0.4
+83,Free State,tanker truck,0.4
+84,Free State,bottled water,0.1
+85,Free State,unimproved water source,8.4
+86,Free State,surface water,5.9
+87,Free State,other water source,1.0
+88,Free State,don't know or missing information on water source,0.3
+89,Northern Cape,improved water source,49.3
+90,Northern Cape,water piped into dwelling,21.6
+91,Northern Cape,public tap/standpipe,11.5
+92,Northern Cape,tubewell/borehole,1.5
+93,Northern Cape,rainwater,0.4
+94,Northern Cape,tanker truck,0.7
+95,Northern Cape,bottled water,0.1
+96,Northern Cape,unimproved water source,7.0
+97,Northern Cape,surface water,7.3
+98,Northern Cape,other water source,0.4
+99,Northern Cape,don't know or missing information on water source,0.2
