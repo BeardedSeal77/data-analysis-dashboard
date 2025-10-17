@@ -1,15 +1,22 @@
-# Task 2 — Monitoring Plan for HDPSA Random Forest (CRISP-DM Deployment)
+# Task 2 - Monitoring Plan for HDPSA Random Forest (CRISP-DM Deployment)
 
 ## 1. Objective
 The objective of this Monitoring Plan is to ensure the post-deployment performance, reliability, and ethical compliance of the HDPSA (Health and Demographic Patterns in South Africa) Random Forest regression model once integrated into the production environment comprising a Flask API, a Next.js dashboard, an n8n automation workflow, and MongoDB for operational logging. The plan operationalises the CRISP-DM Deployment phase by defining what is measured, how it is measured, how results are visualised, and how alerts and corrective actions are triggered, documented, and reviewed.
 
 This document applies to the currently deployed model and all subsequent versions of the HDPSA Random Forest model. It complements the Maintenance Plan (Task 3), which specifies retraining, versioning, and retirement policies that are triggered by the monitoring outcomes defined here.
 
+**Key outputs / artifacts:**
+- Monitoring objective statement tied to CRISP-DM Deployment.
+- Scope of integrated components (Flask, Next.js, n8n, MongoDB).
+- Cross-reference to Maintenance Plan Section 3 (Retraining) and Section 6 (Governance).
+
 ## 2. Monitoring Scope & Framework
-Monitoring focuses on three dimensions aligned to CRISP-DM’s Deployment activities:
+Monitoring focuses on three dimensions aligned to CRISP-DM's Deployment activities:
 - Continuous performance monitoring: tracking model error and stability in production relative to the Milestone 4 baseline.
 - Data quality and drift monitoring: detecting changes in input feature distributions, population stability, and output behaviour that could degrade reliability or indicate context shift.
 - System and ethics monitoring: confirming availability, latency, logging completeness, fairness, and legal compliance (POPIA), with transparent reporting to stakeholders via the Next.js dashboard.
+
+Operational data-quality rules (see Section 10) run in the same n8n workflow; their breaches are classified as engineering alerts distinct from model-performance alerts and contribute to a dashboard `DQ Score` (0-1, green >= 0.85) shown alongside model KPIs.
 
 System components in scope:
 - Flask API (`/api/predict`, `/api/metrics`): request validation, prediction, and metrics endpoints; logs inputs/outputs to MongoDB.
@@ -29,25 +36,31 @@ Core model performance metrics captured weekly on a representative holdout (or r
 |--------|------------|----------|-----------------|-----------|
 | RMSE | Root Mean Square Error | 0.0554 | > 0.07 | Weekly |
 | MAE | Mean Absolute Error | 0.0382 | > 0.05 | Weekly |
-| R² | Explained Variance (Coefficient of Determination) | 0.997 | < 0.95 | Weekly |
+| R^2 | Explained Variance (Coefficient of Determination) | 0.997 | < 0.95 | Weekly |
 
 Collection and computation:
 - The Flask API writes each prediction request/response (timestamp, input vector, prediction, optional ground truth when available) to `MongoDB.model_predictions`.
-- n8n runs a weekly job to compute RMSE, MAE, and R² on the most recent labelled window (e.g., the last 4 weeks or the latest batch with ground truth).
+- n8n runs a weekly job to compute RMSE, MAE, and R^2 on the most recent labelled window (e.g., the last 4 weeks or the latest batch with ground truth).
 - Metrics are written to `MongoDB.monitoring_metrics` with fields: `timestamp`, `rmse`, `mae`, `r2`, `n_samples`, `window`, `model_version`, and `status`.
+- Confidence interpretation: RMSE charts include a 95% confidence band (+/-0.005) derived via bootstrap on the labelled window to contextualise minor fluctuations.
+- Feature stability: track Spearman rho between current permutation feature importance and the Milestone 4 baseline; flag conceptual drift if rho < 0.9 for two consecutive cycles.
 
 Alerting rules and dashboard logic:
-- Threshold breaches set status: green (OK), amber (watch), red (alert). Example: RMSE ≤ 0.07 → green; 0.07 < RMSE ≤ 0.08 → amber; RMSE > 0.08 → red.
+- Threshold breaches set status: green (OK), amber (watch), red (alert). Example: RMSE <= 0.07 -> green; 0.07 < RMSE <= 0.08 -> amber; RMSE > 0.08 -> red.
 - Consecutive breaches for two cycles auto-create a maintenance ticket and escalate to BI Manager.
-- The Next.js dashboard surfaces: (a) current values vs baseline, (b) 8–12 week trend lines, (c) confidence bands, (d) an annotation stream for incidents and changes (e.g., dataset updates).
-- Users can toggle “Compare to Baseline” mode which overlays current distributions versus the Milestone 4 baseline, with percentage deltas.
+- The Next.js dashboard surfaces: (a) current values vs baseline, (b) 8-12 week trend lines, (c) confidence bands, (d) an annotation stream for incidents and changes (e.g., dataset updates).
+- Users can toggle "Compare to Baseline" mode which overlays current distributions versus the Milestone 4 baseline, with percentage deltas.
+- Drill-down visual: A dual-axis line + bar chart plots RMSE trend (line) alongside request volume per week (bar); divergence > 20% highlights potential data quality correlation and links directly to Section 10 metrics.
+
+Threshold breaches feed directly into the Maintenance Plan (Section 3 Retraining Procedures) via the n8n alert branch, ensuring rapid hand-off to retraining or rollback actions.
 
 ## 4. Data Drift Detection
 The monitoring layer evaluates three drift dimensions using established tests and practical thresholds suitable for policy analytics on continuous targets.
 
-- Input feature drift → Kolmogorov–Smirnov (KS) test: for each top feature identified in Milestone 4, compare current input distribution to the training distribution. Flag drift if p < 0.05.
-- Population stability → Population Stability Index (PSI): compute PSI per feature and an aggregate PSI. Flag material shift if PSI > 0.2 and critical shift if PSI > 0.3.
-- Output drift → change in prediction distribution: flag if mean or variance shifts by more than 15% relative to baseline over a rolling 4-week window.
+- Input feature drift -> Kolmogorov-Smirnov (KS) test: for each top feature identified in Milestone 4, compare current input distribution to the training distribution. Flag drift if p < 0.05.
+- Population stability -> Population Stability Index (PSI): compute PSI per feature and an aggregate PSI. Flag material shift if PSI > 0.2 and critical shift if PSI > 0.3.
+- Output drift -> change in prediction distribution: flag if mean or variance shifts by more than 15% relative to baseline over a rolling 4-week window.
+- Effect-size confirmation: classify drift only when KS p < 0.05 **and** |Deltamean| > 0.2 sigma (where sigma is the baseline standard deviation), avoiding false positives on tiny distribution shifts.
 
 Drift reporting:
 - n8n generates a weekly drift report combining: per-feature KS results, PSI table, and output distribution changes; saved to `/monitoring_reports/`:
@@ -55,40 +68,39 @@ Drift reporting:
   - `drift_report_YYYY-MM-DD.html` (rendered)
 - Reports include a summary section with pass/fail status and recommended actions.
 - Notifications: when any drift criterion is breached, n8n sends a Slack and email alert with a deep link to the dashboard report and attaches the Markdown summary. Severe drift (PSI > 0.3 or multiple KS failures) also opens a maintenance ticket and requests an ad-hoc review.
+- Remediation path:
+  - Minor drift: log the incident, monitor next cycle.
+  - Moderate drift (PSI 0.2-0.3 or single KS + effect-size breach): schedule data refresh and stakeholder review.
+  - Severe drift (PSI > 0.3, multiple KS breaches, or rho < 0.9): trigger retraining as per Maintenance Plan Section 3.
+
+Drift outcomes inform the Maintenance Plan (Section 3 Retraining Procedures) and are summarised in quarterly governance records (Section 6 Business Continuity & Governance).
 
 ## 5. Automation Workflow (n8n)
 The monitoring process is orchestrated in n8n as a scheduled workflow. Below is a node-by-node outline and an ASCII dataflow summary.
 
 Nodes and responsibilities:
 - Scheduler (Cron): Triggers weekly on Mondays 07:00 SAST. Output: timestamp, window parameters.
-- Fetch Window Data (HTTP Request → Flask `/api/metrics/window`): Retrieves labelled predictions and input samples for the defined window. Output: JSON payload; Storage: raw snapshot in `MongoDB.monitoring_metrics_raw`.
-- Compute Metrics (Function): Calculates RMSE, MAE, R². Output: metrics object; Storage: `MongoDB.monitoring_metrics`.
+- Fetch Window Data (HTTP Request -> Flask `/api/metrics/window`): Retrieves labelled predictions and input samples for the defined window. Output: JSON payload; Storage: raw snapshot in `MongoDB.monitoring_metrics_raw`.
+- Compute Metrics (Function): Calculates RMSE, MAE, R^2. Output: metrics object; Storage: `MongoDB.monitoring_metrics`.
 - KS & PSI (Function): For each selected feature, run KS test and compute PSI vs training baselines stored in `MongoDB.baselines`. Output: array of drift results; Storage: `MongoDB.drift_results`.
 - Output Drift (Function): Compares current prediction mean/variance vs baseline. Output: drift flags; Storage: included with `drift_results`.
-- Render Report (Markdown → HTML): Builds `drift_report_YYYY-MM-DD.md` and `.html` using template partials. Storage: `/monitoring_reports/`.
+- Render Report (Markdown -> HTML): Builds `drift_report_YYYY-MM-DD.md` and `.html` using template partials. Storage: `/monitoring_reports/`.
 - Threshold Gate (IF): Evaluates metrics and drift flags against thresholds. Output: branch to Alert/OK.
 - Alert (Slack + Email): Sends summary message; attaches report link; Channel: `#hdpsa-model-ops` and ops mailing list.
 - Escalation (Create Issue): If red status or two amber cycles, create GitHub Issue or Jira ticket with labels `monitoring`, `hdpsa`, `drift`.
-- Dashboard Refresh (HTTP Request → Next.js revalidate endpoint): Triggers incremental static regeneration for monitoring pages.
+- Dashboard Refresh (HTTP Request -> Next.js revalidate endpoint): Triggers incremental static regeneration for monitoring pages.
+- Heartbeat (HTTP Request): Daily ping to n8n API and Flask health endpoint; failure raises engineering alert prior to weekly run.
 
 ASCII summary of the workflow:
 
-```
-[Cron]
-  → [Flask /api/metrics/window]
-      → [Compute RMSE/MAE/R²]
-          → [KS & PSI Tests]
-              → [Output Drift Check]
-                  → [Render Markdown/HTML Reports]
-                      → [Save to /monitoring_reports/]
-                          → [Threshold Gate]
-                              → (OK) [Dashboard Revalidate]
-                              → (ALERT) [Slack/Email] → [Create Issue]
-```
+![n8n Monitoring and Maintenance Workflow](n8n.png)
 
 Operational details:
 - All nodes log structured events to MongoDB with `workflow_id`, `run_id`, `node`, `status`, `duration_ms` for traceability.
 - Secrets (API keys, SMTP credentials) are stored securely in n8n credentials and never hard-coded in scripts.
+- Reliability safeguards:
+  - Failed nodes retry up to three times with exponential backoff; persistent failures insert records into `MongoDB.monitoring_failures` and notify the Engineer.
+  - Each workflow run logs the workflow version tag (`monitor_vX.Y.Z`) for change traceability.
 
 ## 6. Dynamic Context & Review Cadence
 Data and business environments evolve. Monitoring explicitly tracks contextual changes and mandates periodic reviews.
@@ -106,7 +118,9 @@ Quarterly Monitoring Reviews (formal checkpoints with BI Manager approval):
 | Q3 | Documentation Audit | Metadata update |
 | Q4 | Lifecycle Decision | Continue / Retire |
 
-Each review consolidates the quarter’s monitoring reports, assesses cumulative threshold breaches, and issues a decision memo (continue, monitor closely, retrain, or retire) with assigned owners and due dates.
+Each review consolidates the quarter's monitoring reports, assesses cumulative threshold breaches, and issues a decision memo (continue, monitor closely, retrain, or retire) with assigned owners and due dates.
+
+Lifecycle decisions and quarterly governance outcomes are recorded in the Maintenance Plan (Section 6 Business Continuity & Governance) for continuity across deliverables.
 
 ## 7. Governance & Roles
 Clear accountability ensures timely action and auditability.
@@ -118,24 +132,43 @@ RACI summary:
 - Data Scientist (R/A) for metrics and drift; Engineer (C/I); BI Manager (A) on decisions.
 - Engineer (R/A) for automation and storage; Data Scientist (C/I); BI Manager (I).
 
+Severity matrix:
+
+| Level | Condition | Response | SLA |
+|-------|-----------|----------|-----|
+| Info | Metric near threshold or single amber DQ rule | Observe next cycle | 1 week |
+| Amber | Single breach of performance or moderate drift | Manual review by Data Scientist + Engineer | 3 days |
+| Red | Repeated breach, severe drift, or workflow failure | Trigger retraining and escalate to BI Manager | 24 h |
+
+Escalation path: Data Scientist -> Engineer -> BI Manager -> Head of Programme. Quarterly review artefacts (minutes, decision log PDF) stored under `/governance_reviews/`.
+
 ## 8. Ethical & Compliance Considerations
 - Fairness tests: compute error parity and calibration parity across key segments (e.g., province, urban/rural). Flag if subgroup MAE deviates > 25% from overall MAE.
 - Privacy (POPIA): no personal identifiers are processed or stored; logs include aggregated or de-identified inputs only; access to logs is role-based; retention schedules are applied to raw inputs.
 - Transparency: the Next.js dashboard publishes a Monitoring Summary page accessible to authorised stakeholders, including metric trends, drift outcomes, fairness indicators, and explanatory notes.
 - Explainability: provide feature-attribution summaries (e.g., permutation importance on a validation subset) quarterly to confirm stability of key drivers.
+- Explainability tracking: store SHAP summary plots and permutation stability analyses quarterly under `02_Project/Documentation/Explainability/Monitoring/` to detect feature-importance drift.
+- Bias audit checklist: include fairness metric review, calibration checks, stakeholder sign-off, and documentation updates each quarter.
+- Retention policy: monitoring logs retained for 12 months, then aggregated and anonymised for longitudinal studies before secure deletion.
 
 ## 9. Summary
-This Monitoring Plan implements CRISP-DM Deployment best practices for the HDPSA Random Forest model by defining metrics, thresholds, drift tests, and automated reporting with alerting and governance. The combined stack—Flask, Next.js, n8n, and MongoDB—delivers continuous oversight and transparent evidence for decision-making. The outputs of monitoring (breaches, trends, fairness signals) serve as explicit triggers into the Maintenance Plan for retraining, versioning, and potential retirement, ensuring proactive detection, accountability, and informed lifecycle management.
+This Monitoring Plan implements CRISP-DM Deployment best practices for the HDPSA Random Forest model by defining metrics, thresholds, drift tests, and automated reporting with alerting and governance. The combined stack-Flask, Next.js, n8n, and MongoDB-delivers continuous oversight and transparent evidence for decision-making. The outputs of monitoring (breaches, trends, fairness signals) serve as explicit triggers into the Maintenance Plan for retraining, versioning, and potential retirement, ensuring proactive detection, accountability, and informed lifecycle management.
+
+Lifecycle decisions from this Monitoring Plan integrate directly with Maintenance Plan Section 6 to ensure consistent governance records.
 
 ## 10. Data Quality Rules & SLOs (Supplement)
 Beyond model performance and drift, the system enforces operational data quality checks with service level objectives (SLOs):
 - Schema and constraints: enforce expected columns, dtypes, value ranges, and categorical domains at the Flask boundary; reject requests that fail validation and log counters to `monitoring_metrics`.
 - Missingness and outliers: track input missingness rate and winsorised outlier share per feature; alert if missingness > 5% for any critical feature or if outlier share doubles relative to baseline.
 - Volume and freshness: compare weekly request counts and label availability rate to baselines; alert if volume drops > 30% or label availability falls below 60% of expected cadence.
-- Latency and reliability: p95 API latency ≤ 500 ms; error rate ≤ 1% per week. Breaches trigger an engineering incident separate from model-performance alerts.
+- Latency and reliability: p95 API latency <= 500 ms; error rate <= 1% per week. Breaches trigger an engineering incident separate from model-performance alerts.
 - Reproducibility: weekly monitoring jobs record code version and environment hash; any change triggers a low-severity alert and a dashboard annotation.
 
-Appendix—Metric notes:
+Appendix-Metric notes:
 - RMSE and MAE are computed on the same labelled window, using the identical preprocessing pipeline as training, to avoid leakage or inconsistent scaling.
-- R² is reported with sample size and confidence intervals (via bootstrap) on the dashboard to contextualise variability across weeks.
+- R^2 is reported with sample size and confidence intervals (via bootstrap) on the dashboard to contextualise variability across weeks.
 - Drift metrics (KS, PSI) are accompanied by effect-size summaries and sparkline trends to distinguish transient blips from persistent shifts.
+
+
+
+
