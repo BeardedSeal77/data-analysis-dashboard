@@ -179,6 +179,7 @@ export default function Navbar() {
     }
     if (pathname === '/project') return 'project-dashboard'
     if (pathname === '/project/predict') return 'project-predict'
+    if (pathname.startsWith('/project/reporting')) return 'project-reporting'
     return 'home'
   }
 
@@ -267,6 +268,27 @@ export default function Navbar() {
                   }}
                 >
                   <i className="fas fa-chart-line mr-2"></i>Predictions
+                </Link>
+
+                <Link
+                  href="/project/reporting"
+                  className="nav-link flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={currentPage === 'project-reporting' ?
+                    { backgroundColor: 'var(--color-success)', color: 'var(--color-base)' } :
+                    { color: 'var(--color-text)' }
+                  }
+                  onMouseEnter={(e) => {
+                    if (currentPage !== 'project-reporting') {
+                      e.currentTarget.style.backgroundColor = 'var(--color-overlay)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== 'project-reporting') {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }
+                  }}
+                >
+                  <i className="fas fa-file-alt mr-2"></i>Reporting
                 </Link>
               </div>
             </div>
