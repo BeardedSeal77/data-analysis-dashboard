@@ -3,7 +3,7 @@
 export default function ReportingDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Reporting Dashboard
@@ -13,7 +13,7 @@ export default function ReportingDashboard() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <a href="/project/reporting/water">
             <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer border-2 border-transparent hover:border-blue-500">
               <div className="flex items-center mb-4">
@@ -41,7 +41,7 @@ export default function ReportingDashboard() {
               </div>
             </div>
           </a>
-        </div>
+        </div> */}
 
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-2">
@@ -51,6 +51,18 @@ export default function ReportingDashboard() {
             These reports are generated from survey data located in 02_Project/Data/Flat Data/.
             Each report provides interactive visualizations and detailed breakdowns of the data.
           </p>
+        </div>
+
+        <div className="mt-10">
+          <iframe
+            title="Bin Project"
+            width="100%"
+            height="1060"
+            src="https://app.powerbi.com/view?r=eyJrIjoiOTNjYTI5MWItY2Y0OC00MzY3LTg2NmUtODMxM2VlNmI0NmU0IiwidCI6ImVhMWE5MDliLTY2MDAtNGEyNS04MmE1LTBjNmVkN2QwNTEzYiIsImMiOjl9" 
+            frameBorder="0"
+            allowFullScreen
+            className="w-full bg-white rounded-lg shadow"
+          />
         </div>
 
         <div className="mt-6 bg-yellow-50 border border-yellow-300 rounded-lg p-6">
