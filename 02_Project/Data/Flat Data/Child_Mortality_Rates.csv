@@ -1,0 +1,82 @@
+Mortality Rate,Province,Value,Indicator type,Survey Year
+7 Month Pregnancy,Gauteng,4677,D,2016
+7 Month Pregnancy,Kwazulu-Natal,3508,I,1998
+7 Month Pregnancy,Western Cape,2339,U,1998
+7 Month Pregnancy,Eastern Cape,2049,D,2016
+7 Month Pregnancy,Limpopo,1756,I,2016
+7 Month Pregnancy,Mpumalanga,1463,U,1998
+7 Month Pregnancy,North West,1170,D,2016
+7 Month Pregnancy,Free State,1023,U,1998
+7 Month Pregnancy,Northern Cape,731,I,1998
+Child,Gauteng,18,U,1998
+Child,Kwazulu-Natal,14,D,2016
+Child,Western Cape,10,I,2016
+Child,Eastern Cape,9,U,2016
+Child,Limpopo,8,D,2016
+Child,Mpumalanga,7,I,1998
+Child,North West,6,U,2016
+Child,Free State,5,D,1998
+Child,Northern Cape,4,I,2016
+Early neonatal deaths,Gauteng,18,D,1998
+Early neonatal deaths,Kwazulu-Natal,14,I,2016
+Early neonatal deaths,Western Cape,10,U,1998
+Early neonatal deaths,Eastern Cape,9,D,2016
+Early neonatal deaths,Limpopo,8,I,1998
+Early neonatal deaths,Mpumalanga,7,U,2016
+Early neonatal deaths,North West,6,D,1998
+Early neonatal deaths,Free State,6,I,2016
+Early neonatal deaths,Northern Cape,3,U,1998
+Infant,Gauteng,66,I,2016
+Infant,Kwazulu-Natal,49,D,1998
+Infant,Western Cape,33,U,2016
+Infant,Eastern Cape,29,D,1998
+Infant,Limpopo,25,I,2016
+Infant,Mpumalanga,21,U,2016
+Infant,North West,17,D,1998
+Infant,Free State,15,I,2016
+Infant,Northern Cape,11,U,1998
+Neonatal,Gauteng,45,D,1998
+Neonatal,Kwazulu-Natal,34,I,2016
+Neonatal,Western Cape,22,U,1998
+Neonatal,Eastern Cape,20,D,2016
+Neonatal,Limpopo,17,I,1998
+Neonatal,Mpumalanga,15,U,2016
+Neonatal,North West,12,D,1998
+Neonatal,Free State,11,I,2016
+Neonatal,Northern Cape,8,U,1998
+Perinatal,Gauteng,18,U,2016
+Perinatal,Kwazulu-Natal,14,D,1998
+Perinatal,Western Cape,9,I,2016
+Perinatal,Eastern Cape,8,U,1998
+Perinatal,Limpopo,7,D,2016
+Perinatal,Mpumalanga,6,I,1998
+Perinatal,North West,5,U,2016
+Perinatal,Free State,5,D,1998
+Perinatal,Northern Cape,3,I,2016
+Postneonatal,Gauteng,33,I,1998
+Postneonatal,Kwazulu-Natal,25,D,2016
+Postneonatal,Western Cape,17,U,1998
+Postneonatal,Eastern Cape,15,D,2016
+Postneonatal,Limpopo,13,I,1998
+Postneonatal,Mpumalanga,11,U,2016
+Postneonatal,North West,9,D,1998
+Postneonatal,Free State,8,I,2016
+Postneonatal,Northern Cape,6,U,1998
+Stillbirths,Gauteng,45,U,1998
+Stillbirths,Kwazulu-Natal,34,D,2016
+Stillbirths,Western Cape,22,I,2016
+Stillbirths,Eastern Cape,20,U,1998
+Stillbirths,Limpopo,17,D,2016
+Stillbirths,Mpumalanga,15,I,1998
+Stillbirths,North West,12,U,2016
+Stillbirths,Free State,10,D,1998
+Stillbirths,Northern Cape,7,I,2016
+Under-five,Gauteng,85,D,2016
+Under-five,Kwazulu-Natal,64,I,1998
+Under-five,Western Cape,43,U,2016
+Under-five,Eastern Cape,38,D,1998
+Under-five,Limpopo,32,I,2016
+Under-five,Mpumalanga,27,U,1998
+Under-five,North West,21,D,2016
+Under-five,Free State,19,I,1998
+Under-five,Northern Cape,13,U,2016
