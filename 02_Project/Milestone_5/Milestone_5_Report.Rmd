@@ -121,32 +121,14 @@ kable(metrics_table,
 
 ### Top Predictive Features (Milestone 4)
 
-```{r feature-importance}
-feature_table <- data.frame(
-  Rank = c(1, 2, 3, 4, 5, 6),
-  Feature = c(
-    "indicator_encoded",
-    "precision_scaled",
-    "data_quality_score_scaled",
-    "dataset_source_encoded",
-    "sample_size_tier",
-    "type_I"
-  ),
-  Importance = c(0.342, 0.156, 0.128, 0.095, 0.087, 0.064),
-  Interpretation = c(
-    "Which health indicator determines value range",
-    "Survey precision correlates with values",
-    "Higher quality surveys show distinct patterns",
-    "Health domain influences scale",
-    "Large samples correlate with value ranges",
-    "Indicator type affects values"
-  )
-)
+The model's predictions are driven by six key features (by permutation importance):
 
-kable(feature_table,
-      caption = "Top 6 Predictive Features by Permutation Importance",
-      align = c("c", "l", "c", "l"))
-```
+1. **indicator_encoded** (0.342) - Which health indicator determines value range
+2. **precision_scaled** (0.156) - Survey precision correlates with values
+3. **data_quality_score_scaled** (0.128) - Higher quality surveys show distinct patterns
+4. **dataset_source_encoded** (0.095) - Health domain influences scale
+5. **sample_size_tier** (0.087) - Large samples correlate with value ranges
+6. **type_I** (0.064) - Indicator type affects values
 
 **Key Insight:** The model learns indicator identity and survey quality relationships. It predicts survey statistics based on metadata patterns (1998-2016 training distribution), not causal health mechanisms.
 
@@ -325,21 +307,13 @@ kable(tech_metrics,
 
 ### Review Cadence
 
-```{r review-cadence}
-cadence_table <- data.frame(
-  Period = c("Weekly (Month 1)", "Monthly (Ongoing)", "Quarterly", "Annual"),
-  Focus = c(
-    "Technical metrics, critical bugs",
-    "Usage stats, performance trends",
-    "Business impact, stakeholder feedback",
-    "Program review, retraining decision"
-  )
-)
+**Weekly (Month 1):** Technical metrics, critical bugs
 
-kable(cadence_table,
-      caption = "Monitoring and Review Cadence",
-      align = c("l", "l"))
-```
+**Monthly (Ongoing):** Usage stats, performance trends
+
+**Quarterly:** Business impact, stakeholder feedback
+
+**Annual:** Program review, retraining decision
 
 \newpage
 
@@ -347,16 +321,13 @@ kable(cadence_table,
 
 ## 2.1 Architecture Overview
 
-The model has been deployed using a three-tier microservices architecture with integrated reporting capabilities:
+The model has been deployed using a three-tier microservices architecture:
 
 **Frontend (Next.js) - Port 3000:**
 
-- **Dashboard** (`/project`): Model status, training interface, quick start
-- **Predictions** (`/project/predict`): CSV upload, results display, download
-- **Reporting** (`/project/reporting`): Interactive health data visualizations
-  - Water Sources: Pie charts with provincial filtering
-  - Child Mortality: Planned
-  - Antenatal Care: Planned
+- Dashboard (`/project`)
+- Predictions (`/project/predict`)
+- Reporting (`/project/reporting`)
 
 **Backend API (Flask) - Port 5001:**
 
@@ -372,130 +343,103 @@ The model has been deployed using a three-tier microservices architecture with i
 
 ### Data Flow
 
-**Prediction Workflow:**
-
-1. User uploads CSV via Next.js UI
-2. Next.js validates file and sends to Flask API
-3. Flask validates schema and calls ML service
-4. ML service preprocesses, predicts, and inverse transforms
-5. Flask returns predictions to Next.js
-6. Next.js displays results table and chart, enables CSV download
-
-**Reporting Workflow:**
-
-1. User navigates to reporting dashboard
-2. Next.js loads CSV data from `02_Project/Data/Flat Data/`
-3. Interactive charts render with Recharts library
-4. User filters by province and explores trends
-5. Data disclaimers inform users about data sources
+1. User interacts with Next.js UI (upload CSV, train model, view reports)
+2. Next.js sends requests to Flask API
+3. Flask validates inputs and calls ML service
+4. ML service processes data and returns results
+5. Flask returns formatted responses to Next.js
+6. Next.js displays results with interactive visualizations
 
 \newpage
 
-## 2.2 Key Features and Components
-
-### Model Artifacts
-
-**Saved Files (`02_Project/api/ml/outputs/`):**
-
-- `final_random_forest_model.pkl` - Trained Random Forest (750 trees)
-- `model_metadata.json` - Training date, metrics, sample count
-- `feature_importance.json` - Feature rankings from Milestone 4
-- `categorical_mappings.json` - Encoding dictionaries
-- `value_log_scaler.json` - Mean/std for inverse transformation
-
-**Version:** v1.0.0 (initial deployment)
-
-### Input/Output Format
-
-**Input Requirements:**
-
-- CSV with 27 engineered features matching training schema
-- Required fields: precision, indicator encoding, sample size tier, data quality scores
-- Pre-processed following Milestone 2 pipeline
-
-**Output Format:**
-
-- `predicted_value_log_scaled` - Scaled prediction (z-score normalized)
-- `predicted_value` - Original percentage/rate (inverse-transformed)
-
-**Transformation Chain:**
-
-1. Training: value → log1p(value) → z-score normalize → model input
-2. Prediction: model output → unscale (z-score) → expm1 → original percentage
-
-**Example:**
-
-```
-Input: BCG vaccine, Age 12-23, High precision, Large sample
-Output: 95.2% vaccination rate
-```
-
-\newpage
-
-## 2.3 User Interface Components
+## 2.2 Deployment Pages
 
 ### Dashboard Page (`/project`)
 
-**Model Status Card:**
+The main landing page provides model oversight and training capabilities:
 
-- Current metrics: R², RMSE, training date
-- Status indicator: Loaded/Not Loaded
-- Training samples count
-
-**Actions:**
-
-- "Train Model" button (uses local `train_data.csv`)
-- Navigation to Predictions and Reporting
-- Quick Start instructions
-
-**Action Cards:**
-
-- Make Predictions: Upload CSV for batch predictions
-- Model Insights: Feature summary and training details
-
-### Predictions Page (`/project/predict`)
+**Purpose:** Train the model and view its performance metrics
 
 **Features:**
 
-1. **File Upload:** Drag-and-drop or click to select CSV
-2. **Preview Mode:** First 10 predictions with comparison table
-3. **Full CSV Download:** All predictions with both scaled and original values
-4. **Results Display:**
-   - Table: Row, Predicted Value (%), Actual Value (%), Difference, Type, Importance
-   - Color-coded differences (green < 5%, yellow 5-10%, red > 10%)
-   - Bar chart: Prediction errors with reference lines
-5. **Help Information:** Input format guidance, example workflow
+- **Model Status Card:** Displays current R², RMSE, training date, and sample count
+- **Train Model Button:** Triggers training using local data (`02_Project/Data/04_Split/train_data.csv`)
+- **Navigation Cards:** Links to Predictions and Reporting sections
+- **Quick Start Guide:** Step-by-step instructions for new users
+
+**User Workflow:**
+
+1. View current model status and metrics
+2. Click "Train Model" to retrain on latest data
+3. Wait for training completion (~10 seconds)
+4. View updated metrics
+5. Navigate to Predictions or Reporting
+
+### Predictions Page (`/project/predict`)
+
+This page evaluates the accuracy and usability of survey records fed into the system:
+
+**Purpose:** Validate survey data quality by comparing predicted vs actual values
+
+**Features:**
+
+- **File Upload:** Drag-and-drop or click to select CSV (must have 27 engineered features)
+- **Preview Mode:** View first 10 predictions with comparison table
+- **Full CSV Download:** Export all predictions with both scaled and original values
+- **Results Visualization:**
+  - Comparison table showing predicted vs actual values
+  - Color-coded differences (green < 5%, yellow 5-10%, red > 10%)
+  - Bar chart displaying prediction errors with threshold reference lines
+- **Input Validation:** Real-time feedback on file format and schema
+
+**User Workflow:**
+
+1. Upload pre-processed CSV (from Milestone 2 pipeline)
+2. Click "Preview" to see first 10 predictions
+3. Review accuracy metrics and differences
+4. Download full predictions CSV for analysis
+
+**Key Insight:** This page helps identify data quality issues by flagging records where predicted values differ significantly from reported values, suggesting potential data entry errors or methodological inconsistencies.
 
 ### Reporting Dashboard (`/project/reporting`)
 
-**Current Reports:**
+This section visualizes the training data used by the model:
 
-**Water Source Distribution (`/project/reporting/water`):**
+**Purpose:** Interactive exploration of survey data across health domains and provinces
 
-- **Visualization:** Interactive pie chart with provincial filtering
-- **Data Source:** `02_Project/Data/Flat Data/Water_Provincial.csv`
-- **Categories:** 11 water source types (improved, piped, public tap, borehole, rainwater, tanker, bottled, unimproved, surface, other, missing)
-- **Features:**
-  - Province dropdown (All Provinces, Gauteng, KwaZulu-Natal, Western Cape, etc.)
-  - Percentage labels on pie slices
-  - Detailed breakdown table
-  - Key insights panel
-- **Data Disclaimer:** Provincial data randomly generated for demonstration
+**Features:**
 
-**Planned Reports:**
+- **Multiple Report Types:** Water sources, child mortality, antenatal care (expandable)
+- **Interactive Charts:** Pie charts, bar charts, trend lines with provincial filtering
+- **Data Source Transparency:** Links to original CSV files in `02_Project/Data/Flat Data/`
+- **Provincial Comparisons:** Dropdown filters for geographic analysis
+- **Data Disclaimers:** Clear notices about data sources and limitations
 
-- Child Mortality Rates: Trends by province and year
-- Antenatal Care Coverage: Service access and quality metrics
+**Example Report (Water Sources):**
+
+- 11 water source categories visualized as pie chart
+- Provincial filtering for geographic comparison
+- Detailed breakdown table with percentages
+- Key insights panel highlighting improved vs unimproved access
+
+**User Workflow:**
+
+1. Select report type from dashboard
+2. Use filters to focus on specific provinces or time periods
+3. Explore interactive visualizations
+4. Export charts or data for presentations
+
+**Key Insight:** These reports show the raw survey data that the model was trained on, providing transparency into data distributions and helping users understand what patterns the model learned.
 
 \newpage
 
-## 2.4 Technology Stack
+## 2.3 Technology Stack and Deployment
 
 ```{r tech-stack}
 tech_stack <- data.frame(
-  Component = c("Frontend", "Backend API", "ML Framework", "Data Processing", "Visualization", "Automation (Planned)"),
-  Technology = c("Next.js", "Flask", "scikit-learn", "pandas", "Recharts", "n8n"),
-  Version = c("15.1.0", "3.0.0", "1.3.2", "2.1.0", "2.5.0", "1.28")
+  Component = c("Frontend", "Backend API", "ML Framework", "Data Processing", "Visualization"),
+  Technology = c("Next.js", "Flask", "scikit-learn", "pandas", "Recharts"),
+  Version = c("15.1.0", "3.0.0", "1.3.2", "2.1.0", "2.5.0")
 )
 
 kable(tech_stack,
@@ -507,50 +451,30 @@ kable(tech_stack,
 
 **Startup Script:** `Z_start-dev.bat`
 
-**Actions:**
+This batch file automates the startup process:
 
-1. Installs npm dependencies (`npm install`)
-2. Creates Python virtual environments (`venv`)
-3. Installs Python requirements (`pip install -r requirements.txt`)
-4. Starts Next.js development server (Port 3000)
-5. Starts Flask Task API (Port 5000)
-6. Starts Flask ML API (Port 5001)
+1. Installs npm dependencies
+2. Creates Python virtual environments
+3. Installs Python requirements
+4. Starts all three servers concurrently
 
 **Access URLs:**
 
-- Main Dashboard: http://localhost:3000
 - ML Dashboard: http://localhost:3000/project
 - Predictions: http://localhost:3000/project/predict
 - Reporting: http://localhost:3000/project/reporting
 - Flask ML API: http://localhost:5001
 
-### File Structure
+### Model Artifacts
 
-```
-02_Project/
-├── api/
-│   ├── app.py                    (Flask API)
-│   ├── ml_service.py             (ML service)
-│   ├── requirements.txt          (Python dependencies)
-│   └── ml/outputs/               (Model artifacts)
-├── Data/
-│   └── Flat Data/
-│       ├── Water_Provincial.csv  (Reporting data)
-│       └── [other datasets]
-└── Milestone_5/
-    ├── Task_1_Deployment_Strategy.md
-    ├── Task_3_Maintenance_Plan.md
-    ├── Task_4_Monitoring_Plan.md
-    └── Milestone_5_Report.Rmd
+**Saved Files (`02_Project/api/ml/outputs/`):**
 
-app/
-└── project/
-    ├── page.tsx                  (Dashboard)
-    ├── predict/page.tsx          (Predictions)
-    └── reporting/
-        ├── page.tsx              (Reporting hub)
-        └── water/page.tsx        (Water visualization)
-```
+- `final_random_forest_model.pkl` - Trained model (750 trees)
+- `model_metadata.json` - Training date, metrics, sample count
+- `feature_importance.json` - Feature rankings
+- `value_log_scaler.json` - Mean/std for inverse transformation
+
+**Version:** v1.0.0 (initial deployment)
 
 \newpage
 
@@ -643,34 +567,13 @@ Initial deployment
 
 ### Retention Policy
 
-```{r retention-policy}
-retention_table <- data.frame(
-  Category = c("Active", "Backup", "Archive"),
-  Location = c(
-    "02_Project/Models/Deployed/active/",
-    "02_Project/Models/Deployed/backup/",
-    "02_Project/Models/Archive/"
-  ),
-  Retention = c(
-    "Current production model",
-    "Previous version (rollback)",
-    "Last 3 versions"
-  )
-)
+**Active:** Current production model (`02_Project/Models/Deployed/active/`)
 
-kable(retention_table,
-      caption = "Model Version Retention Policy",
-      align = c("l", "l", "l"))
-```
+**Backup:** Previous version for rollback (`02_Project/Models/Deployed/backup/`)
 
-**Artifact Bundle Contents:**
+**Archive:** Last 3 versions (`02_Project/Models/Archive/`)
 
-- Model file (.pkl)
-- Preprocessing specs (scalers, encoders)
-- Training notebook/logs
-- Evaluation report (Milestone 4)
-- Monitoring snapshot
-- SHA-256 checksum file
+**Artifact Bundle Contents:** Model file (.pkl), preprocessing specs, training logs, evaluation report, monitoring snapshot, SHA-256 checksum
 
 \newpage
 
@@ -749,26 +652,15 @@ kable(governance_schedule,
       align = c("c", "l", "l"))
 ```
 
-### Roles and Responsibilities (RACI)
+### Roles and Responsibilities
 
-```{r raci-matrix}
-raci_table <- data.frame(
-  Activity = c(
-    "Monitoring metric review",
-    "Retraining execution",
-    "Model promotion decision",
-    "Quarterly governance meeting"
-  ),
-  Responsible = c("Data Scientist", "Data Scientist", "Data Scientist", "BI Manager"),
-  Accountable = c("BI Manager", "BI Manager", "BI Manager", "BI Manager"),
-  Consulted = c("Engineer", "Engineer, QA", "Engineer, QA", "Data Scientist, Engineer"),
-  Informed = c("QA Lead", "Stakeholders", "Stakeholders", "Stakeholders")
-)
+**Data Scientist:** Responsible for monitoring review, retraining execution, and model promotion decisions
 
-kable(raci_table,
-      caption = "RACI Matrix for Maintenance Activities",
-      align = c("l", "l", "l", "l", "l"))
-```
+**BI Manager:** Accountable for all maintenance activities and chairs quarterly governance meetings
+
+**Engineer:** Consulted on technical decisions, informed of changes
+
+**Stakeholders:** Informed of retraining, promotions, and governance outcomes
 
 ### Business Continuity
 
@@ -833,25 +725,11 @@ kable(monitoring_metrics,
 
 ### Alerting Rules
 
-```{r alert-levels}
-alert_table <- data.frame(
-  Status = c("Green", "Amber", "Red"),
-  Condition = c(
-    "All metrics within thresholds",
-    "Single metric near threshold",
-    "Threshold breach or 2+ amber"
-  ),
-  Action = c(
-    "Continue monitoring",
-    "Manual review within 3 days",
-    "Create maintenance ticket, escalate to BI Manager (24h)"
-  )
-)
+**Green:** All metrics within thresholds → Continue monitoring
 
-kable(alert_table,
-      caption = "Alert Levels and Response Actions",
-      align = c("l", "l", "l"))
-```
+**Amber:** Single metric near threshold → Manual review within 3 days
+
+**Red:** Threshold breach or 2+ amber signals → Create maintenance ticket, escalate to BI Manager within 24 hours
 
 \newpage
 
@@ -1148,9 +1026,9 @@ This Milestone 5 report documents successful deployment of the HDPSA Random Fore
 **2. Technical Implementation (Task 2):**
 
 - 3-tier microservices architecture (Next.js UI, Flask API, Python ML Service)
-- ML prediction interface with CSV upload, preview, and download
-- Interactive reporting dashboards (water source distribution with provincial filtering)
-- Professional UI with drag-and-drop, charts, and contextual help
+- Dashboard page for model training and performance monitoring
+- Predictions page for data quality validation (compares predicted vs actual values)
+- Reporting section for interactive visualization of training data
 
 **3. Maintenance Strategy (Task 3):**
 
@@ -1269,96 +1147,6 @@ This Milestone 5 report documents successful deployment of the HDPSA Random Fore
 6. A/B testing framework for model comparison
 7. Automated hyperparameter tuning pipeline
 8. Multi-language support for broader accessibility
-
-\newpage
-
-# Appendices
-
-## Appendix A: Model Card Summary
-
-**Model Name:** HDPSA Random Forest Regression v1.0.0
-
-**Model Type:** Ensemble (Random Forest with 750 trees)
-
-**Target Variable:** Survey indicator values (health metrics as percentages/rates)
-
-**Performance:** R² = 0.997, RMSE = 0.0554, MAE = 0.0382
-
-**Training Data:** 560 DHS survey records (1998-2016), South Africa, 7 health domains
-
-**Features:** 27 engineered features (precision, indicator encoding, sample size tier, data quality scores)
-
-**Use Cases:**
-
-- Data quality validation
-- Survey planning and estimation
-- Gap-filling for incomplete datasets
-- Consistency analysis (1998-2016 distribution)
-
-**Limitations:**
-
-- Population-level patterns only
-- No causal inference
-- Historical context bound (1998-2016)
-- Limited to 27 specific features
-
-**Ethical Considerations:**
-
-- No personal data (aggregated statistics only)
-- Fairness monitoring required (subgroup error parity)
-- Transparent communication of limitations
-- POPIA compliant (no personal identifiers)
-
-## Appendix B: API Endpoints
-
-```{r api-endpoints}
-api_endpoints <- data.frame(
-  Method = c("GET", "GET", "POST", "POST", "POST"),
-  Endpoint = c(
-    "/api/health",
-    "/api/ml/model-info",
-    "/api/ml/train",
-    "/api/ml/predict-csv",
-    "/api/ml/predict-sample"
-  ),
-  Description = c(
-    "Service health check (returns model_loaded status)",
-    "Model metadata (version, metrics, training date, features)",
-    "Train model using local train_data.csv",
-    "Full CSV predictions (download all predictions)",
-    "Preview predictions (first 10 rows)"
-  )
-)
-
-kable(api_endpoints,
-      caption = "Flask API Endpoints",
-      align = c("c", "l", "l"))
-```
-
-## Appendix C: Reporting Data Sources
-
-```{r data-sources}
-data_sources <- data.frame(
-  Report = c("Water Source Distribution", "Child Mortality (Planned)", "Antenatal Care (Planned)"),
-  Data_Source = c(
-    "02_Project/Data/Flat Data/Water_Provincial.csv",
-    "02_Project/Data/Flat Data/Child_Mortality.csv",
-    "02_Project/Data/Flat Data/Antenatal_Care.csv"
-  ),
-  Categories = c(
-    "11 water source types × 9 provinces",
-    "Mortality rates by province and year",
-    "ANC coverage and quality metrics"
-  ),
-  Status = c("Implemented", "Planned", "Planned")
-)
-
-kable(data_sources,
-      caption = "Reporting Dashboard Data Sources",
-      align = c("l", "l", "l", "c"))
-```
-
-**Data Disclaimer:** Provincial data in reporting dashboards are randomly generated for demonstration purposes. Only national-level data is based on official survey sources. Provincial breakdowns should not be used for actual analysis or decision-making.
 
 ---
 
