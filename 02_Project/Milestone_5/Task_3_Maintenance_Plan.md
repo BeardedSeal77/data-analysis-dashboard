@@ -142,15 +142,6 @@ Quarterly governance focus:
 | Q3 | Documentation & registry audit | Metadata updated |
 | Q4 | Lifecycle and roadmap review | Continue / Redevelop / Retire |
 
-RACI overview:
-
-| Activity | Responsible | Accountable | Consulted | Informed |
-|----------|-------------|-------------|-----------|----------|
-| Monitoring metric review | Data Scientist | BI Manager | Engineer | QA Lead |
-| Automation reliability | Engineer | BI Manager | Data Scientist | QA Lead |
-| Quarterly governance meeting | BI Manager | BI Manager | Data Scientist, Engineer | Stakeholders |
-| Model promotion decision | Data Scientist | BI Manager | Engineer, QA Lead | Stakeholders |
-
 Incident severity definitions:
 - **Info:** Single amber breach or non-blocking anomaly; log and review next business day.
 - **Warning:** Threshold breach for one cycle or automation failure requiring manual intervention; response within 24 hours.
