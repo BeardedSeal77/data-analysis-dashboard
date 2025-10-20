@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getHealth, getModelInfo, trainModel } from './lib/api'
-import type { ModelInfo } from './lib/types'
+import { getHealth, getModelInfo, trainModel } from '../lib/api'
+import type { ModelInfo } from '../lib/types'
 
 export default function ProjectDashboard() {
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null)

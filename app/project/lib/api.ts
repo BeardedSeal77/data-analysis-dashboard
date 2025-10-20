@@ -93,6 +93,14 @@ export async function getSamplePredictions(file: File): Promise<SamplePrediction
   return handleResponse<SamplePredictionResponse>(response);
 }
 
+export async function getValidationDataPredictions(): Promise<SamplePredictionResponse> {
+  const response = await fetch(`${API_BASE}/api/ml/predict-validation`, {
+    method: 'POST'
+  });
+
+  return handleResponse<SamplePredictionResponse>(response);
+}
+
 export async function getDataInfo(file: File): Promise<DataInfo> {
   const formData = new FormData();
   formData.append('file', file);

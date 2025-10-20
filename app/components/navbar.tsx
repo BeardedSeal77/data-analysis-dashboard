@@ -177,7 +177,7 @@ export default function Navbar() {
       const milestoneNum = pathname.split('/')[3]
       return `milestone${milestoneNum}`
     }
-    if (pathname === '/project') return 'project-dashboard'
+    if (pathname === '/project/dashboard') return 'project-dashboard'
     if (pathname === '/project/predict') return 'project-predict'
     if (pathname.startsWith('/project/reporting')) return 'project-reporting'
     return 'home'
@@ -229,7 +229,7 @@ export default function Navbar() {
 
               <div className="flex flex-wrap items-center gap-2">
                 <Link
-                  href="/project"
+                  href="/project/dashboard"
                   className="nav-link flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style={currentPage === 'project-dashboard' ?
                     { backgroundColor: 'var(--color-success)', color: 'var(--color-base)' } :
@@ -330,9 +330,9 @@ export default function Navbar() {
                   Task Management
                 </Link>
                 <Link
-                  href="/project"
+                  href="/project/dashboard"
                   className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                    currentPage === 'project'
+                    currentPage === 'project-dashboard'
                       ? 'border-b-2 border-primary text-text'
                       : 'text-muted hover:text-text'
                   }`}

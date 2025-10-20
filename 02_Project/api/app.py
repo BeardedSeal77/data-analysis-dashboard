@@ -281,6 +281,47 @@ def ml_predict_sample():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/ml/predict-validation', methods=['POST'])
+def ml_predict_validation():
+    """
+    Get predictions on validation data (val_data.csv)
+    No file upload needed - uses local validation data
+    """
+    try:
+        if not ml_service.is_loaded:
+            return jsonify({"error": "No model loaded"}), 404
+
+        # Path to local validation data
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        val_path = os.path.join(base_dir, 'Data', '04_Split', 'val_data.csv')
+
+        if not os.path.exists(val_path):
+            return jsonify({"error": f"Validation data not found at {val_path}"}), 404
+
+        # Read validation data
+        df = pd.read_csv(val_path)
+
+        # Predict on first 10 rows
+        sample_df = df.head(10)
+        predictions_scaled = ml_service.predict_from_dataframe(sample_df)
+
+        # Inverse transform to get original values
+        predictions_original = ml_service.inverse_transform_predictions(predictions_scaled)
+
+        sample_df['predicted_value_log_scaled'] = predictions_scaled
+        sample_df['predicted_value'] = predictions_original
+
+        return jsonify({
+            "success": True,
+            "sample_size": len(sample_df),
+            "total_rows": len(df),
+            "sample": sample_df.to_dict('records')
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ============================================================
 # DATA INFO
 # ============================================================

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { getSamplePredictions, predictFromCSV } from '../lib/api'
+import { getSamplePredictions, predictFromCSV, getValidationDataPredictions } from '../lib/api'
 import type { SamplePredictionResponse, PredictionRow } from '../lib/types'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts'
 
@@ -54,6 +54,22 @@ export default function PredictPage() {
     const files = e.dataTransfer.files
     if (files && files.length > 0) {
       handleFileSelect(files[0])
+    }
+  }
+
+  const handleLoadValidationData = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const result = await getValidationDataPredictions()
+      setSampleResult(result)
+      setFile(new File([], 'val_data.csv'))
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load validation data')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -133,7 +149,7 @@ export default function PredictPage() {
           </div>
         </div>
       )}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Upload Section */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -144,24 +160,36 @@ export default function PredictPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select CSV File
             </label>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={(e) => {
-                const selectedFile = e.target.files?.[0]
-                if (selectedFile) {
-                  handleFileSelect(selectedFile)
-                }
-              }}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded file:border-0
-                file:text-sm file:font-semibold
-                file:bg-green-50 file:text-green-700
-                hover:file:bg-green-100"
-            />
+            <div className="flex gap-3 mb-2">
+              <input
+                type="file"
+                accept=".csv"
+                onChange={(e) => {
+                  const selectedFile = e.target.files?.[0]
+                  if (selectedFile) {
+                    handleFileSelect(selectedFile)
+                  }
+                }}
+                className="flex-1 block text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-green-50 file:text-green-700
+                  hover:file:bg-green-100"
+              />
+              <button
+                onClick={handleLoadValidationData}
+                disabled={isLoading}
+                className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium text-sm whitespace-nowrap"
+              >
+                {isLoading ? 'Loading...' : 'Load Validation Data'}
+              </button>
+            </div>
             <p className="mt-2 text-sm text-gray-500">
-              CSV must contain the same 27 engineered features as training data
+              {file ?
+                `Selected: ${file.name}` :
+                'CSV must contain the same 27 engineered features as training data'
+              }
             </p>
           </div>
 
