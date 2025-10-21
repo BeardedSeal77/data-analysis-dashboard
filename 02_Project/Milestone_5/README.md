@@ -1,12 +1,30 @@
-# Milestone 5 Structure
+# Milestone 5 — Deployment Planning
 
-This milestone contains the deliverables for CRISP-DM Deployment (planning and monitoring) and a minimal demo.
+Scope: Plan model deployment, monitoring, and maintenance per CRISP-DM Phase 6 (planning aspects) and provide a minimal user-facing demo.
 
-- Task_01 — Plan Deployment
-- Task_02 — Plan Monitoring and Maintenance
-- shiny_app — Minimal user-facing demo (e.g., Shiny)
+## Tasks & Artifacts
 
-Refer to:
 - Milestone brief: `02_Project/Milestone_5/Milestone_5.md`
-- Prior evaluation: `02_Project/Milestone_4/Task_1.md`, `02_Project/Milestone_4/Task_2.md`, `02_Project/Milestone_4/Task_3.md`
-- Model artifact: `02_Project/Milestone_3/Task_03/outputs/final_random_forest_model.rds`
+- Reports:
+  - Deployment Strategy: `02_Project/Milestone_5/Task_1_Deployment_Strategy.md`
+  - Maintenance Plan: `02_Project/Milestone_5/Task_3_Maintenance_Plan.md`
+  - Monitoring Plan: `02_Project/Milestone_5/Task_4_Monitoring_Plan.md`
+  - Milestone Report (Rmd/PDF/DOCX): `02_Project/Milestone_5/Milestone_5_Report.Rmd`, `.pdf`, `.docx`
+- References: `02_Project/Milestone_5/Milestone_5_Task_Guide.md`, `02_Project/Milestone_5/reference_template.docx`
+- Visuals: `02_Project/Milestone_5/n8n.png`, `02_Project/Milestone_5/screenshots/`
+
+## Minimal Demo
+
+- Reporting UI: `app/project/reporting/page.tsx` (embeds Power BI and explains data sources)
+- Prediction UI: `app/project/predict/page.tsx`
+- ML API: `02_Project/api/` for training/evaluation/prediction endpoints (see `02_Project/api/API_Documentation.md`)
+
+Run locally:
+1) Ensure both Flask APIs are running (see root `README.md` Getting Started)
+2) Start Next.js with `npm run next-dev`
+3) Visit `http://localhost:3000/project/reporting` and `http://localhost:3000/project/predict`
+
+## Upstream Dependencies
+
+- Evaluation outcomes: `02_Project/Milestone_4/Task_1.md`, `Task_2.md`, `Task_3.md`
+- Model artifacts: `02_Project/Milestone_3/Task_03/outputs/`

@@ -1,174 +1,109 @@
-# BIN381 Data Analysis Dashboard
+# BIN381 Data Analysis Dashboard (HDPSA)
 
-A comprehensive data analysis and project management platform built with Next.js and Flask.
+Comprehensive project workspace for the Health and Demographic Profile of South Africa (HDPSA): a Next.js dashboard, two Flask APIs (ML + Task Management), R/Power BI deliverables, and a CRISP-DM milestone track.
 
-## Team Members
+## Quick Navigation
 
-| Name | Role |
-|------|------|
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
-| [Add Name] | [Add Role] |
+- Project Milestones Index: `02_Project/README.md`
+- Milestone READMEs:
+  - `02_Project/Milestone_1/README.md` (Business & Data Understanding)
+  - `02_Project/Milestone_2/README.md` (Data Preparation)
+  - `02_Project/Milestone_3/README.md` (Modeling)
+  - `02_Project/Milestone_4/README.md` (Evaluation)
+  - `02_Project/Milestone_5/README.md` (Deployment Planning)
+  - `02_Project/Milestone_6/README.md` (Final Report)
+- Applications:
+  - Next.js UI: `app/`
+  - ML API (Flask): `02_Project/api/` (docs: `02_Project/api/API_Documentation.md`)
+  - Task Management API (Flask): `01_TaskManagement/api/`
+- Data Lake (CSV):
+  - Raw: `02_Project/Data/01_Raw/`
+  - Cleaned: `02_Project/Data/02_Cleaned/`
+  - Scaled/Features: `02_Project/Data/03_Scaled/`
+  - Train/Val/Test: `02_Project/Data/04_Split/`
+- Reference Docs:
+  - Project Outline: `public/Project_Outline.md`
+  - CRISP-DM Diagram: `public/images/CRISP-DM.png`
 
-## Project Structure
+## Architecture Overview 
 
-```
-├── app/                          # Next.js frontend (App Router)
-│   ├── layout.tsx               # Root layout with navigation
-│   ├── page.tsx                 # Homepage with project navigation
-│   ├── task-management/         # Task management pages
-│   └── project/                 # Data analysis pages
-├── packages/                    # Package management
-│   ├── package.json            # Next.js dependencies & scripts
-│   ├── requirements-task.txt   # Task management API deps
-│   └── requirements-project.txt # Project API deps
-├── 01_TaskManagement/
-│   └── api/
-│       └── app.py              # Flask server (port 5000, MongoDB)
-├── 02_Project/
-│   └── api/
-│       └── app.py              # Flask server (port 5001, PostgreSQL)
-└── docker-compose.yml          # PostgreSQL database
-```
+- Next.js 15 App Router UI (`app/`) with Tailwind CSS.
+- Flask ML API (`02_Project/api/`) serving health-survey modeling endpoints; persists model artifacts to `02_Project/api/ml/outputs` and consumes CSV data under `02_Project/Data`.
+- Flask Task Management API (`01_TaskManagement/api/`) backed by MongoDB; powers the dashboard at `app/task-management`.
+- R Markdown analyses across milestones and Power BI reports embedded in the Reporting UI.
 
-## Quick Start
+## Getting Started
 
-### 1. Install Dependencies
+Prerequisites: Node.js 18+, Python 3.10+, R 4.x. Optional: MongoDB URI for task API. 
 
+1) Install Node dependencies (root):
 ```bash
-# Install Node.js dependencies
-cd packages
 npm install
-
-# Install Python dependencies for task management
-pip install -r requirements-task.txt
-
-# Install Python dependencies for project analysis
-pip install -r requirements-project.txt
 ```
 
-### 2. Start Database Services
+2) Create Python virtual envs and install requirements:
+- Task Management API
+  - Windows: `python -m venv 01_TaskManagement/api/venv && 01_TaskManagement\api\venv\Scripts\pip install -r 01_TaskManagement\api\requirements.txt`
+  - macOS/Linux: `python -m venv 01_TaskManagement/api/venv && source 01_TaskManagement/api/venv/bin/activate && pip install -r 01_TaskManagement/api/requirements.txt`
+- ML API
+  - Windows: `python -m venv 02_Project/api/venv && 02_Project\api\venv\Scripts\pip install -r 02_Project\api\requirements.txt`
+  - macOS/Linux: `python -m venv 02_Project/api/venv && source 02_Project/api/venv/bin/activate && pip install -r 02_Project/api/requirements.txt`
 
+3) (Optional) Install R packages used by Rmd notebooks:
 ```bash
-# Start PostgreSQL (for data analysis)
-docker-compose up -d
+Rscript install_packages.R
 ```
 
-### 3. Start All Services
-
+4) Development run (Next.js + both APIs):
 ```bash
-# From packages/ directory - starts all 3 servers concurrently
-cd packages
 npm run dev
 ```
+Notes:
+- The `dev` script expects Windows-style venv paths. On macOS/Linux, run each service individually (below) or adjust the script.
 
-This single command starts:
-- **Next.js frontend** (http://localhost:3000)
-- **Task Management API** (http://localhost:5000) - MongoDB Atlas
-- **Data Analysis API** (http://localhost:5001) - PostgreSQL
+### Run services individually
 
-## API Endpoints
+- Next.js UI: `npm run next-dev` (serves `http://localhost:3000`)
+- Task Management API: `cd 01_TaskManagement/api && venv/Scripts/python.exe app.py` (Windows) or `source venv/bin/activate && python app.py` (macOS/Linux)
+- ML API: `cd 02_Project/api && venv/Scripts/python.exe app.py` (Windows) or `source venv/bin/activate && python app.py` (macOS/Linux)
 
-### Task Management API (Port 5000)
-- `GET /api/health` - Health check
-- `GET /api/tasks` - Get all tasks
-- `GET /api/members` - Get all team members
-- `GET /api/assignments` - Get task assignments
-- `GET /api/analytics/task-distribution` - Task distribution analytics
+## UI Routes
 
-### Data Analysis API (Port 5001)
-- `GET /api/health` - Health check
-- `GET /api/datasets` - List all datasets
-- `GET /api/datasets/{name}/data` - Get dataset data
-- `GET /api/datasets/{name}/stats` - Get dataset statistics
-- `POST /api/datasets/upload` - Upload CSV dataset
-- `POST /api/query` - Execute SQL query
+- Task Management: `http://localhost:3000/task-management`
+- Project Reporting: `http://localhost:3000/project/reporting` (Power BI embed)
+- Project Predict: `http://localhost:3000/project/predict`
 
-## Features
+## APIs Summary
 
-### Task Management System
-- Real-time task tracking with MongoDB Atlas
-- Team member management
-- Progress analytics and reporting
-- Milestone tracking
+- Task Management API (default `http://localhost:5000`) — configure via `secrets.txt`
+  - Health: `GET /api/health`
+  - Tasks: `GET /api/tasks`, `GET /api/tasks/milestone/{id}`, `POST /api/tasks`, `PUT /api/tasks/{id}`
+  - Assignment: `POST /api/tasks/{id}/assign`, `POST /api/tasks/assignments/{assignmentId}/complete`
+  - Members: `GET /api/members`, `GET /api/members/{id}`
+  - Milestones: `GET /api/milestones`, `GET /api/milestones/{id}/progress`
 
-### Data Analysis Project
-- CSV dataset upload and management
-- Statistical analysis and data exploration
-- SQL query execution
-- PostgreSQL integration
-- Data visualization tools
+- ML API (default `http://localhost:5001`) — docs in `02_Project/api/API_Documentation.md`
+  - Health: `GET /api/health`
+  - Model: `GET /api/ml/model-info`, `GET /api/ml/feature-importance`, `POST /api/ml/reload`
+  - Train: `POST /api/ml/train`
+  - Evaluate: `POST /api/ml/evaluate`
+  - Predict: `POST /api/ml/predict-csv`
 
-## What This Project Does
+## Task Management
 
-This data analysis dashboard explores health and demographic patterns across South Africa by:
+- Backend: `01_TaskManagement/api` (Flask). Configure `secrets.txt` at repo root with at least:
+  - `MONGODB_URI=mongodb+srv://...`
+  - `TASK_MANAGEMENT_PORT=5000`
+- Data seeds and JSON snapshots: `01_TaskManagement/data/`
+- Frontend integration: `app/task-management` uses the API at `http://localhost:5000/api`.
+- Concept and GitHub Pages approach: `01_TaskManagement/public/setup.md`.
 
-🔍 **Analyzing** 12+ health datasets covering water access, sanitation, child mortality, HIV behavior, immunization rates, and more
+## Project Milestones (CRISP-DM)
 
-📊 **Visualizing** complex health patterns through interactive Power BI dashboards and R-generated plots
+All milestone overviews, tasks, and deliverables are cataloged in `02_Project/README.md` with links to each milestone’s README and artifacts.
 
-🤖 **Mining** data using machine learning techniques (clustering, classification, association rules) to uncover hidden relationships
+## License and Acknowledgements
 
-🗺️ **Mapping** health risk zones and regional disparities across South African provinces
+- License: `LICENSE`
+- Project Outline: `public/Project_Outline.md`
 
-📈 **Predicting** health outcomes based on socioeconomic factors like literacy, water access, and living conditions
-
-## Technology Stack
-
-- **Next.js 15** - Modern React framework with App Router
-- **Flask 3.0** - Python web framework for APIs
-- **MongoDB Atlas** - Cloud database for task management
-- **PostgreSQL** - Relational database for data analysis
-- **R** - Statistical analysis and machine learning
-- **Power BI** - Interactive dashboards and visualizations  
-- **CRISP-DM** - Industry-standard data mining methodology
-
-## Development
-
-### Individual Services
-
-```bash
-# Run Next.js only
-cd packages && npm run next-dev
-
-# Run Task Management API only
-cd packages && npm run flask-task
-
-# Run Data Analysis API only
-cd packages && npm run flask-project
-```
-
-### Build for Production
-
-```bash
-cd packages
-npm run build
-```
-
-## Database Setup
-
-### MongoDB Atlas (Task Management)
-Already configured in `01_TaskManagement/api/app.py`. No additional setup required.
-
-### PostgreSQL (Data Analysis)
-Started via Docker Compose:
-```bash
-docker-compose up -d
-```
-
-Database details:
-- Host: localhost:5432
-- Database: bin_project
-- User: postgres
-- Password: postgres
-
-## Next Steps
-
-1. ✅ Basic architecture setup complete
-2. 🚧 Task management UI conversion in progress
-3. 📋 Data analysis frontend components
-4. 🎨 Enhanced styling and user experience
-5. 📊 Advanced analytics and visualization features
-
-Built with Next.js 15, Flask 3.0, MongoDB Atlas, and PostgreSQL.
