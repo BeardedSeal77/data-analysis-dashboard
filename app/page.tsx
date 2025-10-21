@@ -31,8 +31,8 @@ export default function HomePage() {
             </Link>
 
             {/* Data Project Card */}
-            <Link 
-              href="/project"
+            <Link
+              href="/project/dashboard"
               className="block bg-surface hover:bg-overlay border border-highlight-med rounded-lg p-6 transition-colors"
             >
               <div className="text-center">
