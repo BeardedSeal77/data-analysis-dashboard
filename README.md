@@ -36,38 +36,27 @@ Comprehensive project workspace for the Health and Demographic Profile of South 
 
 ## Getting Started
 
-Prerequisites: Node.js 18+, Python 3.10+, R 4.x. Optional: MongoDB URI for task API. 
+Prerequisites: Node.js 18+, Python 3.10+, R 4.x. Optional: MongoDB URI for task API.
 
-1) Install Node dependencies (root):
+### Quick Start (Windows)
+
+Simply run the development startup script:
 ```bash
-npm install
+Z_start-dev.bat
 ```
 
-2) Create Python virtual envs and install requirements:
-- Task Management API
-  - Windows: `python -m venv 01_TaskManagement/api/venv && 01_TaskManagement\api\venv\Scripts\pip install -r 01_TaskManagement\api\requirements.txt`
-  - macOS/Linux: `python -m venv 01_TaskManagement/api/venv && source 01_TaskManagement/api/venv/bin/activate && pip install -r 01_TaskManagement/api/requirements.txt`
-- ML API
-  - Windows: `python -m venv 02_Project/api/venv && 02_Project\api\venv\Scripts\pip install -r 02_Project\api\requirements.txt`
-  - macOS/Linux: `python -m venv 02_Project/api/venv && source 02_Project/api/venv/bin/activate && pip install -r 02_Project/api/requirements.txt`
+This automated script will:
+1. Install/update npm dependencies
+2. Create and validate Python virtual environments for both APIs
+3. Install all required Python packages
+4. Start all three servers concurrently:
+   - Next.js frontend at `http://localhost:3000`
+   - Task Management API at `http://localhost:5000`
+   - Project ML API at `http://localhost:5001`
 
-3) (Optional) Install R packages used by Rmd notebooks:
-```bash
-Rscript install_packages.R
-```
+Once started, open the frontend in your browser: [http://localhost:3000](http://localhost:3000)
 
-4) Development run (Next.js + both APIs):
-```bash
-npm run dev
-```
-Notes:
-- The `dev` script expects Windows-style venv paths. On macOS/Linux, run each service individually (below) or adjust the script.
 
-### Run services individually
-
-- Next.js UI: `npm run next-dev` (serves `http://localhost:3000`)
-- Task Management API: `cd 01_TaskManagement/api && venv/Scripts/python.exe app.py` (Windows) or `source venv/bin/activate && python app.py` (macOS/Linux)
-- ML API: `cd 02_Project/api && venv/Scripts/python.exe app.py` (Windows) or `source venv/bin/activate && python app.py` (macOS/Linux)
 
 ## UI Routes
 

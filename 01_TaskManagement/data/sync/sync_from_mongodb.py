@@ -36,7 +36,7 @@ def sync_all_collections():
         database_name = config['database']
         
         if not mongodb_uri:
-            print("[ERROR] MongoDB URI not found in secrets.txt")
+            print("[ERROR] MongoDB URI not found in .env")
             return False
             
     except Exception as e:

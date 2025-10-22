@@ -15,10 +15,10 @@ def create_app():
     try:
         mongodb_config = get_mongodb_config()
         api_config = get_api_config()
-        print(f"[SUCCESS] Configuration loaded from secrets.txt")
+        print(f"[SUCCESS] Configuration loaded from .env")
     except Exception as e:
         print(f"[ERROR] Failed to load configuration: {e}")
-        print("Make sure secrets.txt exists in the root directory")
+        print("Make sure .env file exists in the root directory")
         exit(1)
     
     # Initialize database manager
