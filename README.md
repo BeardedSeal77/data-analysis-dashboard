@@ -111,7 +111,7 @@ All milestone overviews, tasks, and deliverables are cataloged in `02_Project/RE
 - [Milestone 3 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_3/BIN381_Group_A_Milestone_3.pdf)
 - [Milestone 4 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_4/GroupA_Milestone_04.pdf)
 - [Milestone 5 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_5/Milestone_5_Report.pdf)
-- [Milestone 6 Report (DOCX)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Milestone%206.docx)
+- [Milestone 6 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Group%20A%20Milestone%206.pdf)
 
 ## Power BI Dashboard
 
