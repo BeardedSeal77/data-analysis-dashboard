@@ -28,7 +28,7 @@ Overview of CRISP-DM milestones, tasks, and deliverables for the HDPSA project. 
   - [Final Report PDF](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_5/Milestone_5_Report.pdf)
 - **Final Report**
   - `02_Project/Milestone_6/Milestone_6.md`, `02_Project/Milestone_6/Milestone_6.pdf`
-  - [Final Report DOCX](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Milestone%206.docx)
+  - [Final Report](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Group%20A%20Milestone%206.pdf)
   - [Power BI Report](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/Bin381%20Project.pbix)
   - [Power BI Published Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMWMxNDk0YjAtYjUwNy00OTk4LWJmM2ItOTY1YzM4MmMxYmQ2IiwidCI6ImVhMWE5MDliLTY2MDAtNGEyNS04MmE1LTBjNmVkN2QwNTEzYiIsImMiOjl9)
 
