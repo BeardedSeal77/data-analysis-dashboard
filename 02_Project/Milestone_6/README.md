@@ -11,7 +11,7 @@ Scope: Produce the final report and project review; consolidate deliverables and
 
 ## Final Report
 
-[**BIN381 Milestone 6 Final Report (DOCX)**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Milestone%206.docx)
+[**BIN381 Milestone 6 Final Report**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Group%20A%20Milestone%206.pdf)
 
 ## Power BI Dashboard
 
