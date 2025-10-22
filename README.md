@@ -104,8 +104,23 @@ Notes:
 
 All milestone overviews, tasks, and deliverables are cataloged in `02_Project/README.md` with links to each milestone’s README and artifacts.
 
+## Final Reports
+
+- [Milestone 1 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_1/Report/BIN381_Milestone_1_Group_A.pdf)
+- [Milestone 2 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_2/BIN381_Group_A_Milestone_2.pdf)
+- [Milestone 3 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_3/BIN381_Group_A_Milestone_3.pdf)
+- [Milestone 4 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_4/GroupA_Milestone_04.pdf)
+- [Milestone 5 Report (PDF)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_5/Milestone_5_Report.pdf)
+- [Milestone 6 Report (DOCX)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/BIN381%20Milestone%206.docx)
+
+## Power BI Dashboard
+
+- [Power BI Report File (.pbix)](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_6/Bin381%20Project.pbix)
+- [Published Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMWMxNDk0YjAtYjUwNy00OTk4LWJmM2ItOTY1YzM4MmMxYmQ2IiwidCI6ImVhMWE5MDliLTY2MDAtNGEyNS04MmE1LTBjNmVkN2QwNTEzYiIsImMiOjl9)
+
 ## License and Acknowledgements
 
 - License: `LICENSE`
 - Project Outline: `public/Project_Outline.md`
+- [Complete Project Repository](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project)
 

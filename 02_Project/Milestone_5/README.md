@@ -1,5 +1,7 @@
 # Milestone 5 — Deployment Planning
 
+[GitHub Repository](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_5)
+
 Scope: Plan model deployment, monitoring, and maintenance per CRISP-DM Phase 6 (planning aspects) and provide a minimal user-facing demo.
 
 ## Tasks & Artifacts
@@ -12,6 +14,10 @@ Scope: Plan model deployment, monitoring, and maintenance per CRISP-DM Phase 6 (
   - Milestone Report (Rmd/PDF/DOCX): `02_Project/Milestone_5/Milestone_5_Report.Rmd`, `.pdf`, `.docx`
 - References: `02_Project/Milestone_5/Milestone_5_Task_Guide.md`, `02_Project/Milestone_5/reference_template.docx`
 - Visuals: `02_Project/Milestone_5/n8n.png`, `02_Project/Milestone_5/screenshots/`
+
+## Final Report
+
+[**Milestone 5 Report (PDF)**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_5/Milestone_5_Report.pdf)
 
 ## Minimal Demo
 

@@ -1,5 +1,7 @@
 # Milestone 4 — Evaluation
 
+[GitHub Repository](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_4)
+
 Scope: Evaluate results vs. business goals, review the end-to-end process, and determine next steps per CRISP-DM Phase 5.
 
 ## Tasks & Artifacts
@@ -10,6 +12,10 @@ Scope: Evaluate results vs. business goals, review the end-to-end process, and d
 - Task 3 — Determine Next Steps: `02_Project/Milestone_4/Task_3.md`
 - Group report sources/outputs: `02_Project/Milestone_4/GroupA_Milestone_04.Rmd`, `.docx`, `.pdf`
 
+## Final Report
+
+[**Group A Milestone 4 Report (PDF)**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_4/GroupA_Milestone_04.pdf)
+
 ## Summary
 
 - Benchmarked model metrics against predefined business success criteria.
@@ -19,5 +25,5 @@ Scope: Evaluate results vs. business goals, review the end-to-end process, and d
 ## Upstream Dependencies
 
 - Modeling artifacts: `02_Project/Milestone_3/Task_03/outputs/`
-- Data splits: `02_Project/Data/04_Split/`
+- Data splits: [Split Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/04_Split)
 

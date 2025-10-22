@@ -1,5 +1,7 @@
 # Milestone 2 — Data Preparation
 
+[GitHub Repository](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_2)
+
 Scope: Prepare final analysis dataset(s) from raw CSVs — cleaning, feature selection/engineering, transformations, and train/validation/test splits per CRISP-DM Phase 3.
 
 ## Tasks & Artifacts
@@ -16,12 +18,16 @@ Scope: Prepare final analysis dataset(s) from raw CSVs — cleaning, feature sel
   - HTML report: `02_Project/Milestone_2/Task_04/Task_04.html`
 - Group docs: `02_Project/Milestone_2/Milestone_2_Group_Contribution_Report.md`, `02_Project/Milestone_2/Milestone_2.pdf`
 
+## Final Report
+
+[**BIN381 Group A Milestone 2 Report (PDF)**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_2/BIN381_Group_A_Milestone_2.pdf)
+
 ## Data Lake Structure
 
-- Raw: `02_Project/Data/01_Raw/`
-- Cleaned: `02_Project/Data/02_Cleaned/`
-- Scaled/Features: `02_Project/Data/03_Scaled/`
-- Splits: `02_Project/Data/04_Split/` (`train_data.csv`, `val_data.csv`, `test_data.csv`)
+- [Raw Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/01_Raw)
+- [Cleaned Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/02_Cleaned)
+- [Scaled/Features](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/03_Scaled)
+- [Train/Val/Test Splits](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/04_Split) (`train_data.csv`, `val_data.csv`, `test_data.csv`)
 
 ## Summary
 
@@ -33,5 +39,5 @@ Scope: Prepare final analysis dataset(s) from raw CSVs — cleaning, feature sel
 
 - Install R packages: `Rscript install_packages.R`
 - Run/knit: `02_Project/Milestone_2/Task_02/Task_02.Rmd` and `02_Project/Milestone_2/Task_04/Task_04.Rmd`
-- Resulting CSVs are saved under `02_Project/Data/02_Cleaned/`, `02_Project/Data/03_Scaled/` and final splits under `02_Project/Data/04_Split/`
+- Resulting CSVs are saved under [Cleaned Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/02_Cleaned), [Scaled Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/03_Scaled) and final splits under [Split Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/04_Split)
 

@@ -1,5 +1,7 @@
 # Milestone 1 — Business & Data Understanding
 
+[GitHub Repository](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_1)
+
 Scope: Establish business objectives and success criteria; inventory, explore, and assess the quality of the provided health/demographic datasets per CRISP-DM Phases 1–2.
 
 ## Tasks & Artifacts
@@ -17,6 +19,10 @@ Scope: Establish business objectives and success criteria; inventory, explore, a
   - `02_Project/Milestone_1/BIN381_M1_R/BIN381_M1.Rmd`
 - Compiled outputs: `02_Project/Milestone_1/Report/BIN381_Milestone_1_Group_A.pdf`, `02_Project/Milestone_1/Milestone_1.pdf`
 
+## Final Report
+
+[**BIN381 Milestone 1 Group A Report (PDF)**](https://github.com/BeardedSeal77/data-analysis-dashboard/blob/main/02_Project/Milestone_1/Report/BIN381_Milestone_1_Group_A.pdf)
+
 ## Summary
 
 - Defined business goals and acceptance criteria for HDPSA analysis.
@@ -27,7 +33,7 @@ Scope: Establish business objectives and success criteria; inventory, explore, a
 
 - Install R packages once: `Rscript install_packages.R`
 - Open and knit the Rmd: `02_Project/Milestone_1/Report/BIN381_M1.Rmd`
-- Data sources: national-level CSVs under `02_Project/Data/01_Raw/`
+- Data sources: national-level CSVs under [Raw Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/01_Raw)
 
 ## Related
 
