@@ -4,26 +4,28 @@ Comprehensive project workspace for the Health and Demographic Profile of South 
 
 ## Quick Navigation
 
-- Project Milestones Index: `02_Project/README.md`
-- Milestone READMEs:
-  - `02_Project/Milestone_1/README.md` (Business & Data Understanding)
-  - `02_Project/Milestone_2/README.md` (Data Preparation)
-  - `02_Project/Milestone_3/README.md` (Modeling)
-  - `02_Project/Milestone_4/README.md` (Evaluation)
-  - `02_Project/Milestone_5/README.md` (Deployment Planning)
-  - `02_Project/Milestone_6/README.md` (Final Report)
-- Applications:
+-**Project Milestones Index:**  
+  [`02_Project/README.md`](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project)
+
+- **Milestone READMEs:**
+  - [Milestone 1 – Business & Data Understanding](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_1)
+  - [Milestone 2 – Data Preparation](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_2)
+  - [Milestone 3 – Modeling](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_3)
+  - [Milestone 4 – Evaluation](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_4)
+  - [Milestone 5 – Deployment Planning](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_5)
+  - [Milestone 6 – Final Report](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Milestone_6)
+
+- **Applications:**
   - Next.js UI: `app/`
   - ML API (Flask): `02_Project/api/` (docs: `02_Project/api/API_Documentation.md`)
   - Task Management API (Flask): `01_TaskManagement/api/`
-- Data Lake (CSV):
-  - Raw: `02_Project/Data/01_Raw/`
-  - Cleaned: `02_Project/Data/02_Cleaned/`
-  - Scaled/Features: `02_Project/Data/03_Scaled/`
-  - Train/Val/Test: `02_Project/Data/04_Split/`
-- Reference Docs:
-  - Project Outline: `public/Project_Outline.md`
-  - CRISP-DM Diagram: `public/images/CRISP-DM.png`
+
+- **Data Lake (CSV):**
+  - [Raw](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/01_Raw)
+  - [Cleaned](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/02_Cleaned)
+  - [Scaled/Features](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/03_Scaled)
+  - [Train/Val/Test](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/04_Split)
+  - [Flat Data](https://github.com/BeardedSeal77/data-analysis-dashboard/tree/main/02_Project/Data/Flat%20Data)
 
 ## Architecture Overview 
 
